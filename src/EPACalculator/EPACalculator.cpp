@@ -28,19 +28,19 @@ double EPACalculator::ConvertFacialExpressionToEvaluation(
 }
     
 double EPACalculator::ConvertDistToPotency(
-  const vector<vector<Point3_>>& handPos) {
+  const vector<pair<Point3_, Point3_>>& handPos) {
   // TODO
   return 0.0;
 }
 
 double EPACalculator::ConvertDiffToActivity(
-  const vector<vector<Point3_>>& handPos) {
+  const vector<pair<Point3_, Point3_>>& handPos) {
   return 0.0;
 }
 
 vector<double> EPACalculator::Calculate(
   const vector<FacialExpression>& facialExp,
-  const vector<vector<Point3_>>& handPos);){
+  const vector<pair<Point3_, Point3_>>& handPos) {
   currentEPA[0] = ConvertFacialExpressionToEvaluation(facialExp);
   currentEPA[1] = ConvertDistToPotency(handPos);
   currentEPA[2] = ConvertDiffToActivity(handPos);

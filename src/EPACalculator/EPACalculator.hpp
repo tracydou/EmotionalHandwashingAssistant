@@ -7,7 +7,8 @@
  *  
  */
 
-#includes <vector>
+#include <utility>
+#include <vector>
 
 #ifndef EPA_CALCULATOR_
 #define EPA_CALCULATOR_
@@ -20,14 +21,16 @@ class EPACalculator {
     // Input positions of hands and facial expressions over a set of
     // frames, update and return EPA
     vector<double> Calculate(const vector<FacialExpression>& facialExp,
-                              const vector<vector<Point3_>>& handPos);
+                              const vector<pair<Point3_, Point3_>>& handPos);
     vector<double> getCurrentEPA();
    
   protected:
     double ConvertFacialExpressionToEvaluation(
       const vector<FacialExpression>& facialExp);
-    double ConvertDistToPotency(const vector<vector<Point3_>>& handPos);
-	double ConvertDiffToActivity(const vector<vector<Point3_>>& handPos);
+    double ConvertDistToPotency(
+      const vector<pair<Point3_, Point3_>>& handPos);
+	double ConvertDiffToActivity(
+	  const vector<pair<Point3_, Point3_>>& handPos);
   
     vector<double> currentEPA;
 };
