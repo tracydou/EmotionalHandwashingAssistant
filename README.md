@@ -20,6 +20,6 @@ Code is provided without any guarantees.
 ========================================================================
 This project is built up on the work of two other researches: BayesAct
 and COACH. The former is accessible via https://cs.uwaterloo.ca/~jhoey/research/bayesact/index.php
-and the former is accessible via http://www.ot.utoronto.ca/iatsl/projects/intell_env.htm
+and the latter is accessible via http://www.ot.utoronto.ca/iatsl/projects/intell_env.htm
 
 ========================================================================
