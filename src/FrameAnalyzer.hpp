@@ -26,8 +26,15 @@ class FrameAnalyzer {
     getHandAction();
  
   protected:
+    int createSamples(int numSamples);
+  
     trackingModel* p_actionTracker;
     FacialExpressionRecoganizer* p_facialExpressionRecoganizer;
+    
+    // constants copied from lib/Grabber_TrackingModel/defines.h
+    static int WIDTH = 640; // for cropped image
+    static int HEIGHT = 480; // for cropped image
+    static int RUN_PIXELS = 3000; // random pixels per image for classification for classification
 };
 
 #endif  // FRAME_ANALYZER_
