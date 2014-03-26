@@ -1,0 +1,27 @@
+/*
+ *  File:				BayesActMessage.proto
+ *  Created by:			Luyuan Lin
+ *  Created:			March 2014
+ *  Last Modified:		March 2014
+ *  Last Modified by:	Luyuan Lin
+ * 
+ *  Define a client communicate with the BayesAct engine.
+ */
+ 
+ package EHwA;
+ 
+ message BayesActMessage {
+  required double evaluation = 1;
+  required double potency = 2;
+  required double activity = 3;
+  optional int32 handAction = 4;
+  optional int32 prompt = 5;
+
+  enum MessageType {
+    CLIENT_TO_SERVER = 0;
+    SERVER_TO_CLIENT = 1;
+  } 
+  required MessageType messageType = 6;
+}
+
+ 
