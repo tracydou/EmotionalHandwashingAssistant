@@ -7,33 +7,39 @@
  *  
  */
 
-#include <utility>
-#include <vector>
-
 #ifndef EPA_CALCULATOR_
 #define EPA_CALCULATOR_
 
+#include <utility>
+#include <vector>
+#include "../defines.hpp"
+
+using std::vector;
+using std::pair;
+
+namespace EHwA {
+
+// TODO: add "facial expressions" as an influencer as well
 class EPACalculator {
   public:   
     EPACalculator();
     ~EPACalculator();
     
-    // Input positions of hands and facial expressions over a set of
-    // frames, update and return EPA
-    vector<double> Calculate(const vector<FacialExpression>& facialExp,
-                              const vector<pair<Point3_, Point3_>>& handPos);
-    vector<double> getCurrentEPA();
+    // Input positions of hands frames over a set of frames,
+    // update & return currentEPA
+    vector<double> Calculate(
+      const vector<pair<Position, Position> >& handPos);
+    vector<double> getCurrentEPA() const;
    
   protected:
-    double ConvertFacialExpressionToEvaluation(
-      const vector<FacialExpression>& facialExp);
     double ConvertDistToPotency(
-      const vector<pair<Point3_, Point3_>>& handPos);
+      const vector<pair<Position, Position> >& handPos);
 	double ConvertDiffToActivity(
-	  const vector<pair<Point3_, Point3_>>& handPos);
+	  const vector<pair<Position, Position> >& handPos);
   
     vector<double> currentEPA;
 };
 
+}    // namespace EHwA
 
 #endif  // EPA_CALCULATOR_

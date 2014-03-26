@@ -1,6 +1,6 @@
 Author: Luyuan Lin
 Email: l39lin@uwaterloo.ca
-Last updated: March 20, 2014
+Last updated: March 26, 2014
 
 ========================================================================
 This is the place to hold all codes needed for my thesis project, which
@@ -23,3 +23,19 @@ and COACH. The former is accessible via https://cs.uwaterloo.ca/~jhoey/research/
 and the latter is accessible via http://www.ot.utoronto.ca/iatsl/projects/intell_env.htm
 
 ========================================================================
+
+Dependecies:
+  - openni
+  - nite
+  - opencv
+  - zmq
+  - protobuffer
+  
+Compile & Run:
+  - install all required dependencies
+  - compile .proto files within src folder
+    - run "protoc -I=$SRC_DIR --cpp_out=$DST_DIR $SRC_DIR/messages.proto"
+    - or cd into src folder and run "protoc ./messages.proto"
+  -
+
+Files included in this package:

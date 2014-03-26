@@ -8,45 +8,42 @@
  */
 
 #include "EPACalculator.hpp"
-
-EPACalculator::EPACalculator(){
+namespace EHwA {
+	
+EPACalculator::EPACalculator() {
   // init currentEPA to <0,0,0>
   currentEPA.resize(3);
   for (int i = 0; i < 3; ++i) {
-	  currentEPA[i] = 0;
+	  currentEPA[i] = 0.0;
   }
 }
 
-EPACalculator::~EPACalculator(){
+EPACalculator::~EPACalculator() {
 	// do nothing
 }
 
-double EPACalculator::ConvertFacialExpressionToEvaluation(
-  const vector<FacialExpression>& facialExp) {
-  // TODO
-  return 0.0;
-}
     
 double EPACalculator::ConvertDistToPotency(
-  const vector<pair<Point3_, Point3_>>& handPos) {
-  // TODO
+  const vector<pair<Position, Position> >& handPos) {
+  // TODO: implement this method
   return 0.0;
 }
 
 double EPACalculator::ConvertDiffToActivity(
-  const vector<pair<Point3_, Point3_>>& handPos) {
+  const vector<pair<Position, Position> >& handPos) {
+  // TODO: implement this method
   return 0.0;
 }
 
 vector<double> EPACalculator::Calculate(
-  const vector<FacialExpression>& facialExp,
-  const vector<pair<Point3_, Point3_>>& handPos) {
-  currentEPA[0] = ConvertFacialExpressionToEvaluation(facialExp);
+  const vector<pair<Position, Position> >& handPos) {
   currentEPA[1] = ConvertDistToPotency(handPos);
   currentEPA[2] = ConvertDiffToActivity(handPos);
   return currentEPA;
 }
 
-vector<double> EPACalculator::getCurrentEPA(){
+vector<double> EPACalculator::getCurrentEPA() const{
   return currentEPA;
 }
+
+}  // namespace

@@ -13,11 +13,12 @@ int main (void)
     assert (rc == 0);
 
     while (1) {
-        char buffer [10];
-        zmq_recv (responder, buffer, 10, 0);
+        char buffer [20];
+        zmq_recv (responder, buffer, 20, 0);
         printf ("Received Hello\n");
         sleep (1);          //  Do some 'work'
-        zmq_send (responder, "World", 5, 0);
+        printf("buffer[0-2] = %c, %c, %c\n", buffer[0], buffer[1], buffer[2]);
+        zmq_send (responder, "World", 3, 0);
     }
     return 0;
 }

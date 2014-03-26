@@ -17,7 +17,7 @@ int main (void)
         printf ("Sending Hello %d…\n", request_nbr);
         zmq_send (requester, "Hello", 5, 0);
         zmq_recv (requester, buffer, 10, 0);
-        printf ("Received World %d\n", request_nbr);
+        printf ("Received %s %d\n", buffer, request_nbr);
     }
     zmq_close (requester);
     zmq_ctx_destroy (context);
