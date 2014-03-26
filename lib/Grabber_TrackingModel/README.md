@@ -13,3 +13,11 @@ More details of EHwA can be found at
 https://docs.google.com/document/d/12KKGVZhfhhaVDM4s5xc_vBQZpuCQ2u3ZniWtFxHemLo/edit
 
 ===============================================================================================================
+Note:
+To use these codes, need to install some dependencies - see CMakeList.txt for more details.
+Note that opencv package installed need to be v2.4.4 or higher.
+
+
+
+===============================================================================================================
+
