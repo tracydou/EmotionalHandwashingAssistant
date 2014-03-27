@@ -12,8 +12,8 @@
 #include <string>
 #include <utility>
 #include "BayesActClient.hpp"
-#include "FrameAnalyzer.hpp"
 #include "EPACalculator/EPACalculator.hpp"
+#include "FrameAnalyzer.hpp"
 #include "PromptSelecter.hpp"
 
 using std::cout;
@@ -21,13 +21,13 @@ using std::endl;
 using std::string;
 using std::make_pair;
 
-using namespace EHwA;
+namespace EHwA {
 
 int main() {
   cout << "Hello World for Emotional Handwashing Assistant (EHwA)!"
        << endl;
   // Constant values used in the program
-  string addr = ""; // shared by server & client
+  string addr = "tcp://*:5555"; // shared by server & client
   string outputMappingFilename = "";
 
   int pid=fork();
@@ -73,3 +73,5 @@ int main() {
   }
   return 0;
 }
+
+}  // namespace

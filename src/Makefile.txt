@@ -1,0 +1,31 @@
+# Makefile for building the files together
+EXE = EHwA
+OBJS = BayesActClient.o BayesActMessage.pb.o EPACalculator.o FrameAnalyzer.o PromptSelecter.o
+LIBS = -lzmq -lprotobuf
+CC = g++
+DEBUG = -g
+CFLAGS = -Wall -c $(DEBUG) $(LIBS)
+LFLAGS = -Wall -c $(DEBUG)
+
+all : $(EXE)
+
+$(EXE) : $(OBJS)
+	$(CC) -o $(EXE) -c main.cpp $(OBJS) $(LIBS)
+
+BayesActMessage.pb.o : BayesActMessage.pb.h
+	$(CC) $(CFLAGS) BayesActMessage.pb.cc
+
+BayesActClient.o : BayesActClient.hpp BayesActMessage.pb.h
+	$(CC) $(CFLAGS) BayesActClient.cpp
+
+EPACalculator.o : EPACalculator/EPACalculator.hpp defines.hpp
+	$(CC) $(CFLAGS) EPACalculator/EPACalculator.cpp 
+
+FrameAnalyzer.o : FrameAnalyzer.hpp defines.hpp
+	$(CC) $(CFLAGS) FrameAnalyzer.cpp
+	
+PromptSelecter.o : PromptSelecter.hpp
+	$(CC) $(CFLAGS) PromptSelecter.cpp
+	
+clean :
+	\rm *.o *~ 
