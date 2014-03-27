@@ -21,7 +21,7 @@ using std::endl;
 using std::string;
 using std::make_pair;
 
-namespace EHwA {
+using namespace EHwA;
 
 int main() {
   cout << "Hello World for Emotional Handwashing Assistant (EHwA)!"
@@ -74,5 +74,3 @@ int main() {
   }
   return 0;
 }
-
-}  // namespace
