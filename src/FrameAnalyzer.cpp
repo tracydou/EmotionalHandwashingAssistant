@@ -52,7 +52,7 @@ Position FrameAnalyzer::getRightHandPos() {
   return Position(0);
 };
 
-int getHandAction() {
+int FrameAnalyzer::getHandAction() {
   // To implement
   return -1;
 }
