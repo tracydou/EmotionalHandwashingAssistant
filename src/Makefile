@@ -16,7 +16,7 @@ main.o : *.h *.hpp EPACalculator/EPACalculator.hpp main.cpp
 BayesActMessage.pb.o : BayesActMessage.pb.h BayesActMessage.pb.cc
 	$(CC) $(CFLAGS) BayesActMessage.pb.cc
 
-BayesActClient.o : BayesActClient.hpp BayesActMessage.pb.h BayesActClient.cpp
+BayesActClient.o : BayesActClient.hpp BayesActMessage.pb.h BayesActClient.cpp defines.hpp
 	$(CC) $(CFLAGS) BayesActClient.cpp
 
 EPACalculator.o : EPACalculator/EPACalculator.hpp defines.hpp EPACalculator/EPACalculator.cpp 
@@ -29,4 +29,4 @@ PromptSelecter.o : PromptSelecter.hpp PromptSelecter.cpp
 	$(CC) $(CFLAGS) PromptSelecter.cpp
 	
 clean :
-	\rm *.o  
+	\rm *.o *.gch

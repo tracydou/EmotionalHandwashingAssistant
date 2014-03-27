@@ -106,12 +106,12 @@ void protobuf_AddDesc_BayesActMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\025BayesActMessage.proto\022\004EHwA\"\\\n\017BayesAc"
-    "tRequest\022\022\n\nevaluation\030\001 \002(\001\022\017\n\007potency\030"
-    "\002 \002(\001\022\020\n\010activity\030\003 \002(\001\022\022\n\nhandAction\030\004 "
-    "\002(\005\"X\n\017BayesActRespond\022\022\n\nevaluation\030\001 \002"
-    "(\001\022\017\n\007potency\030\002 \002(\001\022\020\n\010activity\030\003 \002(\001\022\016\n"
-    "\006prompt\030\004 \002(\005", 213);
+    "\n\025BayesActMessage.proto\022\004EHwA\"i\n\017BayesAc"
+    "tRequest\022\025\n\nevaluation\030\001 \002(\001:\0010\022\022\n\007poten"
+    "cy\030\002 \002(\001:\0010\022\023\n\010activity\030\003 \002(\001:\0010\022\026\n\nhand"
+    "Action\030\004 \002(\005:\002-1\"e\n\017BayesActRespond\022\025\n\ne"
+    "valuation\030\001 \002(\001:\0010\022\022\n\007potency\030\002 \002(\001:\0010\022\023"
+    "\n\010activity\030\003 \002(\001:\0010\022\022\n\006prompt\030\004 \002(\005:\002-1", 239);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BayesActMessage.proto", &protobuf_RegisterTypes);
   BayesActRequest::default_instance_ = new BayesActRequest();
@@ -156,7 +156,7 @@ void BayesActRequest::SharedCtor() {
   evaluation_ = 0;
   potency_ = 0;
   activity_ = 0;
-  handaction_ = 0;
+  handaction_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -195,7 +195,7 @@ void BayesActRequest::Clear() {
     evaluation_ = 0;
     potency_ = 0;
     activity_ = 0;
-    handaction_ = 0;
+    handaction_ = -1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -207,7 +207,7 @@ bool BayesActRequest::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required double evaluation = 1;
+      // required double evaluation = 1 [default = 0];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -222,7 +222,7 @@ bool BayesActRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // required double potency = 2;
+      // required double potency = 2 [default = 0];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -238,7 +238,7 @@ bool BayesActRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // required double activity = 3;
+      // required double activity = 3 [default = 0];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -254,7 +254,7 @@ bool BayesActRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // required int32 handAction = 4;
+      // required int32 handAction = 4 [default = -1];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -288,22 +288,22 @@ bool BayesActRequest::MergePartialFromCodedStream(
 
 void BayesActRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   if (has_evaluation()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->evaluation(), output);
   }
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   if (has_potency()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->potency(), output);
   }
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   if (has_activity()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->activity(), output);
   }
 
-  // required int32 handAction = 4;
+  // required int32 handAction = 4 [default = -1];
   if (has_handaction()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->handaction(), output);
   }
@@ -316,22 +316,22 @@ void BayesActRequest::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* BayesActRequest::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   if (has_evaluation()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->evaluation(), target);
   }
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   if (has_potency()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->potency(), target);
   }
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   if (has_activity()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->activity(), target);
   }
 
-  // required int32 handAction = 4;
+  // required int32 handAction = 4 [default = -1];
   if (has_handaction()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->handaction(), target);
   }
@@ -347,22 +347,22 @@ int BayesActRequest::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required double evaluation = 1;
+    // required double evaluation = 1 [default = 0];
     if (has_evaluation()) {
       total_size += 1 + 8;
     }
 
-    // required double potency = 2;
+    // required double potency = 2 [default = 0];
     if (has_potency()) {
       total_size += 1 + 8;
     }
 
-    // required double activity = 3;
+    // required double activity = 3 [default = 0];
     if (has_activity()) {
       total_size += 1 + 8;
     }
 
-    // required int32 handAction = 4;
+    // required int32 handAction = 4 [default = -1];
     if (has_handaction()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -479,7 +479,7 @@ void BayesActRespond::SharedCtor() {
   evaluation_ = 0;
   potency_ = 0;
   activity_ = 0;
-  prompt_ = 0;
+  prompt_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -518,7 +518,7 @@ void BayesActRespond::Clear() {
     evaluation_ = 0;
     potency_ = 0;
     activity_ = 0;
-    prompt_ = 0;
+    prompt_ = -1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -530,7 +530,7 @@ bool BayesActRespond::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required double evaluation = 1;
+      // required double evaluation = 1 [default = 0];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -545,7 +545,7 @@ bool BayesActRespond::MergePartialFromCodedStream(
         break;
       }
 
-      // required double potency = 2;
+      // required double potency = 2 [default = 0];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -561,7 +561,7 @@ bool BayesActRespond::MergePartialFromCodedStream(
         break;
       }
 
-      // required double activity = 3;
+      // required double activity = 3 [default = 0];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
@@ -577,7 +577,7 @@ bool BayesActRespond::MergePartialFromCodedStream(
         break;
       }
 
-      // required int32 prompt = 4;
+      // required int32 prompt = 4 [default = -1];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -611,22 +611,22 @@ bool BayesActRespond::MergePartialFromCodedStream(
 
 void BayesActRespond::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   if (has_evaluation()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->evaluation(), output);
   }
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   if (has_potency()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->potency(), output);
   }
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   if (has_activity()) {
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->activity(), output);
   }
 
-  // required int32 prompt = 4;
+  // required int32 prompt = 4 [default = -1];
   if (has_prompt()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->prompt(), output);
   }
@@ -639,22 +639,22 @@ void BayesActRespond::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* BayesActRespond::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   if (has_evaluation()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->evaluation(), target);
   }
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   if (has_potency()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->potency(), target);
   }
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   if (has_activity()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->activity(), target);
   }
 
-  // required int32 prompt = 4;
+  // required int32 prompt = 4 [default = -1];
   if (has_prompt()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->prompt(), target);
   }
@@ -670,22 +670,22 @@ int BayesActRespond::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required double evaluation = 1;
+    // required double evaluation = 1 [default = 0];
     if (has_evaluation()) {
       total_size += 1 + 8;
     }
 
-    // required double potency = 2;
+    // required double potency = 2 [default = 0];
     if (has_potency()) {
       total_size += 1 + 8;
     }
 
-    // required double activity = 3;
+    // required double activity = 3 [default = 0];
     if (has_activity()) {
       total_size += 1 + 8;
     }
 
-    // required int32 prompt = 4;
+    // required int32 prompt = 4 [default = -1];
     if (has_prompt()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(

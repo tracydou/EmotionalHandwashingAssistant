@@ -2,26 +2,31 @@ import time
 import zmq
 import BayesActMessage_pb2
 
-context = zmq.Context()
-socket = context.socket(zmq.REP)
-socket.bind("tcp://*:5555")
+def serverStub(address_string):
+	context = zmq.Context()
+	socket = context.socket(zmq.REP)
+	socket.bind(address_string.__str__())
+	print("SimpleServer opened!")
 
-while True:
-    #  Wait for next request from client
-    message = socket.recv()
+	while True:
+		print("waiting for client...")
+		#  Wait for next request from client
+		requestBuffer = socket.recv()
+		requestMessage = BayesActMessage_pb2.BayesActRequest()
+		requestMessage.ParseFromString(requestBuffer)
+		print "LOG(info): GOT request = ", requestMessage.__str__()
 
-    request = BayesActMessage_pb2.BayesActRequest()
-    request.ParseFromString(message)
-    
-    print("Received request: %s" % request.__str__())
+		#  Do some 'work'		
+		respondMessage = BayesActMessage_pb2.BayesActRespond()
+		respondMessage.evaluation = 2
+		respondMessage.potency = 2
+		respondMessage.activity = 2
+		respondMessage.prompt = 2
 
-    #  Do some 'work'
-    time.sleep(1)
-    
-    response = BayesActMessage_pb2.BayesActResponse()
-    response.evaluation = request.evaluation
-    response.potency = request.potency
-    response.activity = request.activity
+		#  Send reply back to client
+		respondBuffer = respondMessage.SerializeToString()
+		print "after serialization! repondBuffer = \n", respondBuffer
+		socket.send_string(respondBuffer)
+		print "\n=============================="
 
-    #  Send reply back to client
-    socket.send(response.SerializeToString())
+serverStub("tcp://*:5555")

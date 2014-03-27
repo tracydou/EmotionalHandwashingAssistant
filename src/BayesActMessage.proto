@@ -11,17 +11,17 @@
  package EHwA;
  
  message BayesActRequest {
-  required double evaluation = 1;
-  required double potency = 2;
-  required double activity = 3;
-  required int32 handAction = 4;
+  required double evaluation = 1 [default = 0.0];
+  required double potency = 2 [default = 0.0];
+  required double activity = 3 [default = 0.0];
+  required int32 handAction = 4 [default = -1];
  }
  
  message BayesActRespond {
-  required double evaluation = 1;
-  required double potency = 2;
-  required double activity = 3;
-  required int32 prompt = 4;
+  required double evaluation = 1 [default = 0.0];
+  required double potency = 2 [default = 0.0];
+  required double activity = 3 [default = 0.0];
+  required int32 prompt = 4 [default = -1];
  }
 
  

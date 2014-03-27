@@ -92,28 +92,28 @@ class BayesActRequest : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   inline bool has_evaluation() const;
   inline void clear_evaluation();
   static const int kEvaluationFieldNumber = 1;
   inline double evaluation() const;
   inline void set_evaluation(double value);
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   inline bool has_potency() const;
   inline void clear_potency();
   static const int kPotencyFieldNumber = 2;
   inline double potency() const;
   inline void set_potency(double value);
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   inline bool has_activity() const;
   inline void clear_activity();
   static const int kActivityFieldNumber = 3;
   inline double activity() const;
   inline void set_activity(double value);
 
-  // required int32 handAction = 4;
+  // required int32 handAction = 4 [default = -1];
   inline bool has_handaction() const;
   inline void clear_handaction();
   static const int kHandActionFieldNumber = 4;
@@ -204,28 +204,28 @@ class BayesActRespond : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required double evaluation = 1;
+  // required double evaluation = 1 [default = 0];
   inline bool has_evaluation() const;
   inline void clear_evaluation();
   static const int kEvaluationFieldNumber = 1;
   inline double evaluation() const;
   inline void set_evaluation(double value);
 
-  // required double potency = 2;
+  // required double potency = 2 [default = 0];
   inline bool has_potency() const;
   inline void clear_potency();
   static const int kPotencyFieldNumber = 2;
   inline double potency() const;
   inline void set_potency(double value);
 
-  // required double activity = 3;
+  // required double activity = 3 [default = 0];
   inline bool has_activity() const;
   inline void clear_activity();
   static const int kActivityFieldNumber = 3;
   inline double activity() const;
   inline void set_activity(double value);
 
-  // required int32 prompt = 4;
+  // required int32 prompt = 4 [default = -1];
   inline bool has_prompt() const;
   inline void clear_prompt();
   static const int kPromptFieldNumber = 4;
@@ -267,7 +267,7 @@ class BayesActRespond : public ::google::protobuf::Message {
 
 // BayesActRequest
 
-// required double evaluation = 1;
+// required double evaluation = 1 [default = 0];
 inline bool BayesActRequest::has_evaluation() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -289,7 +289,7 @@ inline void BayesActRequest::set_evaluation(double value) {
   evaluation_ = value;
 }
 
-// required double potency = 2;
+// required double potency = 2 [default = 0];
 inline bool BayesActRequest::has_potency() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -311,7 +311,7 @@ inline void BayesActRequest::set_potency(double value) {
   potency_ = value;
 }
 
-// required double activity = 3;
+// required double activity = 3 [default = 0];
 inline bool BayesActRequest::has_activity() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -333,7 +333,7 @@ inline void BayesActRequest::set_activity(double value) {
   activity_ = value;
 }
 
-// required int32 handAction = 4;
+// required int32 handAction = 4 [default = -1];
 inline bool BayesActRequest::has_handaction() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -344,7 +344,7 @@ inline void BayesActRequest::clear_has_handaction() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void BayesActRequest::clear_handaction() {
-  handaction_ = 0;
+  handaction_ = -1;
   clear_has_handaction();
 }
 inline ::google::protobuf::int32 BayesActRequest::handaction() const {
@@ -359,7 +359,7 @@ inline void BayesActRequest::set_handaction(::google::protobuf::int32 value) {
 
 // BayesActRespond
 
-// required double evaluation = 1;
+// required double evaluation = 1 [default = 0];
 inline bool BayesActRespond::has_evaluation() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -381,7 +381,7 @@ inline void BayesActRespond::set_evaluation(double value) {
   evaluation_ = value;
 }
 
-// required double potency = 2;
+// required double potency = 2 [default = 0];
 inline bool BayesActRespond::has_potency() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -403,7 +403,7 @@ inline void BayesActRespond::set_potency(double value) {
   potency_ = value;
 }
 
-// required double activity = 3;
+// required double activity = 3 [default = 0];
 inline bool BayesActRespond::has_activity() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -425,7 +425,7 @@ inline void BayesActRespond::set_activity(double value) {
   activity_ = value;
 }
 
-// required int32 prompt = 4;
+// required int32 prompt = 4 [default = -1];
 inline bool BayesActRespond::has_prompt() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -436,7 +436,7 @@ inline void BayesActRespond::clear_has_prompt() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void BayesActRespond::clear_prompt() {
-  prompt_ = 0;
+  prompt_ = -1;
   clear_has_prompt();
 }
 inline ::google::protobuf::int32 BayesActRespond::prompt() const {

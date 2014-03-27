@@ -13,7 +13,6 @@ using std::endl;
 
 #include <zmq.h>
 #include "BayesActClient.hpp"
-#include "BayesActMessage.pb.h"
 
 namespace EHwA {
 
@@ -21,12 +20,6 @@ class BayesActRequest;
 class BayesActRespond;
 
 BayesActClient::BayesActClient(string addr) {
-  // init field attributes to default values
-  respondedEPA.resize(3);
-  for (int i = 0; i < 3; ++i) {
-    respondedEPA[i] = 0.0;
-  }
-  respondedPrompt = -1;
   // set up connection to server
   cout << "Connecting to server..." << endl;
   context = zmq_ctx_new ();
@@ -45,45 +38,49 @@ BayesActClient::~BayesActClient() {
 
 bool BayesActClient::Send(const vector<double>& EPA, int handAction) {
   // pack and convert to BayesActRequest sent to server
-  BayesActRequest message;
-  message.set_evaluation(EPA[0]);
-  message.set_potency(EPA[1]);
-  message.set_activity(EPA[2]);
-  message.set_handaction(handAction);
+  requestMessage.set_evaluation(EPA[0]);
+  requestMessage.set_potency(EPA[1]);
+  requestMessage.set_activity(EPA[2]);
+  requestMessage.set_handaction(handAction);
   // send out message if suceeded
-  if (!message.SerializeToString(&buffer)) {
+  if (!requestMessage.SerializeToString(&requestBuffer)) {
     cout << "Message.SerializeToString(&buffer) Failed!" << endl;
     return false;
   } else {
-    zmq_send (requester, buffer.c_str(), sizeof(buffer.c_str()), 0);
+    zmq_send (requester, (void*)requestBuffer.c_str(),
+              requestBuffer.length(), 0);
+    cout << "=========[Log Info] Sent Request Message:" << endl
+         << requestMessage.DebugString() << endl
+         << "Waiting for response..." << endl;
     return true;
   }
 }
 
 // receive & decode responded epa & prompt
 bool BayesActClient::Receive() {
-  zmq_recv (requester, (void*)(&buffer), sizeof(BayesActRespond), 0);
-  BayesActRespond message;
-  if (!message.ParseFromString(buffer)) {
+  zmq_recv (requester, respondBuffer, MAX_RESPOND_BUFFER_SIZE, 0);
+  if (!respondMessage.ParseFromString(
+    string(respondBuffer, MAX_RESPOND_BUFFER_SIZE))) {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
+    cout << "respond buffer = " << respondBuffer << endl;
     return false;
   } else {
-	respondedEPA[0] = message.evaluation();
-	respondedEPA[1] = message.potency();
-	respondedEPA[2] = message.activity();
-	if (message.has_prompt()) {
-      respondedPrompt = message.prompt();
-    }
+    cout << "=========[Log Info] Response Message received:" << endl
+         << respondMessage.DebugString() << endl;    
     return true;
   }
 }
 
 vector<double> BayesActClient::getRespondedEPA() {
-  return respondedEPA;
+  vector<double> epa(3);
+  epa[0] = respondMessage.evaluation();
+  epa[1] = respondMessage.potency();
+  epa[2] = respondMessage.activity();
+  return epa;
 }
 
 int BayesActClient::getRespondedPrompt() {
-  return respondedPrompt;
+  return respondMessage.prompt();
 }
 
 }  // namespace EHwA

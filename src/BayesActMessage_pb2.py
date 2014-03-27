@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='BayesActMessage.proto',
   package='EHwA',
-  serialized_pb='\n\x15\x42\x61yesActMessage.proto\x12\x04\x45HwA\"\\\n\x0f\x42\x61yesActRequest\x12\x12\n\nevaluation\x18\x01 \x02(\x01\x12\x0f\n\x07potency\x18\x02 \x02(\x01\x12\x10\n\x08\x61\x63tivity\x18\x03 \x02(\x01\x12\x12\n\nhandAction\x18\x04 \x02(\x05\"X\n\x0f\x42\x61yesActRespond\x12\x12\n\nevaluation\x18\x01 \x02(\x01\x12\x0f\n\x07potency\x18\x02 \x02(\x01\x12\x10\n\x08\x61\x63tivity\x18\x03 \x02(\x01\x12\x0e\n\x06prompt\x18\x04 \x02(\x05')
+  serialized_pb='\n\x15\x42\x61yesActMessage.proto\x12\x04\x45HwA\"i\n\x0f\x42\x61yesActRequest\x12\x15\n\nevaluation\x18\x01 \x02(\x01:\x01\x30\x12\x12\n\x07potency\x18\x02 \x02(\x01:\x01\x30\x12\x13\n\x08\x61\x63tivity\x18\x03 \x02(\x01:\x01\x30\x12\x16\n\nhandAction\x18\x04 \x02(\x05:\x02-1\"e\n\x0f\x42\x61yesActRespond\x12\x15\n\nevaluation\x18\x01 \x02(\x01:\x01\x30\x12\x12\n\x07potency\x18\x02 \x02(\x01:\x01\x30\x12\x13\n\x08\x61\x63tivity\x18\x03 \x02(\x01:\x01\x30\x12\x12\n\x06prompt\x18\x04 \x02(\x05:\x02-1')
 
 
 
@@ -28,28 +28,28 @@ _BAYESACTREQUEST = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='evaluation', full_name='EHwA.BayesActRequest.evaluation', index=0,
       number=1, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='potency', full_name='EHwA.BayesActRequest.potency', index=1,
       number=2, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='activity', full_name='EHwA.BayesActRequest.activity', index=2,
       number=3, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='handAction', full_name='EHwA.BayesActRequest.handAction', index=3,
       number=4, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=-1,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -63,7 +63,7 @@ _BAYESACTREQUEST = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=31,
-  serialized_end=123,
+  serialized_end=136,
 )
 
 
@@ -77,28 +77,28 @@ _BAYESACTRESPOND = _descriptor.Descriptor(
     _descriptor.FieldDescriptor(
       name='evaluation', full_name='EHwA.BayesActRespond.evaluation', index=0,
       number=1, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='potency', full_name='EHwA.BayesActRespond.potency', index=1,
       number=2, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='activity', full_name='EHwA.BayesActRespond.activity', index=2,
       number=3, type=1, cpp_type=5, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='prompt', full_name='EHwA.BayesActRespond.prompt', index=3,
       number=4, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
+      has_default_value=True, default_value=-1,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -111,8 +111,8 @@ _BAYESACTRESPOND = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=125,
-  serialized_end=213,
+  serialized_start=138,
+  serialized_end=239,
 )
 
 DESCRIPTOR.message_types_by_name['BayesActRequest'] = _BAYESACTREQUEST

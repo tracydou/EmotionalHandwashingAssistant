@@ -13,6 +13,9 @@
 
 #include <string>
 #include <vector>
+#include "BayesActMessage.pb.h"
+#include "defines.hpp" // MAX_RESPOND_BUFFER_SIZE
+
 using std::string;
 using std::vector;
 
@@ -29,9 +32,10 @@ public:
   int getRespondedPrompt(); // call after Receive() is called
   
 protected:  
-  string buffer; // used to store messages sent to and received from server
-  vector<double> respondedEPA;
-  int respondedPrompt;
+  string requestBuffer;
+  char respondBuffer[MAX_RESPOND_BUFFER_SIZE];
+  BayesActRequest requestMessage;
+  BayesActRespond respondMessage;
   
   void* context;
   void* requester;
