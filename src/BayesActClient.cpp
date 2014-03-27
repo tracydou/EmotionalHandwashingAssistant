@@ -17,7 +17,8 @@ using std::endl;
 
 namespace EHwA {
 
-class BayesActMessage;
+class BayesActRequest;
+class BayesActRespond;
 
 BayesActClient::BayesActClient(string addr) {
   // init field attributes to default values
@@ -43,13 +44,12 @@ BayesActClient::~BayesActClient() {
 }
 
 bool BayesActClient::Send(const vector<double>& EPA, int handAction) {
-  // pack and convert to BayesActMessage sent to server
-  BayesActMessage message;
+  // pack and convert to BayesActRequest sent to server
+  BayesActRequest message;
   message.set_evaluation(EPA[0]);
   message.set_potency(EPA[1]);
   message.set_activity(EPA[2]);
   message.set_handaction(handAction);
-  message.set_messagetype(BayesActMessage::CLIENT_TO_SERVER);
   // send out message if suceeded
   if (!message.SerializeToString(&buffer)) {
     cout << "Message.SerializeToString(&buffer) Failed!" << endl;
@@ -62,13 +62,12 @@ bool BayesActClient::Send(const vector<double>& EPA, int handAction) {
 
 // receive & decode responded epa & prompt
 bool BayesActClient::Receive() {
-  zmq_recv (requester, (void*)(&buffer), sizeof(BayesActMessage), 0);
-  BayesActMessage message;
+  zmq_recv (requester, (void*)(&buffer), sizeof(BayesActRespond), 0);
+  BayesActRespond message;
   if (!message.ParseFromString(buffer)) {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
     return false;
   } else {
-	assert(message.messagetype() == BayesActMessage::SERVER_TO_CLIENT);
 	respondedEPA[0] = message.evaluation();
 	respondedEPA[1] = message.potency();
 	respondedEPA[2] = message.activity();

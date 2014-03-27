@@ -20,10 +20,12 @@ namespace EHwA {
 
 namespace {
 
-const ::google::protobuf::Descriptor* BayesActMessage_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* BayesActRequest_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  BayesActMessage_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* BayesActMessage_MessageType_descriptor_ = NULL;
+  BayesActRequest_reflection_ = NULL;
+const ::google::protobuf::Descriptor* BayesActRespond_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  BayesActRespond_reflection_ = NULL;
 
 }  // namespace
 
@@ -34,27 +36,42 @@ void protobuf_AssignDesc_BayesActMessage_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "BayesActMessage.proto");
   GOOGLE_CHECK(file != NULL);
-  BayesActMessage_descriptor_ = file->message_type(0);
-  static const int BayesActMessage_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, evaluation_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, potency_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, activity_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, handaction_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, prompt_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, messagetype_),
+  BayesActRequest_descriptor_ = file->message_type(0);
+  static const int BayesActRequest_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, evaluation_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, potency_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, activity_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, handaction_),
   };
-  BayesActMessage_reflection_ =
+  BayesActRequest_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      BayesActMessage_descriptor_,
-      BayesActMessage::default_instance_,
-      BayesActMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActMessage, _unknown_fields_),
+      BayesActRequest_descriptor_,
+      BayesActRequest::default_instance_,
+      BayesActRequest_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRequest, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(BayesActMessage));
-  BayesActMessage_MessageType_descriptor_ = BayesActMessage_descriptor_->enum_type(0);
+      sizeof(BayesActRequest));
+  BayesActRespond_descriptor_ = file->message_type(1);
+  static const int BayesActRespond_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, evaluation_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, potency_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, activity_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, prompt_),
+  };
+  BayesActRespond_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      BayesActRespond_descriptor_,
+      BayesActRespond::default_instance_,
+      BayesActRespond_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BayesActRespond, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(BayesActRespond));
 }
 
 namespace {
@@ -68,14 +85,18 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    BayesActMessage_descriptor_, &BayesActMessage::default_instance());
+    BayesActRequest_descriptor_, &BayesActRequest::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    BayesActRespond_descriptor_, &BayesActRespond::default_instance());
 }
 
 }  // namespace
 
 void protobuf_ShutdownFile_BayesActMessage_2eproto() {
-  delete BayesActMessage::default_instance_;
-  delete BayesActMessage_reflection_;
+  delete BayesActRequest::default_instance_;
+  delete BayesActRequest_reflection_;
+  delete BayesActRespond::default_instance_;
+  delete BayesActRespond_reflection_;
 }
 
 void protobuf_AddDesc_BayesActMessage_2eproto() {
@@ -85,17 +106,18 @@ void protobuf_AddDesc_BayesActMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\025BayesActMessage.proto\022\004EHwA\"\337\001\n\017BayesA"
-    "ctMessage\022\022\n\nevaluation\030\001 \002(\001\022\017\n\007potency"
-    "\030\002 \002(\001\022\020\n\010activity\030\003 \002(\001\022\022\n\nhandAction\030\004"
-    " \001(\005\022\016\n\006prompt\030\005 \001(\005\0226\n\013messageType\030\006 \002("
-    "\0162!.EHwA.BayesActMessage.MessageType\"9\n\013"
-    "MessageType\022\024\n\020CLIENT_TO_SERVER\020\000\022\024\n\020SER"
-    "VER_TO_CLIENT\020\001", 255);
+    "\n\025BayesActMessage.proto\022\004EHwA\"\\\n\017BayesAc"
+    "tRequest\022\022\n\nevaluation\030\001 \002(\001\022\017\n\007potency\030"
+    "\002 \002(\001\022\020\n\010activity\030\003 \002(\001\022\022\n\nhandAction\030\004 "
+    "\002(\005\"X\n\017BayesActRespond\022\022\n\nevaluation\030\001 \002"
+    "(\001\022\017\n\007potency\030\002 \002(\001\022\020\n\010activity\030\003 \002(\001\022\016\n"
+    "\006prompt\030\004 \002(\005", 213);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BayesActMessage.proto", &protobuf_RegisterTypes);
-  BayesActMessage::default_instance_ = new BayesActMessage();
-  BayesActMessage::default_instance_->InitAsDefaultInstance();
+  BayesActRequest::default_instance_ = new BayesActRequest();
+  BayesActRespond::default_instance_ = new BayesActRespond();
+  BayesActRequest::default_instance_->InitAsDefaultInstance();
+  BayesActRespond::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BayesActMessage_2eproto);
 }
 
@@ -108,105 +130,78 @@ struct StaticDescriptorInitializer_BayesActMessage_2eproto {
 
 // ===================================================================
 
-const ::google::protobuf::EnumDescriptor* BayesActMessage_MessageType_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return BayesActMessage_MessageType_descriptor_;
-}
-bool BayesActMessage_MessageType_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-      return true;
-    default:
-      return false;
-  }
-}
-
 #ifndef _MSC_VER
-const BayesActMessage_MessageType BayesActMessage::CLIENT_TO_SERVER;
-const BayesActMessage_MessageType BayesActMessage::SERVER_TO_CLIENT;
-const BayesActMessage_MessageType BayesActMessage::MessageType_MIN;
-const BayesActMessage_MessageType BayesActMessage::MessageType_MAX;
-const int BayesActMessage::MessageType_ARRAYSIZE;
-#endif  // _MSC_VER
-#ifndef _MSC_VER
-const int BayesActMessage::kEvaluationFieldNumber;
-const int BayesActMessage::kPotencyFieldNumber;
-const int BayesActMessage::kActivityFieldNumber;
-const int BayesActMessage::kHandActionFieldNumber;
-const int BayesActMessage::kPromptFieldNumber;
-const int BayesActMessage::kMessageTypeFieldNumber;
+const int BayesActRequest::kEvaluationFieldNumber;
+const int BayesActRequest::kPotencyFieldNumber;
+const int BayesActRequest::kActivityFieldNumber;
+const int BayesActRequest::kHandActionFieldNumber;
 #endif  // !_MSC_VER
 
-BayesActMessage::BayesActMessage()
+BayesActRequest::BayesActRequest()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void BayesActMessage::InitAsDefaultInstance() {
+void BayesActRequest::InitAsDefaultInstance() {
 }
 
-BayesActMessage::BayesActMessage(const BayesActMessage& from)
+BayesActRequest::BayesActRequest(const BayesActRequest& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void BayesActMessage::SharedCtor() {
+void BayesActRequest::SharedCtor() {
   _cached_size_ = 0;
   evaluation_ = 0;
   potency_ = 0;
   activity_ = 0;
   handaction_ = 0;
-  prompt_ = 0;
-  messagetype_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-BayesActMessage::~BayesActMessage() {
+BayesActRequest::~BayesActRequest() {
   SharedDtor();
 }
 
-void BayesActMessage::SharedDtor() {
+void BayesActRequest::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void BayesActMessage::SetCachedSize(int size) const {
+void BayesActRequest::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* BayesActMessage::descriptor() {
+const ::google::protobuf::Descriptor* BayesActRequest::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return BayesActMessage_descriptor_;
+  return BayesActRequest_descriptor_;
 }
 
-const BayesActMessage& BayesActMessage::default_instance() {
+const BayesActRequest& BayesActRequest::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_BayesActMessage_2eproto();
   return *default_instance_;
 }
 
-BayesActMessage* BayesActMessage::default_instance_ = NULL;
+BayesActRequest* BayesActRequest::default_instance_ = NULL;
 
-BayesActMessage* BayesActMessage::New() const {
-  return new BayesActMessage;
+BayesActRequest* BayesActRequest::New() const {
+  return new BayesActRequest;
 }
 
-void BayesActMessage::Clear() {
+void BayesActRequest::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     evaluation_ = 0;
     potency_ = 0;
     activity_ = 0;
     handaction_ = 0;
-    prompt_ = 0;
-    messagetype_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool BayesActMessage::MergePartialFromCodedStream(
+bool BayesActRequest::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -259,7 +254,7 @@ bool BayesActMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // optional int32 handAction = 4;
+      // required int32 handAction = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -268,43 +263,6 @@ bool BayesActMessage::MergePartialFromCodedStream(
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &handaction_)));
           set_has_handaction();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(40)) goto parse_prompt;
-        break;
-      }
-
-      // optional int32 prompt = 5;
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_prompt:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &prompt_)));
-          set_has_prompt();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(48)) goto parse_messageType;
-        break;
-      }
-
-      // required .EHwA.BayesActMessage.MessageType messageType = 6;
-      case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_messageType:
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::EHwA::BayesActMessage_MessageType_IsValid(value)) {
-            set_messagetype(static_cast< ::EHwA::BayesActMessage_MessageType >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(6, value);
-          }
         } else {
           goto handle_uninterpreted;
         }
@@ -328,7 +286,7 @@ bool BayesActMessage::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void BayesActMessage::SerializeWithCachedSizes(
+void BayesActRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required double evaluation = 1;
   if (has_evaluation()) {
@@ -345,20 +303,9 @@ void BayesActMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->activity(), output);
   }
 
-  // optional int32 handAction = 4;
+  // required int32 handAction = 4;
   if (has_handaction()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->handaction(), output);
-  }
-
-  // optional int32 prompt = 5;
-  if (has_prompt()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->prompt(), output);
-  }
-
-  // required .EHwA.BayesActMessage.MessageType messageType = 6;
-  if (has_messagetype()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      6, this->messagetype(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -367,7 +314,7 @@ void BayesActMessage::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* BayesActMessage::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* BayesActRequest::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required double evaluation = 1;
   if (has_evaluation()) {
@@ -384,20 +331,9 @@ void BayesActMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->activity(), target);
   }
 
-  // optional int32 handAction = 4;
+  // required int32 handAction = 4;
   if (has_handaction()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->handaction(), target);
-  }
-
-  // optional int32 prompt = 5;
-  if (has_prompt()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->prompt(), target);
-  }
-
-  // required .EHwA.BayesActMessage.MessageType messageType = 6;
-  if (has_messagetype()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      6, this->messagetype(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -407,7 +343,7 @@ void BayesActMessage::SerializeWithCachedSizes(
   return target;
 }
 
-int BayesActMessage::ByteSize() const {
+int BayesActRequest::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -426,24 +362,11 @@ int BayesActMessage::ByteSize() const {
       total_size += 1 + 8;
     }
 
-    // optional int32 handAction = 4;
+    // required int32 handAction = 4;
     if (has_handaction()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->handaction());
-    }
-
-    // optional int32 prompt = 5;
-    if (has_prompt()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->prompt());
-    }
-
-    // required .EHwA.BayesActMessage.MessageType messageType = 6;
-    if (has_messagetype()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->messagetype());
     }
 
   }
@@ -458,10 +381,10 @@ int BayesActMessage::ByteSize() const {
   return total_size;
 }
 
-void BayesActMessage::MergeFrom(const ::google::protobuf::Message& from) {
+void BayesActRequest::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const BayesActMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const BayesActMessage*>(
+  const BayesActRequest* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BayesActRequest*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -470,7 +393,7 @@ void BayesActMessage::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void BayesActMessage::MergeFrom(const BayesActMessage& from) {
+void BayesActRequest::MergeFrom(const BayesActRequest& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_evaluation()) {
@@ -485,53 +408,368 @@ void BayesActMessage::MergeFrom(const BayesActMessage& from) {
     if (from.has_handaction()) {
       set_handaction(from.handaction());
     }
-    if (from.has_prompt()) {
-      set_prompt(from.prompt());
-    }
-    if (from.has_messagetype()) {
-      set_messagetype(from.messagetype());
-    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void BayesActMessage::CopyFrom(const ::google::protobuf::Message& from) {
+void BayesActRequest::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void BayesActMessage::CopyFrom(const BayesActMessage& from) {
+void BayesActRequest::CopyFrom(const BayesActRequest& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool BayesActMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000027) != 0x00000027) return false;
+bool BayesActRequest::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
 
   return true;
 }
 
-void BayesActMessage::Swap(BayesActMessage* other) {
+void BayesActRequest::Swap(BayesActRequest* other) {
   if (other != this) {
     std::swap(evaluation_, other->evaluation_);
     std::swap(potency_, other->potency_);
     std::swap(activity_, other->activity_);
     std::swap(handaction_, other->handaction_);
-    std::swap(prompt_, other->prompt_);
-    std::swap(messagetype_, other->messagetype_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata BayesActMessage::GetMetadata() const {
+::google::protobuf::Metadata BayesActRequest::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = BayesActMessage_descriptor_;
-  metadata.reflection = BayesActMessage_reflection_;
+  metadata.descriptor = BayesActRequest_descriptor_;
+  metadata.reflection = BayesActRequest_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int BayesActRespond::kEvaluationFieldNumber;
+const int BayesActRespond::kPotencyFieldNumber;
+const int BayesActRespond::kActivityFieldNumber;
+const int BayesActRespond::kPromptFieldNumber;
+#endif  // !_MSC_VER
+
+BayesActRespond::BayesActRespond()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void BayesActRespond::InitAsDefaultInstance() {
+}
+
+BayesActRespond::BayesActRespond(const BayesActRespond& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void BayesActRespond::SharedCtor() {
+  _cached_size_ = 0;
+  evaluation_ = 0;
+  potency_ = 0;
+  activity_ = 0;
+  prompt_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+BayesActRespond::~BayesActRespond() {
+  SharedDtor();
+}
+
+void BayesActRespond::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void BayesActRespond::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* BayesActRespond::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return BayesActRespond_descriptor_;
+}
+
+const BayesActRespond& BayesActRespond::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BayesActMessage_2eproto();
+  return *default_instance_;
+}
+
+BayesActRespond* BayesActRespond::default_instance_ = NULL;
+
+BayesActRespond* BayesActRespond::New() const {
+  return new BayesActRespond;
+}
+
+void BayesActRespond::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    evaluation_ = 0;
+    potency_ = 0;
+    activity_ = 0;
+    prompt_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool BayesActRespond::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required double evaluation = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &evaluation_)));
+          set_has_evaluation();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(17)) goto parse_potency;
+        break;
+      }
+
+      // required double potency = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
+         parse_potency:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &potency_)));
+          set_has_potency();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(25)) goto parse_activity;
+        break;
+      }
+
+      // required double activity = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
+         parse_activity:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &activity_)));
+          set_has_activity();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_prompt;
+        break;
+      }
+
+      // required int32 prompt = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_prompt:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &prompt_)));
+          set_has_prompt();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void BayesActRespond::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required double evaluation = 1;
+  if (has_evaluation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->evaluation(), output);
+  }
+
+  // required double potency = 2;
+  if (has_potency()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->potency(), output);
+  }
+
+  // required double activity = 3;
+  if (has_activity()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->activity(), output);
+  }
+
+  // required int32 prompt = 4;
+  if (has_prompt()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->prompt(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* BayesActRespond::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required double evaluation = 1;
+  if (has_evaluation()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->evaluation(), target);
+  }
+
+  // required double potency = 2;
+  if (has_potency()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->potency(), target);
+  }
+
+  // required double activity = 3;
+  if (has_activity()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->activity(), target);
+  }
+
+  // required int32 prompt = 4;
+  if (has_prompt()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->prompt(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int BayesActRespond::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required double evaluation = 1;
+    if (has_evaluation()) {
+      total_size += 1 + 8;
+    }
+
+    // required double potency = 2;
+    if (has_potency()) {
+      total_size += 1 + 8;
+    }
+
+    // required double activity = 3;
+    if (has_activity()) {
+      total_size += 1 + 8;
+    }
+
+    // required int32 prompt = 4;
+    if (has_prompt()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->prompt());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void BayesActRespond::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const BayesActRespond* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BayesActRespond*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void BayesActRespond::MergeFrom(const BayesActRespond& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_evaluation()) {
+      set_evaluation(from.evaluation());
+    }
+    if (from.has_potency()) {
+      set_potency(from.potency());
+    }
+    if (from.has_activity()) {
+      set_activity(from.activity());
+    }
+    if (from.has_prompt()) {
+      set_prompt(from.prompt());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void BayesActRespond::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BayesActRespond::CopyFrom(const BayesActRespond& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BayesActRespond::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+
+  return true;
+}
+
+void BayesActRespond::Swap(BayesActRespond* other) {
+  if (other != this) {
+    std::swap(evaluation_, other->evaluation_);
+    std::swap(potency_, other->potency_);
+    std::swap(activity_, other->activity_);
+    std::swap(prompt_, other->prompt_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata BayesActRespond::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = BayesActRespond_descriptor_;
+  metadata.reflection = BayesActRespond_reflection_;
   return metadata;
 }
 

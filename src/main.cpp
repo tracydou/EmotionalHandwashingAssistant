@@ -34,12 +34,12 @@ int main() {
   if (pid < 0 ) { // failed to fork
     cout << "Failed to fork child process!" << endl;  
     return -1;
-  } else if (pid == 0) { // child process
+  } else if (pid != 0) { // Child process
     // change directory and start the BayesactEngine server
     // TODO: implement server stub using zmq
     chdir("../lib/BayesactEngine");
     system("python ./bayesactinteractive.py");
-  } else { // parent process
+  } else { // Parent process
     // Connect the BayesActClient client & server
     BayesActClient client(addr);
     // define and initianlize pipeline variables
@@ -68,6 +68,7 @@ int main() {
       int respondedPrompt = client.getRespondedPrompt();
       //----------- Select proper prompt ---------------------
       int id = promptSelecter.Select(respondedEPA, respondedPrompt);
+      cout << "Proper prompt is #" << id << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
      }
   }

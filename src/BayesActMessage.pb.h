@@ -23,7 +23,6 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
-#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 
@@ -34,37 +33,19 @@ void  protobuf_AddDesc_BayesActMessage_2eproto();
 void protobuf_AssignDesc_BayesActMessage_2eproto();
 void protobuf_ShutdownFile_BayesActMessage_2eproto();
 
-class BayesActMessage;
+class BayesActRequest;
+class BayesActRespond;
 
-enum BayesActMessage_MessageType {
-  BayesActMessage_MessageType_CLIENT_TO_SERVER = 0,
-  BayesActMessage_MessageType_SERVER_TO_CLIENT = 1
-};
-bool BayesActMessage_MessageType_IsValid(int value);
-const BayesActMessage_MessageType BayesActMessage_MessageType_MessageType_MIN = BayesActMessage_MessageType_CLIENT_TO_SERVER;
-const BayesActMessage_MessageType BayesActMessage_MessageType_MessageType_MAX = BayesActMessage_MessageType_SERVER_TO_CLIENT;
-const int BayesActMessage_MessageType_MessageType_ARRAYSIZE = BayesActMessage_MessageType_MessageType_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* BayesActMessage_MessageType_descriptor();
-inline const ::std::string& BayesActMessage_MessageType_Name(BayesActMessage_MessageType value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    BayesActMessage_MessageType_descriptor(), value);
-}
-inline bool BayesActMessage_MessageType_Parse(
-    const ::std::string& name, BayesActMessage_MessageType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<BayesActMessage_MessageType>(
-    BayesActMessage_MessageType_descriptor(), name, value);
-}
 // ===================================================================
 
-class BayesActMessage : public ::google::protobuf::Message {
+class BayesActRequest : public ::google::protobuf::Message {
  public:
-  BayesActMessage();
-  virtual ~BayesActMessage();
+  BayesActRequest();
+  virtual ~BayesActRequest();
 
-  BayesActMessage(const BayesActMessage& from);
+  BayesActRequest(const BayesActRequest& from);
 
-  inline BayesActMessage& operator=(const BayesActMessage& from) {
+  inline BayesActRequest& operator=(const BayesActRequest& from) {
     CopyFrom(from);
     return *this;
   }
@@ -78,17 +59,17 @@ class BayesActMessage : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const BayesActMessage& default_instance();
+  static const BayesActRequest& default_instance();
 
-  void Swap(BayesActMessage* other);
+  void Swap(BayesActRequest* other);
 
   // implements Message ----------------------------------------------
 
-  BayesActMessage* New() const;
+  BayesActRequest* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BayesActMessage& from);
-  void MergeFrom(const BayesActMessage& from);
+  void CopyFrom(const BayesActRequest& from);
+  void MergeFrom(const BayesActRequest& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -108,30 +89,6 @@ class BayesActMessage : public ::google::protobuf::Message {
   ::google::protobuf::Metadata GetMetadata() const;
 
   // nested types ----------------------------------------------------
-
-  typedef BayesActMessage_MessageType MessageType;
-  static const MessageType CLIENT_TO_SERVER = BayesActMessage_MessageType_CLIENT_TO_SERVER;
-  static const MessageType SERVER_TO_CLIENT = BayesActMessage_MessageType_SERVER_TO_CLIENT;
-  static inline bool MessageType_IsValid(int value) {
-    return BayesActMessage_MessageType_IsValid(value);
-  }
-  static const MessageType MessageType_MIN =
-    BayesActMessage_MessageType_MessageType_MIN;
-  static const MessageType MessageType_MAX =
-    BayesActMessage_MessageType_MessageType_MAX;
-  static const int MessageType_ARRAYSIZE =
-    BayesActMessage_MessageType_MessageType_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  MessageType_descriptor() {
-    return BayesActMessage_MessageType_descriptor();
-  }
-  static inline const ::std::string& MessageType_Name(MessageType value) {
-    return BayesActMessage_MessageType_Name(value);
-  }
-  static inline bool MessageType_Parse(const ::std::string& name,
-      MessageType* value) {
-    return BayesActMessage_MessageType_Parse(name, value);
-  }
 
   // accessors -------------------------------------------------------
 
@@ -156,28 +113,14 @@ class BayesActMessage : public ::google::protobuf::Message {
   inline double activity() const;
   inline void set_activity(double value);
 
-  // optional int32 handAction = 4;
+  // required int32 handAction = 4;
   inline bool has_handaction() const;
   inline void clear_handaction();
   static const int kHandActionFieldNumber = 4;
   inline ::google::protobuf::int32 handaction() const;
   inline void set_handaction(::google::protobuf::int32 value);
 
-  // optional int32 prompt = 5;
-  inline bool has_prompt() const;
-  inline void clear_prompt();
-  static const int kPromptFieldNumber = 5;
-  inline ::google::protobuf::int32 prompt() const;
-  inline void set_prompt(::google::protobuf::int32 value);
-
-  // required .EHwA.BayesActMessage.MessageType messageType = 6;
-  inline bool has_messagetype() const;
-  inline void clear_messagetype();
-  static const int kMessageTypeFieldNumber = 6;
-  inline ::EHwA::BayesActMessage_MessageType messagetype() const;
-  inline void set_messagetype(::EHwA::BayesActMessage_MessageType value);
-
-  // @@protoc_insertion_point(class_scope:EHwA.BayesActMessage)
+  // @@protoc_insertion_point(class_scope:EHwA.BayesActRequest)
  private:
   inline void set_has_evaluation();
   inline void clear_has_evaluation();
@@ -187,10 +130,6 @@ class BayesActMessage : public ::google::protobuf::Message {
   inline void clear_has_activity();
   inline void set_has_handaction();
   inline void clear_has_handaction();
-  inline void set_has_prompt();
-  inline void clear_has_prompt();
-  inline void set_has_messagetype();
-  inline void clear_has_messagetype();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -198,157 +137,314 @@ class BayesActMessage : public ::google::protobuf::Message {
   double potency_;
   double activity_;
   ::google::protobuf::int32 handaction_;
-  ::google::protobuf::int32 prompt_;
-  int messagetype_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_BayesActMessage_2eproto();
   friend void protobuf_AssignDesc_BayesActMessage_2eproto();
   friend void protobuf_ShutdownFile_BayesActMessage_2eproto();
 
   void InitAsDefaultInstance();
-  static BayesActMessage* default_instance_;
+  static BayesActRequest* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class BayesActRespond : public ::google::protobuf::Message {
+ public:
+  BayesActRespond();
+  virtual ~BayesActRespond();
+
+  BayesActRespond(const BayesActRespond& from);
+
+  inline BayesActRespond& operator=(const BayesActRespond& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BayesActRespond& default_instance();
+
+  void Swap(BayesActRespond* other);
+
+  // implements Message ----------------------------------------------
+
+  BayesActRespond* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BayesActRespond& from);
+  void MergeFrom(const BayesActRespond& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required double evaluation = 1;
+  inline bool has_evaluation() const;
+  inline void clear_evaluation();
+  static const int kEvaluationFieldNumber = 1;
+  inline double evaluation() const;
+  inline void set_evaluation(double value);
+
+  // required double potency = 2;
+  inline bool has_potency() const;
+  inline void clear_potency();
+  static const int kPotencyFieldNumber = 2;
+  inline double potency() const;
+  inline void set_potency(double value);
+
+  // required double activity = 3;
+  inline bool has_activity() const;
+  inline void clear_activity();
+  static const int kActivityFieldNumber = 3;
+  inline double activity() const;
+  inline void set_activity(double value);
+
+  // required int32 prompt = 4;
+  inline bool has_prompt() const;
+  inline void clear_prompt();
+  static const int kPromptFieldNumber = 4;
+  inline ::google::protobuf::int32 prompt() const;
+  inline void set_prompt(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:EHwA.BayesActRespond)
+ private:
+  inline void set_has_evaluation();
+  inline void clear_has_evaluation();
+  inline void set_has_potency();
+  inline void clear_has_potency();
+  inline void set_has_activity();
+  inline void clear_has_activity();
+  inline void set_has_prompt();
+  inline void clear_has_prompt();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  double evaluation_;
+  double potency_;
+  double activity_;
+  ::google::protobuf::int32 prompt_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_BayesActMessage_2eproto();
+  friend void protobuf_AssignDesc_BayesActMessage_2eproto();
+  friend void protobuf_ShutdownFile_BayesActMessage_2eproto();
+
+  void InitAsDefaultInstance();
+  static BayesActRespond* default_instance_;
 };
 // ===================================================================
 
 
 // ===================================================================
 
-// BayesActMessage
+// BayesActRequest
 
 // required double evaluation = 1;
-inline bool BayesActMessage::has_evaluation() const {
+inline bool BayesActRequest::has_evaluation() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void BayesActMessage::set_has_evaluation() {
+inline void BayesActRequest::set_has_evaluation() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void BayesActMessage::clear_has_evaluation() {
+inline void BayesActRequest::clear_has_evaluation() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void BayesActMessage::clear_evaluation() {
+inline void BayesActRequest::clear_evaluation() {
   evaluation_ = 0;
   clear_has_evaluation();
 }
-inline double BayesActMessage::evaluation() const {
+inline double BayesActRequest::evaluation() const {
   return evaluation_;
 }
-inline void BayesActMessage::set_evaluation(double value) {
+inline void BayesActRequest::set_evaluation(double value) {
   set_has_evaluation();
   evaluation_ = value;
 }
 
 // required double potency = 2;
-inline bool BayesActMessage::has_potency() const {
+inline bool BayesActRequest::has_potency() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void BayesActMessage::set_has_potency() {
+inline void BayesActRequest::set_has_potency() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void BayesActMessage::clear_has_potency() {
+inline void BayesActRequest::clear_has_potency() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void BayesActMessage::clear_potency() {
+inline void BayesActRequest::clear_potency() {
   potency_ = 0;
   clear_has_potency();
 }
-inline double BayesActMessage::potency() const {
+inline double BayesActRequest::potency() const {
   return potency_;
 }
-inline void BayesActMessage::set_potency(double value) {
+inline void BayesActRequest::set_potency(double value) {
   set_has_potency();
   potency_ = value;
 }
 
 // required double activity = 3;
-inline bool BayesActMessage::has_activity() const {
+inline bool BayesActRequest::has_activity() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void BayesActMessage::set_has_activity() {
+inline void BayesActRequest::set_has_activity() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void BayesActMessage::clear_has_activity() {
+inline void BayesActRequest::clear_has_activity() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void BayesActMessage::clear_activity() {
+inline void BayesActRequest::clear_activity() {
   activity_ = 0;
   clear_has_activity();
 }
-inline double BayesActMessage::activity() const {
+inline double BayesActRequest::activity() const {
   return activity_;
 }
-inline void BayesActMessage::set_activity(double value) {
+inline void BayesActRequest::set_activity(double value) {
   set_has_activity();
   activity_ = value;
 }
 
-// optional int32 handAction = 4;
-inline bool BayesActMessage::has_handaction() const {
+// required int32 handAction = 4;
+inline bool BayesActRequest::has_handaction() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void BayesActMessage::set_has_handaction() {
+inline void BayesActRequest::set_has_handaction() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void BayesActMessage::clear_has_handaction() {
+inline void BayesActRequest::clear_has_handaction() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void BayesActMessage::clear_handaction() {
+inline void BayesActRequest::clear_handaction() {
   handaction_ = 0;
   clear_has_handaction();
 }
-inline ::google::protobuf::int32 BayesActMessage::handaction() const {
+inline ::google::protobuf::int32 BayesActRequest::handaction() const {
   return handaction_;
 }
-inline void BayesActMessage::set_handaction(::google::protobuf::int32 value) {
+inline void BayesActRequest::set_handaction(::google::protobuf::int32 value) {
   set_has_handaction();
   handaction_ = value;
 }
 
-// optional int32 prompt = 5;
-inline bool BayesActMessage::has_prompt() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+// -------------------------------------------------------------------
+
+// BayesActRespond
+
+// required double evaluation = 1;
+inline bool BayesActRespond::has_evaluation() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void BayesActMessage::set_has_prompt() {
-  _has_bits_[0] |= 0x00000010u;
+inline void BayesActRespond::set_has_evaluation() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void BayesActMessage::clear_has_prompt() {
-  _has_bits_[0] &= ~0x00000010u;
+inline void BayesActRespond::clear_has_evaluation() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void BayesActMessage::clear_prompt() {
+inline void BayesActRespond::clear_evaluation() {
+  evaluation_ = 0;
+  clear_has_evaluation();
+}
+inline double BayesActRespond::evaluation() const {
+  return evaluation_;
+}
+inline void BayesActRespond::set_evaluation(double value) {
+  set_has_evaluation();
+  evaluation_ = value;
+}
+
+// required double potency = 2;
+inline bool BayesActRespond::has_potency() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void BayesActRespond::set_has_potency() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void BayesActRespond::clear_has_potency() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void BayesActRespond::clear_potency() {
+  potency_ = 0;
+  clear_has_potency();
+}
+inline double BayesActRespond::potency() const {
+  return potency_;
+}
+inline void BayesActRespond::set_potency(double value) {
+  set_has_potency();
+  potency_ = value;
+}
+
+// required double activity = 3;
+inline bool BayesActRespond::has_activity() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void BayesActRespond::set_has_activity() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void BayesActRespond::clear_has_activity() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void BayesActRespond::clear_activity() {
+  activity_ = 0;
+  clear_has_activity();
+}
+inline double BayesActRespond::activity() const {
+  return activity_;
+}
+inline void BayesActRespond::set_activity(double value) {
+  set_has_activity();
+  activity_ = value;
+}
+
+// required int32 prompt = 4;
+inline bool BayesActRespond::has_prompt() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void BayesActRespond::set_has_prompt() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void BayesActRespond::clear_has_prompt() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void BayesActRespond::clear_prompt() {
   prompt_ = 0;
   clear_has_prompt();
 }
-inline ::google::protobuf::int32 BayesActMessage::prompt() const {
+inline ::google::protobuf::int32 BayesActRespond::prompt() const {
   return prompt_;
 }
-inline void BayesActMessage::set_prompt(::google::protobuf::int32 value) {
+inline void BayesActRespond::set_prompt(::google::protobuf::int32 value) {
   set_has_prompt();
   prompt_ = value;
-}
-
-// required .EHwA.BayesActMessage.MessageType messageType = 6;
-inline bool BayesActMessage::has_messagetype() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void BayesActMessage::set_has_messagetype() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void BayesActMessage::clear_has_messagetype() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void BayesActMessage::clear_messagetype() {
-  messagetype_ = 0;
-  clear_has_messagetype();
-}
-inline ::EHwA::BayesActMessage_MessageType BayesActMessage::messagetype() const {
-  return static_cast< ::EHwA::BayesActMessage_MessageType >(messagetype_);
-}
-inline void BayesActMessage::set_messagetype(::EHwA::BayesActMessage_MessageType value) {
-  assert(::EHwA::BayesActMessage_MessageType_IsValid(value));
-  set_has_messagetype();
-  messagetype_ = value;
 }
 
 
@@ -360,10 +456,6 @@ inline void BayesActMessage::set_messagetype(::EHwA::BayesActMessage_MessageType
 namespace google {
 namespace protobuf {
 
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::EHwA::BayesActMessage_MessageType>() {
-  return ::EHwA::BayesActMessage_MessageType_descriptor();
-}
 
 }  // namespace google
 }  // namespace protobuf
