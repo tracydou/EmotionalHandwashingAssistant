@@ -13,7 +13,7 @@
 
 #include <string>
 #include <vector>
-#include "BayesActMessage.pb.h"
+#include "bayesact_message.pb.h"
 #include "defines.hpp" // MAX_RESPOND_BUFFER_SIZE
 
 using std::string;

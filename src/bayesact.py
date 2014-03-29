@@ -1,32 +1,35 @@
+import bayesact_message_pb2
+import sys
 import time
 import zmq
-import BayesActMessage_pb2
 
-def serverStub(address_string):
+def server_stub(address_string):
 	context = zmq.Context()
 	socket = context.socket(zmq.REP)
 	socket.bind(address_string.__str__())
-	print("SimpleServer opened!")
+	print("BayesActServer started!")
 
 	while True:
-		print("waiting for client...")
+		print("Waiting for request...\n")
 		#  Wait for next request from client
-		requestBuffer = socket.recv()
-		requestMessage = BayesActMessage_pb2.BayesActRequest()
-		requestMessage.ParseFromString(requestBuffer)
-		print "LOG(info): GOT request = ", requestMessage.__str__()
+		request = socket.recv()
+		request_message = bayesact_message_pb2.BayesActRequest()
+		request_message.ParseFromString(request)
+		print "Request = \n", request_message.__str__()
 
-		#  Do some 'work'		
-		respondMessage = BayesActMessage_pb2.BayesActRespond()
-		respondMessage.evaluation = 2
-		respondMessage.potency = 2
-		respondMessage.activity = 2
-		respondMessage.prompt = 2
+		#  Do some 'work'
+		respond_message = bayesact_message_pb2.BayesActRespond()
+		respond_message.evaluation = 2
+		respond_message.potency = 2
+		respond_message.activity = 2
+		respond_message.prompt = 2
 
 		#  Send reply back to client
-		respondBuffer = respondMessage.SerializeToString()
-		print "after serialization! repondBuffer = \n", respondBuffer
-		socket.send_string(respondBuffer)
-		print "\n=============================="
+		respond = respond_message.SerializeToString()
+		print "Respond = \n", respond_message.__str__()
+		socket.send_string(respond)
+		print "=============================="
 
-serverStub("tcp://*:5555")
+if __name__ == "__main__":
+	server_stub(sys.argv[-1])
+

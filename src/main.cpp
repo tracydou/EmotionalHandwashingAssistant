@@ -24,11 +24,8 @@ using std::make_pair;
 using namespace EHwA;
 
 void startServer(string addr) {
-    // change directory and start the BayesactEngine server
-    // TODO: implement server stub using zmq
-    // chdir("../lib/BayesactEngine");
-    // system("python ./bayesactinteractive.py");
-    system("python ./simpleserver.py");
+    string cmd = "gnome-terminal -e 'python ./bayesact.py " + addr + "'";
+    system(cmd.c_str());
 }
 	
 void startClient(string addr, string outputMappingFilename) {
@@ -71,20 +68,12 @@ int main() {
   cout << "Hello World for Emotional Handwashing Assistant (EHwA)!"
        << endl;
   // Constant values used in the program
-  // string serverAddr = "tcp://localhost:5555";
+  string serverAddr = "tcp://*:5555";
   string clientAddr = "tcp://localhost:5555";
   string outputMappingFilename = "";
-  
+
+  startServer(serverAddr);
   startClient(clientAddr, outputMappingFilename);
-/*
-  int pid=fork();
-  if (pid < 0 ) { // failed to fork
-    cout << "Failed to fork child process!" << endl;  
-    return -1;
-  } else if (pid != 0) { 
-	startServer(serverAddr);
-  } else {
-	startClient(clientAddr, outputMappingFilename);
-  }
-*/  return 0;
+
+  return 0;
 }
