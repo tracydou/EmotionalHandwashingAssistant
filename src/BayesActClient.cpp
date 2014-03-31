@@ -38,13 +38,13 @@ bool BayesActClient::Send(const vector<double>& epa, int hand_action) {
   request.set_potency(epa[1]);
   request.set_activity(epa[2]);
   request.set_handaction(hand_action);
-  string serialized_request;
+  string message;
   // send out message if suceeded
-  if (!request.SerializeToString(&serialized_request)) {
+  if (!request.SerializeToString(&message)) {
     cout << "Message.SerializeToString(&buffer) Failed!" << endl;
     return false;
   } else {
-    socket.send(serialized_request.c_str(), serialized_request.length());
+    socket.send(message.c_str(), message.length());
     cout << "=========[Log Info] Sent Request Message:" << endl
          << request.DebugString() << endl
          << "Waiting for response..." << endl;
