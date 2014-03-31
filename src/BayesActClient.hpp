@@ -13,8 +13,9 @@
 
 #include <string>
 #include <vector>
+#include <../lib/cppzmq/zmq.hpp>
 #include "bayesact_message.pb.h"
-#include "defines.hpp" // MAX_RESPOND_BUFFER_SIZE
+#include "defines.hpp"
 
 using std::string;
 using std::vector;
@@ -28,19 +29,16 @@ public:
   
   bool Send(const vector<double>& EPA, int handAction); // encode & send
   bool Receive(); // receive & decode responded epa & prompt
-  vector<double> getRespondedEPA(); // call after Receive() is called
-  int getRespondedPrompt(); // call after Receive() is called
+  vector<double> getResponseEPA(); // call after Receive() is called
+  int getResponsePrompt(); // call after Receive() is called
   
-protected:  
-  string requestBuffer;
-  char respondBuffer[MAX_RESPOND_BUFFER_SIZE];
-  BayesActRequest requestMessage;
-  BayesActRespond respondMessage;
-  
-  void* context;
-  void* requester;
+private:
+  zmq::context_t context;
+  zmq::socket_t socket;
+  BayesActResponse response;
 };
 
 }  // namespace EHwA
+
 #endif  // BAYES_ACT_CLIENT_
 

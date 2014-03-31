@@ -17,7 +17,7 @@
   required int32 handAction = 4 [default = -1];
  }
  
- message BayesActRespond {
+ message BayesActResponse {
   required double evaluation = 1 [default = 0.0];
   required double potency = 2 [default = 0.0];
   required double activity = 3 [default = 0.0];

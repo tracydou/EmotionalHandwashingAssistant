@@ -8,49 +8,45 @@
  */
 
 #include <iostream>
+#include <zmq.h>
+#include <../lib/cppzmq/zmq.hpp>
+#include "BayesActClient.hpp"
+
 using std::cout;
 using std::endl;
-
-#include <zmq.h>
-#include "BayesActClient.hpp"
 
 namespace EHwA {
 
 class BayesActRequest;
-class BayesActRespond;
+class BayesActResponse;
 
-BayesActClient::BayesActClient(string addr) {
+BayesActClient::BayesActClient(string addr): context(1), socket(context, ZMQ_REQ) {
   // set up connection to server
   cout << "Connecting to server..." << endl;
-  context = zmq_ctx_new ();
-  requester = zmq_socket (context, ZMQ_REQ);
-  zmq_connect (requester, addr.c_str());
+  socket.connect(addr.c_str());
 }
 
 BayesActClient::~BayesActClient() {
-  // close connection to server
-  cout << "Closing connection to server..." << endl;
-  zmq_close (requester);
-  zmq_ctx_destroy (context);
   // Optional:  Delete all global objects allocated by libprotobuf.
   google::protobuf::ShutdownProtobufLibrary();
 }
 
-bool BayesActClient::Send(const vector<double>& EPA, int handAction) {
+bool BayesActClient::Send(const vector<double>& epa, int hand_action) {
   // pack and convert to BayesActRequest sent to server
-  requestMessage.set_evaluation(EPA[0]);
-  requestMessage.set_potency(EPA[1]);
-  requestMessage.set_activity(EPA[2]);
-  requestMessage.set_handaction(handAction);
+  BayesActRequest request;
+  request.set_evaluation(epa[0]);
+  request.set_potency(epa[1]);
+  request.set_activity(epa[2]);
+  request.set_handaction(hand_action);
+  string serialized_request;
   // send out message if suceeded
-  if (!requestMessage.SerializeToString(&requestBuffer)) {
+  if (!request.SerializeToString(&serialized_request)) {
     cout << "Message.SerializeToString(&buffer) Failed!" << endl;
     return false;
   } else {
-    zmq_send (requester, (void*)requestBuffer.c_str(),
-              requestBuffer.length(), 0);
+    socket.send(serialized_request.c_str(), serialized_request.length());
     cout << "=========[Log Info] Sent Request Message:" << endl
-         << requestMessage.DebugString() << endl
+         << request.DebugString() << endl
          << "Waiting for response..." << endl;
     return true;
   }
@@ -58,29 +54,29 @@ bool BayesActClient::Send(const vector<double>& EPA, int handAction) {
 
 // receive & decode responded epa & prompt
 bool BayesActClient::Receive() {
-  zmq_recv (requester, respondBuffer, MAX_RESPOND_BUFFER_SIZE, 0);
-  if (!respondMessage.ParseFromString(
-    string(respondBuffer, MAX_RESPOND_BUFFER_SIZE))) {
+  zmq::message_t message;
+  socket.recv(&message);
+  BayesActResponse response;
+  if (!response.ParseFromString(string((const char *)message.data(), message.size()))) {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
-    cout << "respond buffer = " << respondBuffer << endl;
     return false;
   } else {
     cout << "=========[Log Info] Response Message received:" << endl
-         << respondMessage.DebugString() << endl;    
+         << response.DebugString() << endl;    
     return true;
   }
 }
 
-vector<double> BayesActClient::getRespondedEPA() {
+vector<double> BayesActClient::getResponseEPA() {
   vector<double> epa(3);
-  epa[0] = respondMessage.evaluation();
-  epa[1] = respondMessage.potency();
-  epa[2] = respondMessage.activity();
+  epa[0] = response.evaluation();
+  epa[1] = response.potency();
+  epa[2] = response.activity();
   return epa;
 }
 
-int BayesActClient::getRespondedPrompt() {
-  return respondMessage.prompt();
+int BayesActClient::getResponsePrompt() {
+  return response.prompt();
 }
 
 }  // namespace EHwA

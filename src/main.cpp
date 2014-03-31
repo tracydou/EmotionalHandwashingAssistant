@@ -53,10 +53,10 @@ void startClient(string addr, string outputMappingFilename) {
                   frameAnalyzer.getHandAction());
       //----------- Get response from server --------------
       client.Receive();
-      vector<double> respondedEPA = client.getRespondedEPA();
-      int respondedPrompt = client.getRespondedPrompt();
+      vector<double> responseEPA = client.getResponseEPA();
+      int responsePrompt = client.getResponsePrompt();
       //----------- Select proper prompt ---------------------
-      int id = promptSelecter.Select(respondedEPA, respondedPrompt);
+      int id = promptSelecter.Select(responseEPA, responsePrompt);
       cout << "Proper prompt is #" << id << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
      }

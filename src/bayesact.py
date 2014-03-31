@@ -12,22 +12,22 @@ def server_stub(address_string):
 	while True:
 		print("Waiting for request...\n")
 		#  Wait for next request from client
-		request = socket.recv()
-		request_message = bayesact_message_pb2.BayesActRequest()
-		request_message.ParseFromString(request)
-		print "Request = \n", request_message.__str__()
+		request_message = socket.recv()
+		request = bayesact_message_pb2.BayesActRequest()
+		request.ParseFromString(request_message)
+		print "Request = \n", request.__str__()
 
 		#  Do some 'work'
-		respond_message = bayesact_message_pb2.BayesActRespond()
-		respond_message.evaluation = 2
-		respond_message.potency = 2
-		respond_message.activity = 2
-		respond_message.prompt = 2
+		response = bayesact_message_pb2.BayesActResponse()
+		response.evaluation = 2
+		response.potency = 2
+		response.activity = 2
+		response.prompt = 2
 
 		#  Send reply back to client
-		respond = respond_message.SerializeToString()
-		print "Respond = \n", respond_message.__str__()
-		socket.send_string(respond)
+		response_message = response.SerializeToString()
+		print "Response = \n", response.__str__()
+		socket.send_string(response_message)
 		print "=============================="
 
 if __name__ == "__main__":
