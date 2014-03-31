@@ -56,7 +56,6 @@ bool BayesActClient::Send(const vector<double>& epa, int hand_action) {
 bool BayesActClient::Receive() {
   zmq::message_t message;
   socket.recv(&message);
-  BayesActResponse response;
   if (!response.ParseFromString(string((const char *)message.data(), message.size()))) {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
     return false;
