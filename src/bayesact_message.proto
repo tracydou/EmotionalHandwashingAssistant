@@ -1,23 +1,23 @@
 /*
- *  File:				BayesActMessage.proto
+ *  File:				bayesact_message.proto
  *  Created by:			Luyuan Lin
  *  Created:			March 2014
  *  Last Modified:		March 2014
  *  Last Modified by:	Luyuan Lin
  * 
- *  Define a client communicate with the BayesAct engine.
+ *  Define Message-types used between Bayesact client & server
  */
  
  package EHwA;
  
- message BayesActRequest {
+ message BayesactRequest {
   required double evaluation = 1 [default = 0.0];
   required double potency = 2 [default = 0.0];
   required double activity = 3 [default = 0.0];
-  required int32 handAction = 4 [default = -1];
+  required int32 hand_action = 4 [default = -1];
  }
  
- message BayesActResponse {
+ message BayesactResponse {
   required double evaluation = 1 [default = 0.0];
   required double potency = 2 [default = 0.0];
   required double activity = 3 [default = 0.0];

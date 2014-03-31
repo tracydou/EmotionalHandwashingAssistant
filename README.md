@@ -28,14 +28,12 @@ Dependecies:
   - openni
   - nite
   - opencv
-  - zmq
+  - zmq/ c++wrapper & python wrapper
   - protobuffer
   
 Compile & Run:
   - install all required dependencies
-  - compile .proto files within src folder
-    - run "protoc -I=$SRC_DIR --cpp_out=$DST_DIR $SRC_DIR/BayesActMessage.proto"
-    - or cd into src folder and run "protoc ./BayesActMessage.proto"
+  - make (see Makefile for details)
   -
 
 Files included in this package:

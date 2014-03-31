@@ -11,10 +11,10 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include "BayesActClient.hpp"
-#include "EPACalculator/EPACalculator.hpp"
-#include "FrameAnalyzer.hpp"
-#include "PromptSelecter.hpp"
+#include "bayesact_client.hpp"
+#include "EPACalculator/epa_calculator.hpp"
+#include "frame_analyzer.hpp"
+#include "prompt_selecter.hpp"
 
 using std::cout;
 using std::endl;
@@ -23,40 +23,40 @@ using std::make_pair;
 
 using namespace EHwA;
 
-void startServer(string addr) {
-    string cmd = "gnome-terminal -e 'python ./bayesact.py " + addr + "'";
+void StartServer(string addr) {
+    string cmd = "gnome-terminal -e 'python ./bayesact_server_stub.py " + addr + "'";
     system(cmd.c_str());
 }
 	
-void startClient(string addr, string outputMappingFilename) {
+void StartClient(string addr, string output_mapping_filename) {
     // Connect the BayesActClient client & server
-    BayesActClient client(addr);
+    BayesactClient client(addr);
     // define and initianlize pipeline variables
     // KinGrabber kinGrabber;
-    FrameAnalyzer frameAnalyzer;
-    EPACalculator epaCalculator;
-    PromptSelecter promptSelecter(outputMappingFilename);
-    vector<pair<Position, Position> > handPositions;
+    FrameAnalyzer frame_analyzer;
+    EPACalculator epa_calculator;
+    PromptSelecter prompt_selecter(output_mapping_filename);
+    vector<pair<Position, Position> > hand_positions;
     while (true) {
 	  //------------- Grab an image & pack a Frame for process ----------------
       // Frame frame = kinGrabber.Capture();
       //------------- Analyze the frame & update corresponding variables --------
-      frameAnalyzer.Analyze();
-      Position leftHandPos = frameAnalyzer.getLeftHandPos();
-      Position rightHandPos = frameAnalyzer.getRightHandPos();
-      handPositions.push_back(
-        make_pair<Position, Position> (leftHandPos, rightHandPos));
+      frame_analyzer.Analyze();
+      Position left_hand_pos = frame_analyzer.get_left_hand_position();
+      Position right_hand_pos = frame_analyzer.get_right_hand_position();
+      hand_positions.push_back(
+        make_pair<Position, Position> (left_hand_pos, right_hand_pos));
       //---------------- Calculate EPA values -------------------------
-      epaCalculator.Calculate(handPositions);
+      epa_calculator.Calculate(hand_positions);
       //-------- Send currentEPA & handAction to server -------
-      client.Send(epaCalculator.getCurrentEPA(),
-                  frameAnalyzer.getHandAction());
+      client.Send(epa_calculator.get_current_epa(),
+                  frame_analyzer.get_hand_action());
       //----------- Get response from server --------------
       client.Receive();
-      vector<double> responseEPA = client.getResponseEPA();
-      int responsePrompt = client.getResponsePrompt();
+      vector<double> response_epa = client.get_response_epa();
+      int response_prompt = client.get_response_prompt();
       //----------- Select proper prompt ---------------------
-      int id = promptSelecter.Select(responseEPA, responsePrompt);
+      int id = prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt is #" << id << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
      }
@@ -72,8 +72,8 @@ int main() {
   string clientAddr = "tcp://localhost:5555";
   string outputMappingFilename = "";
 
-  startServer(serverAddr);
-  startClient(clientAddr, outputMappingFilename);
+  StartServer(serverAddr);
+  StartClient(clientAddr, outputMappingFilename);
 
   return 0;
 }
