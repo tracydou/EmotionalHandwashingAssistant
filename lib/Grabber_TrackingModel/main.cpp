@@ -31,6 +31,7 @@
 #include "defines.h"
 #include "grab.h"
 #include "kalmanfilter.h"
+#include "tracking_model.h"
 
 #define BILLION  1000000000L;
 

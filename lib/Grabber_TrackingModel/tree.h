@@ -10,6 +10,7 @@
 #define TREE_DEF_
 
 #include "defines.h"
+#include "tracking_model.h" // part
 
 enum node_type {
 	UNKN,
