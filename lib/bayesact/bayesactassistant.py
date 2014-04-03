@@ -17,14 +17,67 @@ see README for details
 from bayesact import *
 from assistant import *
 from pwid import *
-
-#NP.set_printoptions(precision=5)
-#NP.set_printoptions(suppress=True)
-NP.set_printoptions(linewidth=10000)
  
 
+def is_array_of_floats(possarray):
+    try:
+        parr = [float(x) for x in possarray.split(',')]
+    except ValueError:
+        return False
+    if len(parr)==3:
+        return parr
+    return False
 
-def run_assistant():	#-----------------------------------------------------------------------------------------------------------------------------
+        
+    
+#a function to ask the client for an action to take and map it to an EPA value
+def ask_client(fbeh,sugg_act='',epaact=[],qq="behaviour"):
+    sst="your action ("+qq+" ... '?' shows options): "
+
+    sstnc="You can now either :\n"
+    sstnc+="- pick an action ("+qq+") and type in its label\n"
+    sstnc+="- type 'quit' to stop the simulation\n"
+    sstnc+="- type a comma separated list of three numbers to specify the action as E,P,A values\n"
+    if not sugg_act=='':
+        sstnc+="- hit 'enter' to take default action with label: "+sugg_act+"\n"
+    if not epaact=='':
+        sstnc+="- type any digit (0-9) to take suggsted action: "+str(epaact)
+
+    if do_automatic:
+        return epaact
+
+    
+    while True:
+        cact = raw_input(sst)
+        if cact=='quit':
+            return []
+        elif cact=='' and not sugg_act=='':
+            cact=sugg_act
+            if qq=="identity":
+                return cact
+            break
+        elif cact.isdigit() and not epaact==[]:
+            return epaact
+        elif re.sub(r"\s+","_",cact.strip()) in fbeh.keys():
+            cact=re.sub(r"\s+","_",cact.strip()) 
+            break
+        elif cact=="?":
+            print sstnc
+        elif is_array_of_floats(cact):
+            return [float(x) for x in cact.split(',')]
+        else:
+            print "incorrect or not found, try again. '?' shows options"
+    observ=map(lambda x: float (x), [fbeh[cact]["e"],fbeh[cact]["p"],fbeh[cact]["a"]])
+    print "client said: ",cact
+    return observ
+
+
+def run_assistant():
+	#NP.set_printoptions(precision=5)
+	#NP.set_printoptions(suppress=True)
+	NP.set_printoptions(linewidth=10000)
+	
+	#-----------------------------------------------------------------------------------------------------------------------------
 	#user-defined parameters 
 	#-----------------------------------------------------------------------------------------------------------------------------
 	#agent knowledge of client id: 
@@ -208,61 +261,11 @@ def run_assistant():	#----------------------------------------------------------
 	print "random seeed is : ",rseed
 	NP.random.seed(rseed)
 
-	 #-----------------------------------------------------------------------------------------------------------------------------
+	#-----------------------------------------------------------------------------------------------------------------------------
 	#code start - here there be dragons - only hackers should proceed, with caution
 	#-----------------------------------------------------------------------------------------------------------------------------
 
-	def is_array_of_floats(possarray):
-	    try:
-		parr = [float(x) for x in possarray.split(',')]
-	    except ValueError:
-		return False
-	    if len(parr)==3:
-		return parr
-	    return False
-
 	
-	    
-	#a function to ask the client for an action to take and map it to an EPA value
-	def ask_client(fbeh,sugg_act='',epaact=[],qq="behaviour"):
-	    sst="your action ("+qq+" ... '?' shows options): "
-
-	    sstnc="You can now either :\n"
-	    sstnc+="- pick an action ("+qq+") and type in its label\n"
-	    sstnc+="- type 'quit' to stop the simulation\n"
-	    sstnc+="- type a comma separated list of three numbers to specify the action as E,P,A values\n"
-	    if not sugg_act=='':
-		sstnc+="- hit 'enter' to take default action with label: "+sugg_act+"\n"
-	    if not epaact=='':
-		sstnc+="- type any digit (0-9) to take suggsted action: "+str(epaact)
-
-	    if do_automatic:
-		return epaact
-
-	    
-	    while True:
-		cact = raw_input(sst)
-		if cact=='quit':
-		    return []
-		elif cact=='' and not sugg_act=='':
-		    cact=sugg_act
-		    if qq=="identity":
-			return cact
-		    break
-		elif cact.isdigit() and not epaact==[]:
-		    return epaact
-		elif re.sub(r"\s+","_",cact.strip()) in fbeh.keys():
-		    cact=re.sub(r"\s+","_",cact.strip()) 
-		    break
-		elif cact=="?":
-		    print sstnc
-		elif is_array_of_floats(cact):
-		    return [float(x) for x in cact.split(',')]
-		else:
-		    print "incorrect or not found, try again. '?' shows options"
-	    observ=map(lambda x: float (x), [fbeh[cact]["e"],fbeh[cact]["p"],fbeh[cact]["a"]])
-	    print "client said: ",cact
-	    return observ
 
 	fbehaviours_agent=readSentiments(fbfname,agent_gender)
 	fbehaviours_client=readSentiments(fbfname,client_gender)
