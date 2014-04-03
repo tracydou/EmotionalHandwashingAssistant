@@ -1165,7 +1165,8 @@ class Agent(object):
         if self.use_pomcp:
             #possibly allow the user the explore the POMCP tree
             if self.pomcp_doInteractive:
-                askq=raw_input("POMCP about to prune  - do you want to interactively explore the tree? (enter means no, anything else is yes):")
+                #askq=raw_input("POMCP about to prune  - do you want to interactively explore the tree? (enter means no, anything else is yes):")
+                askq = ""
                 if not askq == "":
                     self.pomcp_agent.POMCP_interactiveExplorePlanTree()
             #prune the tree

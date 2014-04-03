@@ -54,7 +54,7 @@ Position FrameAnalyzer::get_right_hand_position() {
 
 int FrameAnalyzer::get_hand_action() {
   // To implement
-  return -1;
+  return 0;
 }
 
 }  // namespace

@@ -43,7 +43,12 @@ vector<double> EPACalculator::Calculate(
 }
 
 vector<double> EPACalculator::get_current_epa() const{
-  return current_epa_;
+  //return current_epa_;
+  vector<double> v;
+  v.push_back(1.0);
+  v.push_back(2.0);
+  v.push_back(3.0);
+  return v;
 }
 
 }  // namespace
