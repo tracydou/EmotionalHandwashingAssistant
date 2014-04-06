@@ -1,0 +1,70 @@
+# Source configuration
+SOURCE KIN
+DISK_PATH /home/basement/Documents/COACH_HomeLab_trials/holdback_images/H1_13-10-22_trial-004(Steve)
+
+# Spearmint configuration
+SPEARMINT_PATH training/T3
+
+# Tree paths
+
+TREE /trees/T0-14-01-25_00-50-57_1664I_12D_0G_3000C_3000S_250O_100T.txt
+TREE /trees/T1-14-01-25_02-00-13_1589I_12D_0G_3000C_3000S_250O_100T.txt
+TREE /trees/T2-14-01-25_00-52-40_1718I_12D_0G_3000C_3000S_250O_100T.txt
+
+# Background colour for display
+BGCOLOUR 200 225 250
+
+# Body part configuration
+# Probability thresholds and bandwidths optimized using spearmint
+# PART Classify Bandwidths ProbThresh	B G R Part	
+PART 1	25	0.25	0	126	255	L_HAND
+PART 1	25	0.25	0	0	255	R_HAND
+PART 0	10	0.00	255	0	0	L_ARM
+PART 0	10	0.00	0	255	0	R_ARM
+PART 0	15	0.00	255	255	0	L_SHOULDER
+PART 0	15	0.00	0	255	255	R_SHOULDER
+PART 0	15	0.10	126	0	126	L_LEG
+PART 0	15	0.10	0	126	126	R_LEG
+PART 0	15	0.10	0	62	192	LF_BODY
+PART 0	15	0.10	192	0	62	RF_BODY
+PART 0	15	0.10	0	62	0	LR_BODY
+PART 0	15	0.10	0	0	126	RR_BODY
+PART 1	15	0.50	255	0	255	HEAD
+
+# Generic part configured for unlabeled body. This MUST be last in the list
+PART 0	15	0.10	250	225	200	BODY
+
+# Participant position/action in washroom
+POS UNDEF		# position is not yet defined
+POS WALK		# participant is walking to or from the sink area
+POS WASH		# participant is washing his/her hands
+POS TURN		# participant has turned away from the sink
+POS DRY			# participant is using the towel
+
+# Activity in the hand washing task
+ACT UNDEF		# task step is undefined
+ACT AWAY		# user does not have his/her hands in any active regions
+ACT SINK		# user has his/her hands in the sink, but is not under the water
+ACT SOAP		# user is getting soap
+ACT TAP		# user is adjusting the taps
+ACT WATER		# user has his/her hands under the water
+ACT TOWEL		# user is drying his/her hands
+
+# Regions for the hand washing task
+REGION AWAY		0
+REGION SINK		1
+REGION SOAP		2
+REGION WATER	3
+REGION L_TAP	4
+REGION R_TAP	5
+REGION TOWEL	6
+
+
+
+
+
+
+
+
+
+
