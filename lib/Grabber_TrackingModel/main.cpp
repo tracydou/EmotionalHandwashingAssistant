@@ -9,6 +9,8 @@
 
 //OpenCV libraries
 #include "opencv2/opencv.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 // openni
 #include "ni/XnCppWrapper.h"
@@ -31,7 +33,6 @@
 #include "defines.h"
 #include "grab.h"
 #include "kalmanfilter.h"
-#include "tracking_model.h"
 
 #define BILLION  1000000000L;
 

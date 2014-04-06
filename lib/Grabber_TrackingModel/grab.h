@@ -1,16 +1,14 @@
 /*
- *  File:				grab.h
+ *  File:				kinectgrab.h
  *  Created by:			Steve Czarnuch
  *  Created:			January 2013
  *  Last Modified:		January 2013
  *  Last Modified by:	Steve Czarnuch
  */
 
-#ifndef KINGRABBER_
-#define KINGRABBER_
+#ifndef KINGRABBER
+#define KINGRABBER
 
-// openni
-#include "ni/XnCppWrapper.h"
 #include "opencv2/opencv.hpp"
 #include "defines.h"
 

@@ -1,5 +1,5 @@
 /*
- *  File:				grab.cpp
+ *  File:				kinectgrab.cpp
  *  Created by:			Steve Czarnuch
  *  Created:			January 2013
  *  Last Modified:		January 2013
