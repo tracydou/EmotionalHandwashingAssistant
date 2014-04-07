@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 
     // Create SDL graphics objects.
     SDL_Window * window = SDL_CreateWindow(
-            "Fartplayer",
+            "Sampleplayer",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             WIDTH, HEIGHT,

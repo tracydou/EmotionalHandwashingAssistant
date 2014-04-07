@@ -1,15 +1,8 @@
 """------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Assistance Interactive Example
-Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey
-September 2013
-Use for research purposes only.
-Please do not re-distribute without written permission from the author
-Any commerical uses strictly forbidden.
-Code is provided without any guarantees.
-Research sponsored by the Natural Sciences and Engineering Council of Canada (NSERC).
-use python2.6
-see README for details
+Changed from bayesactassistant.py within the same src folder
+Work together with ../src/bayesact_server_stub.py
 ----------------------------------------------------------------------------------------------"""
 
 #new verison is bayesactp - use just 'bayesact' to revert to the previous version
@@ -18,7 +11,7 @@ from bayesact import *
 from assistant import *
 from pwid import *
 
-class Bayesact:
+class BayesactAssistant:
     def __init__(self):
         #NP.set_printoptions(precision=5)
         #NP.set_printoptions(suppress=True)

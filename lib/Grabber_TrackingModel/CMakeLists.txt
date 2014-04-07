@@ -91,7 +91,8 @@ SET (LIBS ${GLIB2_LIBRARIES}
 SET (SRCS main.cpp
             tree.cpp
             grab.cpp
-            kalmanfilter.cpp)
+            kalmanfilter.cpp
+	    tracker.cpp)
 
 # the target
 ADD_EXECUTABLE (${EXEC} ${SRCS})

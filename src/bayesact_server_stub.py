@@ -7,7 +7,7 @@ import bayesact_message_pb2
 
 sys.path.append('../lib/bayesact/')
 sys.path.append("../lib/bayesact/gui/")
-from bayesactlib import Bayesact
+from bayesactlib import BayesactAssistant
 
 os.chdir('../lib/bayesact/')
 
@@ -18,7 +18,7 @@ def server_stub(address_string):
 	socket.bind(address_string.__str__())
 	print("BayesActServer started!")
 
-	bayesact = Bayesact()
+	bayesact = BayesactAssistant()
 	while True:
 		print("Waiting for request...\n")
 		#  Wait for next request from client
