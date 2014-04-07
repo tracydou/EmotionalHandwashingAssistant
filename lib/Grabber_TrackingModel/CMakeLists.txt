@@ -94,7 +94,7 @@ SET (SRCS main.cpp
             tree.cpp
             grab.cpp
             kalmanfilter.cpp
-	    tracker.cpp
+	    hand_tracker.cpp
 	    tracker_message.pb.cc)
 
 # the target
