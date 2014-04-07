@@ -4502,12 +4502,13 @@ gint mainIdle(void* data){
 		filterPartProposals();
 
 		// capture the position of the left and right hands as float
-		// TODO find the left and right hand positions by parsing the list of parts
-		//Point3_<float> LHandPosition = Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z);
-		//Point3_<float> RHandPosition = Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z);
+		Point3_<float> LHandPosition = Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z);
+		Point3_<float> RHandPosition = Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z);
+		printf("=========in mainIdle tracy: LHandPosition = < %f, %f, %f>\n", LHandPosition.x, LHandPosition.y, LHandPosition.z);
+		printf("=========in mainIdle tracy: RHandPosition = < %f, %f, %f>\n", RHandPosition.x, RHandPosition.y, RHandPosition.z);
 
 		// use hand locations to find the task action each hand is completing
-		//findAction(LHandPosition, RHandPosition, trackModel->handAction);
+		// findAction(LHandPosition, RHandPosition, trackModel->handAction);
 
 		// we're done with it so wait for more
 		grabber->newDepthData = FALSE;
