@@ -56,7 +56,7 @@ using std::vector;
 
 class TrackerServerStub {
 public:
-    TrackerServerStub(string addr);
+    TrackerServerStub(const char* addr);
     ~TrackerServerStub();
     int Receive();
     bool SendHandPos(Point3_<float> hand_position);
@@ -66,6 +66,7 @@ public:
     const static int TYPE_LEFT_HAND_POS = 0;
     const static int TYPE_RIGHT_HAND_POS = 1;
     const static int TYPE_ACTION = 2;
+    const static int TYPE_NO_MESSAGE = 3;
 private:    
     zmq::context_t context;
     zmq::socket_t socket;
@@ -78,7 +79,7 @@ int tracker_start(int argc, char** argv, TrackerServerStub* stub);
 gint trackerIdle(void* data);
 
 // listen to requests from "client" and process recordingly
-gint processRequestsIdle(TrackerServerStub* server_stub);
+gint processRequestsIdle(void* server_stub);
 // 1) if requests for LeftHandPos
 bool respondWithLeftHandPos(TrackerServerStub* server_stub);
 // 2) else if requests for RightHandPos

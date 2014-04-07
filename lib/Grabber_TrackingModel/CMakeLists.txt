@@ -4,7 +4,7 @@ SET (CMAKE_VERBOSE_MAKEFILE OFF)
 
 # project wide build settings
 # compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall -lzmq -I.")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall -lzmq -lprotobuf -I.")
 
 PROJECT (HAND_TRACKER)
 
@@ -85,14 +85,17 @@ SET (LIBS ${GLIB2_LIBRARIES}
 		${OpenCV_LIBS}
 		${OPENNI_LIBRARIES}
 		${Nite_LIBRARIES}
-		${GTK2_LIBRARIES})
+		${GTK2_LIBRARIES}
+		"/usr/local/lib/libzmq.so"
+		"/usr/local/lib/libprotobuf.so")
 
 # files in this dir + all above
 SET (SRCS main.cpp
             tree.cpp
             grab.cpp
             kalmanfilter.cpp
-	    tracker.cpp)
+	    tracker.cpp
+	    tracker_message.pb.cc)
 
 # the target
 ADD_EXECUTABLE (${EXEC} ${SRCS})

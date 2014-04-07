@@ -4574,7 +4574,7 @@ int tracker_start( int argc, char** argv, TrackerServerStub* server_stub )
 
 	// Parse input parameters
 
-	if (argc < 3) {
+	if (argc < 4) {
 		usage();
 		exit(0);
 	}
@@ -5133,7 +5133,7 @@ int tracker_start( int argc, char** argv, TrackerServerStub* server_stub )
 	// 1) monitor hand positions at all times
 	idleTag = g_idle_add( trackerIdle, NULL);
 	// 2) listen to "client" requests for info
-    g_idle_add(processRequestsIdle, (void *) server_stub);
+    g_idle_add(processRequestsIdle, (void*)server_stub);
 
 	runTimer = g_timer_new();
 	g_timer_start(runTimer);
@@ -5146,18 +5146,19 @@ int tracker_start( int argc, char** argv, TrackerServerStub* server_stub )
 }
 /******************************************************************************/
 
-gint processRequestsIdle(TrackerServerStub* server_stub){
+gint processRequestsIdle(void* server_stub){
 	printf("========= Processing requests!\n");
-	int request_type = server_stub -> Receive();
-	if (request_type == TrackerServerStub::TYPE_LEFT_HAND_POS) {
-		return respondWithLeftHandPos(server_stub);
+	int request_type = ((TrackerServerStub*)server_stub) -> Receive();
+	if (request_type == TrackerServerStub::TYPE_NO_MESSAGE) {
+	    return true;
+	} else if (request_type == TrackerServerStub::TYPE_LEFT_HAND_POS) {
+		respondWithLeftHandPos((TrackerServerStub*)server_stub);
 	} else if (request_type == TrackerServerStub::TYPE_RIGHT_HAND_POS) {
-		return respondWithRightHandPos(server_stub);
+		respondWithRightHandPos((TrackerServerStub*)server_stub);
 	} else if (request_type == TrackerServerStub::TYPE_ACTION) {
-		return respondWithAction(server_stub);
-	} else {
-		return false;
+		respondWithAction((TrackerServerStub*)server_stub);
 	}
+	return true; // always return true
 }
 
 bool respondWithLeftHandPos(TrackerServerStub* stub) {
@@ -5180,11 +5181,12 @@ bool respondWithAction(TrackerServerStub* stub) {
 	return stub -> SendAction(action);
 }
 
-TrackerServerStub::TrackerServerStub(string addr):
-  context(1), socket(context, ZMQ_REQ) {
+TrackerServerStub::TrackerServerStub(const char* addr):
+  context(1), socket(context, ZMQ_REP) {
   // set up connection to server
-  cout << "Connecting to server..." << endl;
-  socket.connect(addr.c_str());
+  cout << addr << endl;
+  socket.bind(addr);
+  cout << "Server Started!" << endl;
 }
 
 TrackerServerStub::~TrackerServerStub() {
@@ -5194,7 +5196,9 @@ TrackerServerStub::~TrackerServerStub() {
 
 int TrackerServerStub::Receive() {
   zmq::message_t message;
-  socket.recv(&message);
+  if (!socket.recv(&message, ZMQ_DONTWAIT)) {
+	  return TYPE_NO_MESSAGE;
+  }
   HandTrackerRequest request;
   if (!request.ParseFromString(
     string((const char *)message.data(), message.size()))) {
