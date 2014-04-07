@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "SDL/SDL.h"
-#include "SDL/SDL_mutex.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_mutex.h"
 
 #include "vlc/vlc.h"
 
@@ -148,13 +148,16 @@ int main(int argc, char *argv[]) {
     // with the executable or libvlc_new() will not work!
     printf("VLC_PLUGIN_PATH=%s\n", getenv("VLC_PLUGIN_PATH"));
 
+    printf("=======================22222222222222222222222\n");
     // Initialise libVLC.
     libvlc = libvlc_new(vlc_argc, vlc_argv);
+    printf("==%d", libvlc);
     if(NULL == libvlc) {
         printf("LibVLC initialization failure.\n");
         return EXIT_FAILURE;
     }
 
+printf("=======================3333333333333333333333333\n");
     m = libvlc_media_new_path(libvlc, argv[1]);
     mp = libvlc_media_player_new_from_media(m);
     libvlc_media_release(m);
@@ -162,7 +165,7 @@ int main(int argc, char *argv[]) {
     libvlc_video_set_callbacks(mp, lock, unlock, display, &context);
     libvlc_video_set_format(mp, "RV16", VIDEOWIDTH, VIDEOHEIGHT, VIDEOWIDTH*2);
     libvlc_media_player_play(mp);
-
+printf("=======================555554555\n");
     // Main loop.
     while(!done) {
 
