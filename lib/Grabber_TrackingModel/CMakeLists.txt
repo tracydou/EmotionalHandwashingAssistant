@@ -4,7 +4,7 @@ SET (CMAKE_VERBOSE_MAKEFILE OFF)
 
 # project wide build settings
 # compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall -lzmq")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall -lzmq -I.")
 
 PROJECT (HAND_TRACKER)
 

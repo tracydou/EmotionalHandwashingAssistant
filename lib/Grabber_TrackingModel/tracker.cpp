@@ -5141,17 +5141,19 @@ int tracker_start( int argc, char** argv, TrackerServerStub* server_stub )
 	// Start
 	gtk_main ();
 	gdk_threads_leave ();
+	
+	return 0;
 }
 /******************************************************************************/
 
 gint processRequestsIdle(TrackerServerStub* server_stub){
 	printf("========= Processing requests!\n");
-	int request_type = server_stub -> Recive();
-	if (request_type = TYPE_LEFT_HAND_POS) {
+	int request_type = server_stub -> Receive();
+	if (request_type == TrackerServerStub::TYPE_LEFT_HAND_POS) {
 		return respondWithLeftHandPos(server_stub);
-	} else if (request_type = TYPE_RIGHT_HAND_POS) {
+	} else if (request_type == TrackerServerStub::TYPE_RIGHT_HAND_POS) {
 		return respondWithRightHandPos(server_stub);
-	} else if (request_type = TYPE_ACTION) {
+	} else if (request_type == TrackerServerStub::TYPE_ACTION) {
 		return respondWithAction(server_stub);
 	} else {
 		return false;
@@ -5207,6 +5209,8 @@ int TrackerServerStub::Receive() {
 		return TYPE_RIGHT_HAND_POS;
 	} else if (request.request_type() == HandTrackerRequest_RequestType_ACTION) {
 		return TYPE_ACTION;
+	} else {
+		return TYPE_ERROR;
 	}
   }
 }

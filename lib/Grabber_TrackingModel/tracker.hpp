@@ -46,7 +46,7 @@
 #include <string>
 #include <vector>
 #include <zmq.h>
-#include "../../cppzmq/zmq.hpp"
+#include "../cppzmq/zmq.hpp"
 #include "tracker_message.pb.h"
 
 using std::string;
@@ -54,21 +54,7 @@ using std::vector;
 
 #define BILLION  1000000000L;
 
-int tracker_start(int argc, char** argv, TrackerServerStub* stub);
-
-// converted from mainIdle() by changing func name
-gint trackerIdle(void* data);
-
-// listen to requests from "client" and process recordingly
-gint processRequestsIdle(TrackerServerStub* server_stub);
-// 1) if requests for LeftHandPos
-bool respondWithLeftHandPos(TrackerServerStub* server_stub);
-// 2) else if requests for RightHandPos
-bool respondWithRightHandPos(TrackerServerStub* server_stub);
-// 3) else if requests for HandAction
-bool respondWithAction(TrackerServerStub* server_stub);
-
-public class TrackerServerStub {
+class TrackerServerStub {
 public:
     TrackerServerStub(string addr);
     ~TrackerServerStub();
@@ -84,5 +70,20 @@ private:
     zmq::context_t context;
     zmq::socket_t socket;
 };
+
+
+int tracker_start(int argc, char** argv, TrackerServerStub* stub);
+
+// converted from mainIdle() by changing func name
+gint trackerIdle(void* data);
+
+// listen to requests from "client" and process recordingly
+gint processRequestsIdle(TrackerServerStub* server_stub);
+// 1) if requests for LeftHandPos
+bool respondWithLeftHandPos(TrackerServerStub* server_stub);
+// 2) else if requests for RightHandPos
+bool respondWithRightHandPos(TrackerServerStub* server_stub);
+// 3) else if requests for HandAction
+bool respondWithAction(TrackerServerStub* server_stub);
 
 #endif  // TRACKER_
