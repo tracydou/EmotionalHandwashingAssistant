@@ -1,0 +1,30 @@
+/*
+ *  File:				tracker_message.proto
+ *  Created by:			Luyuan Lin
+ *  Created:			April 2014
+ *  Last Modified:		April 2014
+ *  Last Modified by:	Luyuan Lin
+ * 
+ *  Define Message-types used between Tracker (e.g. HandTracker) client & server
+ */
+  
+message HandTrackerRequest {
+  enum RequestType {
+    LEFT_HAND_POS = 0;
+    RIGHT_HAND_POS = 1;
+    ACTION = 2;
+  };
+  required RequestType request_type = 1 [default = LEFT_HAND_POS];
+}
+ 
+message HandTrackerResponseHandPos {
+  required float x = 1 [default = 0.0];
+  required float y = 2 [default = 0.0];
+  required float z = 3 [default = 0.0];
+}
+
+message HandTrackerResponseAction {
+  required int32 action = 1 [default = 0];
+}
+
+ 

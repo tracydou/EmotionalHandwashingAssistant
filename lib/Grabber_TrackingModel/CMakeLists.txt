@@ -4,11 +4,11 @@ SET (CMAKE_VERBOSE_MAKEFILE OFF)
 
 # project wide build settings
 # compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -Wall -lzmq")
 
-PROJECT (TRAIN)
+PROJECT (HAND_TRACKER)
 
-SET (EXEC TRAIN)	#executable name
+SET (EXEC HAND_TRACKER)	#executable name
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 #OpenCV
@@ -91,7 +91,8 @@ SET (LIBS ${GLIB2_LIBRARIES}
 SET (SRCS main.cpp
             tree.cpp
             grab.cpp
-            kalmanfilter.cpp)
+            kalmanfilter.cpp
+	    tracker.cpp)
 
 # the target
 ADD_EXECUTABLE (${EXEC} ${SRCS})
