@@ -5126,12 +5126,8 @@ int tracker_start( int argc, char** argv, TrackerServerStub* server_stub )
 
 	g_signal_connect (G_OBJECT (mainWindow), "key_press_event", G_CALLBACK (gtkOnKeyPress), NULL);
 
-
-
 	// Show
 	gtk_widget_show_all (mainWindow);
-
-    // Connect as server, using zmq
 
 	// Add idle processes:
 	// 1) monitor hand positions at all times

@@ -54,6 +54,8 @@ using std::vector;
 
 #define BILLION  1000000000L;
 
+int tracker_start(int argc, char** argv, TrackerServerStub* stub);
+
 // converted from mainIdle() by changing func name
 gint trackerIdle(void* data);
 
