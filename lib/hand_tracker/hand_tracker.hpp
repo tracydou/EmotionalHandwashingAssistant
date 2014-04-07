@@ -42,12 +42,12 @@
 #include "grab.h"
 #include "kalmanfilter.h"
 
-// ZMQ & others, used in class ZMQServer
+// ZMQ & others, used in class HandTrackerServerStub
 #include <string>
 #include <vector>
 #include <zmq.h>
 #include "../cppzmq/zmq.hpp"
-#include "tracker_message.pb.h"
+#include "hand_tracker_message.pb.h"
 
 using std::string;
 using std::vector;

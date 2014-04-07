@@ -95,7 +95,7 @@ SET (SRCS main.cpp
             grab.cpp
             kalmanfilter.cpp
 	    hand_tracker.cpp
-	    tracker_message.pb.cc)
+	    hand_tracker_message.pb.cc)
 
 # the target
 ADD_EXECUTABLE (${EXEC} ${SRCS})
