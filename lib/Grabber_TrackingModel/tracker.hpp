@@ -1,4 +1,17 @@
-
+/*
+ *  File:				tracker.hpp
+ *  Created by:			Luyuan Lin
+ *  Created:			April 2014
+ *  Last Modified:		April 2014
+ *  Last Modified by:	Luyuan Lin
+ *  
+ *  This file and main.cpp are all modified from the old main.cpp
+ *  file. Changed places include newly added funcs and several changes
+ *  to original main(), mainIdle() (now trackerIdle()), etc.
+ * 
+ *  Functions declared in this file are implemented in main.cpp. 
+ */
+ 
 #ifndef TRACKER_
 #define TRACKER_
 
@@ -31,12 +44,18 @@
 
 #define BILLION  1000000000L;
 
-// functions got from changing signatures of original funcs
-int main_start(int argc, char** argv);
+// converted from mainIdle() by changing func name
+gint trackerIdle(void* data);
 
-// wrapper functions
-Point3_<float> getLeftHandPos();
-Point3_<float> getRightHandPos();
-int getHandAction();
+// listen to requests from "client" and process recordingly
+gint processRequestsIdle(void* data);
+// 1) if requests for LeftHandPos
+void respondWithLeftHandPos();
+// 2) else if requests for RightHandPos
+void respondWithRightHandPos();
+// 3) else if requests for HandAction
+void respondWithHandAction();
+
+// connect to server
 
 #endif  // TRACKER_
