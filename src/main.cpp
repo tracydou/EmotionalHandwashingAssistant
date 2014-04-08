@@ -34,13 +34,13 @@ void StartHandtrackerServer(string addr) {
 }
 	
 void StartClient(string bayesact_addr, string hand_tracker_addr,
-                 string output_mapping_filename) {
+                 string output_mapping_filename, string default_prompt_filename) {
     // Start BayesActClient & TrackerClient clients
     BayesactClient bayesact_client(bayesact_addr);
     TrackerClient tracker_client(hand_tracker_addr);
     // Define and initianlize pipeline variables
     EPACalculator epa_calculator;
-    PromptSelecter prompt_selecter(output_mapping_filename);
+    PromptSelecter prompt_selecter(output_mapping_filename, default_prompt_filename);
     vector<pair<Position, Position> > hand_positions;
     int current_action = UNKNOWN_ACTION;
     PromptPlayer prompt_player;
@@ -80,11 +80,12 @@ int main() {
   string bayesactClientAddr = "tcp://localhost:5555";
   string trackerServerAddr = "tcp://*:5556";
   string trackerClientAddr = "tcp://localhost:5556";
-  string outputMappingFilename = "";
+  string output_mapping_filename = "";
+  string default_prompt_filename = "DELTA.MPG";
 
   StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr);
-  StartClient(bayesactClientAddr, trackerClientAddr, outputMappingFilename);
+  StartClient(bayesactClientAddr, trackerClientAddr, output_mapping_filename, default_prompt_filename);
 
   return 0;
 }
