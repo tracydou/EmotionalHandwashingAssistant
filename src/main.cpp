@@ -48,11 +48,11 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       Position left_hand_pos, right_hand_pos;
       if (tracker_client.GetHandPosition(true, left_hand_pos) &&
           tracker_client.GetHandPosition(false, right_hand_pos)) {
-        hand_positions.push_back(
-          make_pair<Position, Position> (left_hand_pos, right_hand_pos));
-	  } else {
-		continue;
-	  }
+          hand_positions.push_back(
+            make_pair<Position, Position> (left_hand_pos, right_hand_pos));
+      } else {
+          continue;
+      }
       //---------------- Calculate EPA values -------------------------
       epa_calculator.Calculate(hand_positions);
       //-------- Send currentEPA & handAction to server -------
