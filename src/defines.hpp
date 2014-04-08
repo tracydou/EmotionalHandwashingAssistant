@@ -1,9 +1,7 @@
 /*
  *  File:				defines.hpp
  *  Created by:			Luyuan Lin
- *  Created:			March 2014
- *  Last Modified:		March 2014
- *  Last Modified by:	Luyuan Lin
+ * 
  *  Shared definitions among all EHwA src files
  */
 

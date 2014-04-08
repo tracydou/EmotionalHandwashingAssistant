@@ -1,9 +1,6 @@
 /*
  *  File:				prompt_selecter.cpp
  *  Created by:			Luyuan Lin
- *  Created:			March 2014
- *  Last Modified:		March 2014
- *  Last Modified by:	Luyuan Lin
  * 
  *  Define a class that selects proper prompts from <proposition, EPA>
  *  inputs. Selection is based on survey result link-here.
@@ -23,9 +20,10 @@ PromptSelecter::~PromptSelecter() {
 	// do nothing
 }
 	
-int PromptSelecter::Select(const vector<double>& EPA, int prompt) {
-	// 
-	return 0;
+string PromptSelecter::Select(const vector<double>& EPA, int prompt) {
+	string prompt_filename = "/home/l39lin/Videos/DELTA.MPG";
+	// TO be implemented
+	return prompt_filename;
 }
  
 }  // namespace EHwA

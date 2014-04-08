@@ -9,10 +9,11 @@
 #include <string>
 #include <utility>
 #include "bayesact_client.hpp"
+#include "defines.hpp"
 #include "EPACalculator/epa_calculator.hpp"
+#include "prompt_player.hpp"
 #include "prompt_selecter.hpp"
 #include "tracker_client.hpp"
-#include "defines.hpp"
 
 using std::cout;
 using std::endl;
@@ -25,6 +26,12 @@ void StartBayesactServer(string addr) {
     string cmd = "gnome-terminal -e 'python ./bayesact_server_stub.py " + addr + "'";
     system(cmd.c_str());
 }
+
+void StartHandtrackerServer(string addr) {
+    string cmd = "gnome-terminal -e \
+      '../lib/hand_tracker/build/HAND_TRACKER -projectpath ../lib/hand_tracker " + addr + "'";
+    system(cmd.c_str());
+}
 	
 void StartClient(string bayesact_addr, string hand_tracker_addr,
                  string output_mapping_filename) {
@@ -35,6 +42,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     EPACalculator epa_calculator;
     PromptSelecter prompt_selecter(output_mapping_filename);
     vector<pair<Position, Position> > hand_positions;
+    PromptPlayer prompt_player;
     while (true) {
 	  //------------- Get hand-pos info from HandTracker -------
       Position left_hand_pos, right_hand_pos;
@@ -49,15 +57,17 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       epa_calculator.Calculate(hand_positions);
       //-------- Send currentEPA & handAction to server -------
       int current_action = UNKNOWN_ACTION;
+      tracker_client.GetHandAction(current_action);
       bayesact_client.Send(epa_calculator.get_current_epa(), current_action);
       //----------- Get response from server --------------
       bayesact_client.Receive();
       vector<double> response_epa = bayesact_client.get_response_epa();
       int response_prompt = bayesact_client.get_response_prompt();
       //----------- Select proper prompt ---------------------
-      int id = prompt_selecter.Select(response_epa, response_prompt);
-      cout << "Proper prompt is #" << id << endl;
+      string prompt_filename = prompt_selecter.Select(response_epa, response_prompt);
+      cout << "Proper prompt_filename is " << prompt_filename << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
+      prompt_player.Play(prompt_filename);
      }
  }
 	
@@ -74,7 +84,10 @@ int main() {
   string outputMappingFilename = "";
 
   StartBayesactServer(bayesactServerAddr);
+  StartHandtrackerServer(trackerServerAddr);
   StartClient(bayesactClientAddr, trackerClientAddr, outputMappingFilename);
+//  PromptPlayer player;
+//  player.Play("/home/l39lin/Videos/DELTA.MPG");
 
   return 0;
 }

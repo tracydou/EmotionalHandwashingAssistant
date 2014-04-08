@@ -1,9 +1,6 @@
 /*
  *  File:				bayesact_client.cpp
  *  Created by:			Luyuan Lin
- *  Created:			March 2014
- *  Last Modified:		March 2014
- *  Last Modified by:	Luyuan Lin
  * 
  */
 

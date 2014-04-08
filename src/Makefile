@@ -1,10 +1,14 @@
 # Makefile for building the files together
 EXE_EHWA = EHwA
+
 OBJS = main.o bayesact_client.o bayesact_message.pb.o epa_calculator.o \
-prompt_selecter.o tracker_client.o ../lib/hand_tracker/hand_tracker_message.pb.o
+prompt_selecter.o tracker_client.o prompt_player.o hand_tracker_message.pb.o
+
 HDRS = bayesact_client.hpp bayesact_message.pb.h EPACalculator/epa_calculator.hpp \
-prompt_selecter.hpp defines.hpp tracker_client.hpp ../lib/hand_tracker/hand_tracker_message.pb.h
-LIBS = -lzmq -lprotobuf
+prompt_selecter.hpp defines.hpp tracker_client.hpp ../lib/hand_tracker/hand_tracker_message.pb.h \
+prompt_player.hpp
+
+LIBS = -lzmq -lprotobuf -lvlc
 CC = g++
 PBC = protoc
 DEBUG = -g
@@ -31,6 +35,9 @@ tracker_client.o : tracker_client.hpp defines.hpp ../lib/hand_tracker/hand_track
 	
 prompt_selecter.o : prompt_selecter.hpp prompt_selecter.cpp
 	$(CC) $(CFLAGS) prompt_selecter.cpp
+
+prompt_player.o : prompt_player.hpp prompt_player.cpp
+	$(CC) $(CFLAGS) prompt_player.cpp
 	
 bayesact_proto : bayesact_message.proto
 	$(PBC) bayesact_message.proto --cpp_out=. --python_out=.
@@ -39,4 +46,4 @@ handtracker_proto : ../lib/hand_tracker/hand_tracker_message.proto
 	$(PBC) ../lib/hand_tracker/hand_tracker_message.proto --proto_path=../lib/hand_tracker/ --cpp_out=../lib/hand_tracker/
 
 clean :
-	\rm $(EXE_EHWA) $(OBJS)
+	\rm $(EXE_EHWA) $(OBJS) *.gch
