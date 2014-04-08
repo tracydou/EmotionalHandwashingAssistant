@@ -1,30 +1,26 @@
 /*
  *  File:				tracker_message.proto
  *  Created by:			Luyuan Lin
- *  Created:			April 2014
- *  Last Modified:		April 2014
- *  Last Modified by:	Luyuan Lin
- * 
+ *
  *  Define Message-types used between Tracker (e.g. HandTracker) client & server
+ *  Should look up "action" value fields in config.txt
  */
   
 message HandTrackerRequest {
-  enum RequestType {
-    LEFT_HAND_POS = 0;
-    RIGHT_HAND_POS = 1;
-    ACTION = 2;
-  };
-  required RequestType request_type = 1 [default = LEFT_HAND_POS];
-}
- 
-message HandTrackerResponseHandPos {
-  required float x = 1 [default = 0.0];
-  required float y = 2 [default = 0.0];
-  required float z = 3 [default = 0.0];
+  optional int32 timestamp =  1 [default = -1]; // -1 means this field is not used
 }
 
-message HandTrackerResponseAction {
-  required int32 action = 1 [default = 0];
+message HandTrackerResponse {
+  message HandPosition {
+    required float x = 1 [default = 0.0];
+    required float y = 2 [default = 0.0];
+    required float z = 3 [default = 0.0];
+  }
+  required HandPosition left_hand_position = 1;
+  required HandPosition right_hand_position = 2;
+  required int32 action = 3 [default = 0];
+  optional int32 timestamp = 4 [default = -1];
 }
+
 
  

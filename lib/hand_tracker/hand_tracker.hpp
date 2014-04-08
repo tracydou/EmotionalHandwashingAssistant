@@ -58,15 +58,12 @@ class HandTrackerServerStub {
 public:
     HandTrackerServerStub(const char* addr);
     ~HandTrackerServerStub();
-    int Receive();
-    bool SendHandPos(Point3_<float> hand_position);
-    bool SendAction(int action);
+    int ReceiveRequest();
+    bool SendResponse(const vector<Point3_<float> >& hand_positions, int action);
     
-    const static int TYPE_ERROR = -1;
-    const static int TYPE_LEFT_HAND_POS = 0;
-    const static int TYPE_RIGHT_HAND_POS = 1;
-    const static int TYPE_ACTION = 2;
-    const static int TYPE_NO_MESSAGE = 3;
+    const static int TYPE_PARSE_ERROR = 0;
+    const static int TYPE_MESSAGE_SUCCESS = 1;
+    const static int TYPE_NO_MESSAGE = 2;
 private:    
     zmq::context_t context;
     zmq::socket_t socket;
@@ -80,11 +77,5 @@ gint handTrackerIdle(void* data);
 
 // listen to requests from "client" and process recordingly
 gint processRequestsIdle(void* server_stub);
-// 1) if requests for LeftHandPos
-bool respondWithLeftHandPos(HandTrackerServerStub* server_stub);
-// 2) else if requests for RightHandPos
-bool respondWithRightHandPos(HandTrackerServerStub* server_stub);
-// 3) else if requests for HandAction
-bool respondWithAction(HandTrackerServerStub* server_stub);
 
 #endif  // TRACKER_

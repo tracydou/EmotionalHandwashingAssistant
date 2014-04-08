@@ -5141,37 +5141,19 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 
 gint processRequestsIdle(void* server_stub){
 	printf("========= Processing requests!\n");
-	int request_type = ((HandTrackerServerStub*)server_stub) -> Receive();
-	if (request_type == HandTrackerServerStub::TYPE_NO_MESSAGE) {
-	    return true;
-	} else if (request_type == HandTrackerServerStub::TYPE_LEFT_HAND_POS) {
-		respondWithLeftHandPos((HandTrackerServerStub*)server_stub);
-	} else if (request_type == HandTrackerServerStub::TYPE_RIGHT_HAND_POS) {
-		respondWithRightHandPos((HandTrackerServerStub*)server_stub);
-	} else if (request_type == HandTrackerServerStub::TYPE_ACTION) {
-		respondWithAction((HandTrackerServerStub*)server_stub);
+	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
+	if (request_type == HandTrackerServerStub::TYPE_MESSAGE_SUCCESS) {
+	  // capture the positions of hands as float
+	  vector<Point3_<float> > hand_positions;
+	  hand_positions.push_back(
+	    Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z));
+	  hand_positions.push_back(
+	    Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z));
+	  // TODO: call findAction()
+	  int action = 0;
+	  ((HandTrackerServerStub*)server_stub) -> SendResponse(hand_positions, action);
 	}
 	return true; // always return true
-}
-
-bool respondWithLeftHandPos(HandTrackerServerStub* stub) {
-	// capture the position of the left hands as float
-	Point3_<float> LHandPosition = Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z);
-	printf("=========in getLHandPos tracy: LHandPosition = < %f, %f, %f>\n", LHandPosition.x, LHandPosition.y, LHandPosition.z);
-	return stub -> SendHandPos(LHandPosition);
-}
-
-bool respondWithRightHandPos(HandTrackerServerStub* stub) {
-	// capture the position of the right hands as float
-	Point3_<float> RHandPosition = Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z);
-	printf("=========in getRightHandPOs tracy: RHandPosition = < %f, %f, %f>\n", RHandPosition.x, RHandPosition.y, RHandPosition.z);
-	return stub -> SendHandPos(RHandPosition);
-}	
-
-bool respondWithAction(HandTrackerServerStub* stub) {
-	// TODO: call findAction()
-	int action = 0;
-	return stub -> SendAction(action);
 }
 
 HandTrackerServerStub::HandTrackerServerStub(const char* addr):
@@ -5187,7 +5169,7 @@ HandTrackerServerStub::~HandTrackerServerStub() {
   google::protobuf::ShutdownProtobufLibrary();
 }
 
-int HandTrackerServerStub::Receive() {
+int HandTrackerServerStub::ReceiveRequest() {
   zmq::message_t message;
   if (!socket.recv(&message, ZMQ_DONTWAIT)) {
 	  return TYPE_NO_MESSAGE;
@@ -5196,44 +5178,29 @@ int HandTrackerServerStub::Receive() {
   if (!request.ParseFromString(
     string((const char *)message.data(), message.size()))) {
     cout << "Message.ParseFromString(message) Failed!" << endl;
-    return TYPE_ERROR;
+    return TYPE_PARSE_ERROR;
   } else {
-    cout << "Request Message received in HandTracker Server:" << endl
-         << request.DebugString() << endl;
-    if (request.request_type() == HandTrackerRequest_RequestType_LEFT_HAND_POS) {
-		return TYPE_LEFT_HAND_POS;
-	} else if (request.request_type() == HandTrackerRequest_RequestType_RIGHT_HAND_POS) {
-		return TYPE_RIGHT_HAND_POS;
-	} else if (request.request_type() == HandTrackerRequest_RequestType_ACTION) {
-		return TYPE_ACTION;
-	} else {
-		return TYPE_ERROR;
-	}
+    cout << "Request Message received in HandTracker Server!" << endl;
+    return TYPE_MESSAGE_SUCCESS;
   }
 }
 
-bool HandTrackerServerStub::SendHandPos(Point3_<float> hand_position) {
+bool HandTrackerServerStub::SendResponse(
+  const vector<Point3_<float> >& hand_positions, int action) {
   // pack and convert to HandTrackerResponseHandPos sent to client
-  HandTrackerResponseHandPos response;
-  response.set_x(hand_position.x);
-  response.set_y(hand_position.y);
-  response.set_z(hand_position.z);
-  string message;
-  // send out message if suceeded
-  if (!response.SerializeToString(&message)) {
-    cout << "Message.SerializeToString(&message) Failed!" << endl;
+  if(hand_positions.size() != 2) {
+    cout << "Wrong hand_positions size!" << endl;
     return false;
-  } else {
-    socket.send(message.c_str(), message.length());
-    cout << "Sent Request Message in HandTracker Server:" << endl
-         << response.DebugString() << endl;
-    return true;
-  }
-}
-
-bool HandTrackerServerStub::SendAction(int action) {
-  // pack and convert to HandTrackerResponseAction sent to client
-  HandTrackerResponseAction response;
+  }  
+  vector<HandTrackerResponse::HandPosition> hands;
+  for (unsigned int i = 0; i < 1; ++i) {
+    hands[i].set_x(hand_positions[i].x);
+    hands[i].set_y(hand_positions[i].y);
+    hands[i].set_z(hand_positions[i].z);
+  }	  
+  HandTrackerResponse response;
+  response.mutable_left_hand_position()->CopyFrom(hands[0]);
+  response.mutable_right_hand_position()->CopyFrom(hands[1]);
   response.set_action(action);
   string message;
   // send out message if suceeded
@@ -5242,7 +5209,7 @@ bool HandTrackerServerStub::SendAction(int action) {
     return false;
   } else {
     socket.send(message.c_str(), message.length());
-    cout << "Sent Request Message in HandTracker Server:" << endl
+    cout << "Sent Response Message in HandTracker Server:" << endl
          << response.DebugString() << endl;
     return true;
   }
