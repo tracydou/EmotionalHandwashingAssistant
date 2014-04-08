@@ -42,12 +42,13 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     EPACalculator epa_calculator;
     PromptSelecter prompt_selecter(output_mapping_filename);
     vector<pair<Position, Position> > hand_positions;
+    int current_action = UNKNOWN_ACTION;
     PromptPlayer prompt_player;
     while (true) {
 	  //------------- Get hand-pos info from HandTracker -------
       Position left_hand_pos, right_hand_pos;
-      if (tracker_client.GetHandPosition(true, left_hand_pos) &&
-          tracker_client.GetHandPosition(false, right_hand_pos)) {
+      if (tracker_client.GetHandPositionAndAction(
+            left_hand_pos, right_hand_pos, current_action)) {
           hand_positions.push_back(
             make_pair<Position, Position> (left_hand_pos, right_hand_pos));
       } else {
@@ -56,8 +57,6 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       //---------------- Calculate EPA values -------------------------
       epa_calculator.Calculate(hand_positions);
       //-------- Send currentEPA & handAction to server -------
-      int current_action = UNKNOWN_ACTION;
-      tracker_client.GetHandAction(current_action);
       bayesact_client.Send(epa_calculator.get_current_epa(), current_action);
       //----------- Get response from server --------------
       bayesact_client.Receive();
@@ -83,11 +82,9 @@ int main() {
   string trackerClientAddr = "tcp://localhost:5556";
   string outputMappingFilename = "";
 
-  StartBayesactServer(bayesactServerAddr);
+//  StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr);
   StartClient(bayesactClientAddr, trackerClientAddr, outputMappingFilename);
-//  PromptPlayer player;
-//  player.Play("/home/l39lin/Videos/DELTA.MPG");
 
   return 0;
 }

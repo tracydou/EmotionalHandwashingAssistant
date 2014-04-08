@@ -24,42 +24,25 @@ TrackerClient::~TrackerClient() {
   google::protobuf::ShutdownProtobufLibrary();
 }
 
-bool TrackerClient::GetHandPosition(bool left_hand, Position& pos) { 
+bool TrackerClient::GetHandPositionAndAction(Position& left_hand_pos,
+  Position& right_hand_pos, int& action) {
   // Construct request message
   HandTrackerRequest request;
-  if (left_hand == true) {
-    request.set_request_type(HandTrackerRequest_RequestType_LEFT_HAND_POS);
-  } else {
-    request.set_request_type(HandTrackerRequest_RequestType_RIGHT_HAND_POS);
-  }
   // Send out request and wait for response
   SendHandTrackerRequest(request);
   // Decode received message
-  HandTrackerResponseHandPos response;
-  if (!ReceiveHandPos(response)) {
-	  cout << "Failed in getting hand pos!" << endl;
+  HandTrackerResponse response;
+  if (!ReceiveHandTrackerResponse(response)) {
+	  cout << "Failed in getting hand positions and current action!" << endl;
 	  return false;
   } else {
-	  pos.x = response.x();
-	  pos.y = response.y();
-	  pos.z = response.z();
-	  return true;
-  }
-};
-
-bool TrackerClient::GetHandAction(int& action) {
-  // Construct request message
-  HandTrackerRequest request;
-  request.set_request_type(HandTrackerRequest_RequestType_ACTION);
-  // Send out request and wait for response
-  SendHandTrackerRequest(request);
-  // Decode received message
-  HandTrackerResponseAction response;
-  if (!ReceiveAction(response)) {
-	  cout << "Failed in getting current action!" << endl;
-	  return false;
-  } else {
-	  action = response.action();
+	  left_hand_pos.x = response.left_hand_position().x();
+	  left_hand_pos.y = response.left_hand_position().y();
+	  left_hand_pos.z = response.left_hand_position().z();
+	  right_hand_pos.x = response.right_hand_position().x();
+	  right_hand_pos.y = response.right_hand_position().y();
+	  right_hand_pos.z = response.right_hand_position().z();
+    action = response.action();
 	  return true;
   }
 }
@@ -74,15 +57,13 @@ bool TrackerClient::SendHandTrackerRequest(
     return false;
   } else {
     handtracker_socket_.send(message.c_str(), message.length());
-    cout << "=========[TrackerClient] Sent Request Message:" << endl
-         << request.DebugString() << endl
+    cout << "TrackerClient] Sent Request Message:" << endl
          << "Waiting for response..." << endl;
     return true;
   }
 }
 
-bool TrackerClient::ReceiveHandPos(
-  HandTrackerResponseHandPos& response) {
+bool TrackerClient::ReceiveHandTrackerResponse(HandTrackerResponse& response) {
   zmq::message_t message;
   handtracker_socket_.recv(&message);
   if (!response.ParseFromString(
@@ -90,23 +71,8 @@ bool TrackerClient::ReceiveHandPos(
     cout << "Message.ParseFromString(message) Failed!" << endl;
     return false;
   } else {
-    cout << "=========[TrackerClient] Response Message received:"
-         << endl << response.DebugString() << endl;    
-    return true;
-  }
-}
-
-bool TrackerClient::ReceiveAction(
-  HandTrackerResponseAction& response) {
-  zmq::message_t message;
-  handtracker_socket_.recv(&message);
-  if (!response.ParseFromString(
-    string((const char *)message.data(), message.size()))) {
-    cout << "Message.ParseFromString(message) Failed!" << endl;
-    return false;
-  } else {
-    cout << "=========[TrackerClient] Response Message received:"
-         << endl << response.DebugString() << endl;    
+    cout << "[TrackerClient] Response Message received:" << endl
+         << response.DebugString() << endl;    
     return true;
   }
 }

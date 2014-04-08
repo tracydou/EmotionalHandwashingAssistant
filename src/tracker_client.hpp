@@ -23,16 +23,13 @@ class TrackerClient {
     TrackerClient(string handtracker_addr);
     ~TrackerClient();
   
-    // request for left-hand-pos if left_hand == true; otherwise,
-    // request for right-hand-pos. Call HandTracker funcs.
-    bool GetHandPosition(bool left_hand, Position& pos);
-    // request for current hand action, call HandTracker funcs.
-    bool GetHandAction(int& action);
- 
+    // Request for hand-positions and current action. Call HandTracker funcs.
+    bool GetHandPositionAndAction(Position& left_hand_pos, 
+                                  Position& right_hand_pos, int& action);
+    
   protected:
     bool SendHandTrackerRequest(const HandTrackerRequest& request);
-    bool ReceiveHandPos(HandTrackerResponseHandPos& response);
-    bool ReceiveAction(HandTrackerResponseAction& response);
+    bool ReceiveHandTrackerResponse(HandTrackerResponse& response);
     
     zmq::context_t handtracker_context_;
     zmq::socket_t handtracker_socket_;
