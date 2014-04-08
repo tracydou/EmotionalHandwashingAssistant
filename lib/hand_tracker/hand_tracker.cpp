@@ -4463,10 +4463,6 @@ gint handTrackerIdle(void* data) {
 
 		// implement temporal filters
 		filterPartProposals();
-
-	// capture the position of the left hands as float
-	Point3_<float> LHandPosition = Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z);
-	printf("=========in getLHandPos tracy: LHandPosition = < %f, %f, %f>\n", LHandPosition.x, LHandPosition.y, LHandPosition.z);
 	
 		// use hand locations to find the task action each hand is completing
 		// findAction(LHandPosition, RHandPosition, trackModel->handAction);
@@ -5140,7 +5136,6 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 /******************************************************************************/
 
 gint processRequestsIdle(void* server_stub){
-	printf("========= Processing requests!\n");
 	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
 	if (request_type == HandTrackerServerStub::TYPE_MESSAGE_SUCCESS) {
 	  // capture the positions of hands as float
@@ -5152,6 +5147,7 @@ gint processRequestsIdle(void* server_stub){
 	  // TODO: call findAction()
 	  int action = 0;
 	  ((HandTrackerServerStub*)server_stub) -> SendResponse(hand_positions, action);
+	  printf("==============[HandTrackerServer] Request Processed! Waiting for new requests... \n");
 	}
 	return true; // always return true
 }
@@ -5191,13 +5187,14 @@ bool HandTrackerServerStub::SendResponse(
   if(hand_positions.size() != 2) {
     cout << "Wrong hand_positions size!" << endl;
     return false;
-  }  
+  }
   vector<HandTrackerResponse::HandPosition> hands;
-  for (unsigned int i = 0; i < 1; ++i) {
+  hands.resize(2);
+  for (unsigned int i = 0; i < 2; ++i) {
     hands[i].set_x(hand_positions[i].x);
     hands[i].set_y(hand_positions[i].y);
     hands[i].set_z(hand_positions[i].z);
-  }	  
+  }
   HandTrackerResponse response;
   response.mutable_left_hand_position()->CopyFrom(hands[0]);
   response.mutable_right_hand_position()->CopyFrom(hands[1]);

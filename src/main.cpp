@@ -63,7 +63,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       vector<double> response_epa = bayesact_client.get_response_epa();
       int response_prompt = bayesact_client.get_response_prompt();
       //----------- Select proper prompt ---------------------
-      string prompt_filename = prompt_selecter.Select(response_epa, response_prompt);
+      string prompt_filename = "../data/" + prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt_filename is " << prompt_filename << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
       prompt_player.Play(prompt_filename);
@@ -82,7 +82,7 @@ int main() {
   string trackerClientAddr = "tcp://localhost:5556";
   string outputMappingFilename = "";
 
-//  StartBayesactServer(bayesactServerAddr);
+  StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr);
   StartClient(bayesactClientAddr, trackerClientAddr, outputMappingFilename);
 
