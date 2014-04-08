@@ -18,8 +18,7 @@ using cv::Point3_;
 namespace EHwA {
 
 typedef Point3_<float> Position;
-  
-const int MAX_RESPOND_BUFFER_SIZE = 2048;
+const int UNKNOWN_ACTION = -1;
 
 }  // namespace EHwA
 

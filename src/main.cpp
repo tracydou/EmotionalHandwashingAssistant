@@ -1,9 +1,6 @@
 /*
  *  File:				main.cpp
  *  Created by:			Luyuan Lin
- *  Created:			March 2014
- *  Last Modified:		March 2014
- *  Last Modified by:	Luyuan Lin
  * 
  *  Defined the main function for the whole EHwA system.
  */
@@ -13,8 +10,9 @@
 #include <utility>
 #include "bayesact_client.hpp"
 #include "EPACalculator/epa_calculator.hpp"
-#include "frame_analyzer.hpp"
 #include "prompt_selecter.hpp"
+#include "tracker_client.hpp"
+#include "defines.hpp"
 
 using std::cout;
 using std::endl;
@@ -23,38 +21,39 @@ using std::make_pair;
 
 using namespace EHwA;
 
-void StartServer(string addr) {
+void StartBayesactServer(string addr) {
     string cmd = "gnome-terminal -e 'python ./bayesact_server_stub.py " + addr + "'";
     system(cmd.c_str());
 }
 	
-void StartClient(string addr, string output_mapping_filename) {
-    // Connect the BayesActClient client & server
-    BayesactClient client(addr);
-    // define and initianlize pipeline variables
-    // KinGrabber kinGrabber;
-    FrameAnalyzer frame_analyzer;
+void StartClient(string bayesact_addr, string hand_tracker_addr,
+                 string output_mapping_filename) {
+    // Start BayesActClient & TrackerClient clients
+    BayesactClient bayesact_client(bayesact_addr);
+    TrackerClient tracker_client(hand_tracker_addr);
+    // Define and initianlize pipeline variables
     EPACalculator epa_calculator;
     PromptSelecter prompt_selecter(output_mapping_filename);
     vector<pair<Position, Position> > hand_positions;
     while (true) {
-	  //------------- Grab an image & pack a Frame for process ----------------
-      // Frame frame = kinGrabber.Capture();
-      //------------- Analyze the frame & update corresponding variables --------
-      frame_analyzer.Analyze();
-      Position left_hand_pos = frame_analyzer.get_left_hand_position();
-      Position right_hand_pos = frame_analyzer.get_right_hand_position();
-      hand_positions.push_back(
-        make_pair<Position, Position> (left_hand_pos, right_hand_pos));
+	  //------------- Get hand-pos info from HandTracker -------
+      Position left_hand_pos, right_hand_pos;
+      if (tracker_client.GetHandPosition(true, left_hand_pos) &&
+          tracker_client.GetHandPosition(false, right_hand_pos)) {
+        hand_positions.push_back(
+          make_pair<Position, Position> (left_hand_pos, right_hand_pos));
+	  } else {
+		continue;
+	  }
       //---------------- Calculate EPA values -------------------------
       epa_calculator.Calculate(hand_positions);
       //-------- Send currentEPA & handAction to server -------
-      client.Send(epa_calculator.get_current_epa(),
-                  frame_analyzer.get_hand_action());
+      int current_action = UNKNOWN_ACTION;
+      bayesact_client.Send(epa_calculator.get_current_epa(), current_action);
       //----------- Get response from server --------------
-      client.Receive();
-      vector<double> response_epa = client.get_response_epa();
-      int response_prompt = client.get_response_prompt();
+      bayesact_client.Receive();
+      vector<double> response_epa = bayesact_client.get_response_epa();
+      int response_prompt = bayesact_client.get_response_prompt();
       //----------- Select proper prompt ---------------------
       int id = prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt is #" << id << endl;
@@ -68,12 +67,14 @@ int main() {
   cout << "Hello World for Emotional Handwashing Assistant (EHwA)!"
        << endl;
   // Constant values used in the program
-  string serverAddr = "tcp://*:5555";
-  string clientAddr = "tcp://localhost:5555";
+  string bayesactServerAddr = "tcp://*:5555";
+  string bayesactClientAddr = "tcp://localhost:5555";
+  string trackerServerAddr = "tcp://*:5556";
+  string trackerClientAddr = "tcp://localhost:5556";
   string outputMappingFilename = "";
 
-  StartServer(serverAddr);
-  StartClient(clientAddr, outputMappingFilename);
+  StartBayesactServer(bayesactServerAddr);
+  StartClient(bayesactClientAddr, trackerClientAddr, outputMappingFilename);
 
   return 0;
 }
