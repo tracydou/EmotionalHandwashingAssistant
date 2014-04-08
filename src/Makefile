@@ -46,4 +46,4 @@ handtracker_proto : ../lib/hand_tracker/hand_tracker_message.proto
 	$(PBC) ../lib/hand_tracker/hand_tracker_message.proto --proto_path=../lib/hand_tracker/ --cpp_out=../lib/hand_tracker/
 
 clean :
-	\rm $(EXE_EHWA) $(OBJS) *.gch
+	\rm $(EXE_EHWA) $(OBJS) *.gch bayesact_message.pb.* bayesact_message_pb2.*
