@@ -5134,6 +5134,24 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 	return 0;
 }
 /******************************************************************************/
+int compareAndGetHandAction(Point condAction) {
+	int action = UNDEF;
+	int left_action = condAction.x, right_action = condAction.y;
+    if(left_action == SOAP || right_action == SOAP) {
+		action = SOAP;
+	} else if (left_action == TAP || right_action == TAP) {
+		action = TAP;
+	} else if (left_action == WATER || right_action == WATER) {
+		action = WATER;
+	} else if (left_action == TOWEL || right_action == TOWEL) {
+		action = TOWEL;
+	} else if (left_action == SINK || right_action == SINK) {
+		action = SINK;
+	} else if (left_action == AWAY || right_action == AWAY) {
+		action = AWAY;
+	}
+	return action;
+}
 
 gint processRequestsIdle(void* server_stub){
 	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
@@ -5145,7 +5163,9 @@ gint processRequestsIdle(void* server_stub){
 	  hand_positions.push_back(
 	    Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z));
 	  // TODO: call findAction()
-	  int action = 0;
+	  Point condAction = Point(UNDEF, UNDEF);
+	  findAction(hand_positions[0], hand_positions[1], trackModel->handAction, condAction);
+	  int action = compareAndGetHandAction(condAction);
 	  ((HandTrackerServerStub*)server_stub) -> SendResponse(hand_positions, action);
 	  printf("==============[HandTrackerServer] Request Processed! Waiting for new requests... \n");
 	}

@@ -115,6 +115,16 @@ struct runConfig{
 
 };
 
+// condHandAction constants (added by Luyuan Lin)
+// This MUST be consistant with ../lib/hand_tracker/config.txt (the activity part)
+const int UNDEF = 0;	// task step is undefined
+const int AWAY	= 1;	// user does not have his/her hands in any active regions
+const int SINK	= 2;	// user has his/her hands in the sink, but is not under the water
+const int SOAP	= 3;	// user is getting soap
+const int TAP	= 4;    // user is adjusting the taps
+const int WATER = 5;	// user has his/her hands under the water
+const int TOWEL = 6;	// user is drying his/her hands
+
 struct trackingModel{
 
 	// general configuration
