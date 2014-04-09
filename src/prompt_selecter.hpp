@@ -21,20 +21,18 @@ namespace EHwA {
 class Item {
 public:
   Item();
-  Item(int id, string filename, int proposition, const vector<double> epa);
+  Item(string filename, int proposition, const vector<double> epa);
   Item(const Item& item);
   ~Item();
   
   void SwapWith(Item& item);
   Item& operator = (const Item& item);
 
-  int getId() const;
   string getFilename() const;
   int getProposition() const;
   vector<double> getEPA() const;
 
 private:
-  int id_;
   string filename_;
   int proposition_; // this should be consistant with action types
   vector<double> epa_;

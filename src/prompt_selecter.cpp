@@ -13,7 +13,7 @@ namespace EHwA {
 
 // ==== This class will be used only inside class PromptSelecter ====
 
-Item::Item(): id_(-1), proposition_(-1) {
+Item::Item(): proposition_(-1) {
   filename_ = "";
   epa_.resize(3);
   for (int i = 0; i < 3; ++i) {
@@ -21,8 +21,8 @@ Item::Item(): id_(-1), proposition_(-1) {
   }
 }
 
-Item::Item(int id, string filename, int proposition, const vector<double> epa) :
-  id_(id), proposition_(proposition) {
+Item::Item(string filename, int proposition, const vector<double> epa) :
+  proposition_(proposition) {
   filename_ = filename;
   epa_.resize(3);
   for (int i = 0; i < 3; ++i) {
@@ -31,7 +31,6 @@ Item::Item(int id, string filename, int proposition, const vector<double> epa) :
 }
 
 Item::Item(const Item& item) {
-  id_ = item.getId();
   filename_ = item.getFilename();
   proposition_ = item.getProposition();
   epa_ = item.getEPA();
@@ -54,14 +53,12 @@ Item& Item::operator = (const Item& item) {
   if (this == &item) {
     return *this;
   }
-  id_ = item.getId();
   filename_ = item.getFilename();
   proposition_ = item.getProposition();
   epa_ = item.getEPA();
   return *this;
 }
 
-int Item::getId() const {return id_;}
 string Item::getFilename() const {return filename_;}
 int Item::getProposition() const {return proposition_;}
 vector<double> Item::getEPA() const { return epa_;}
@@ -78,8 +75,9 @@ int compare (const void* a, const void* b) {
 	
 PromptSelecter::PromptSelecter(string items_filename, string default_prompt_filename) {
   default_prompt_ = default_prompt_filename;
-	// TODO: open csv file "filename"
+  // TODO: open csv file "filename"
   // TODO: read contents into items_
+  // TODO: close csv file "filename"
   // sort items in order of proposition, e, p, & a
   qsort(&items_, items_.size(), sizeof(Item), compare);
   // update index_
@@ -90,7 +88,6 @@ PromptSelecter::PromptSelecter(string items_filename, string default_prompt_file
       index_.push_back(make_pair<int, int> (current_prompt, i));
     }
   }  
-  // TODO: close csv file "filename"
 }
 
 PromptSelecter::~PromptSelecter() {
