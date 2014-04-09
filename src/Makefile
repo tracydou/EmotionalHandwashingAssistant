@@ -8,11 +8,11 @@ HDRS = bayesact_client.hpp bayesact_message.pb.h EPACalculator/epa_calculator.hp
 prompt_selecter.hpp defines.hpp tracker_client.hpp ../lib/hand_tracker/hand_tracker_message.pb.h \
 prompt_player.hpp
 
-LIBS = -lzmq -lprotobuf -lvlc
+LIBS = -lzmq -lprotobuf -lvlc -lpthread
 CC = g++
 PBC = protoc
 DEBUG = -g
-CFLAGS = -Wall -c $(DEBUG) $(LIBS) -I.
+CFLAGS = -Wall -c $(DEBUG) $(LIBS) -I. -std=c++0x 
 LFLAGS = -Wall $(DEBUG)
 
 $(EXE_EHWA) : bayesact_proto handtracker_proto $(OBJS)
@@ -33,7 +33,7 @@ epa_calculator.o : EPACalculator/epa_calculator.hpp defines.hpp EPACalculator/ep
 tracker_client.o : tracker_client.hpp defines.hpp ../lib/hand_tracker/hand_tracker_message.pb.h tracker_client.cpp
 	$(CC) $(CFLAGS) tracker_client.cpp ../lib/hand_tracker/hand_tracker_message.pb.cc
 	
-prompt_selecter.o : prompt_selecter.hpp prompt_selecter.cpp
+prompt_selecter.o : prompt_selecter.hpp ../lib/csv_parser/csv_v3.h prompt_selecter.cpp
 	$(CC) $(CFLAGS) prompt_selecter.cpp
 
 prompt_player.o : prompt_player.hpp prompt_player.cpp

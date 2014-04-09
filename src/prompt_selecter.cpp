@@ -7,7 +7,12 @@
  */
 
 #include "prompt_selecter.hpp"
-#include <stdlib.h>
+#include <stdlib.h> // qsort()
+#include "../lib/csv_parser/csv_v3.h"
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 namespace EHwA {
 
@@ -30,6 +35,15 @@ Item::Item(string filename, int proposition, const vector<double> epa) :
   }
 }
 
+Item::Item(string filename, int proposition, double epa[]) {
+  proposition_ = proposition;
+  filename_ = filename;
+  epa_.resize(3);
+  for (int i = 0; i < 3; ++i) {
+    epa_[i] = epa[i];
+  }
+}
+  
 Item::Item(const Item& item) {
   filename_ = item.getFilename();
   proposition_ = item.getProposition();
@@ -63,7 +77,30 @@ string Item::getFilename() const {return filename_;}
 int Item::getProposition() const {return proposition_;}
 vector<double> Item::getEPA() const { return epa_;}
 
+string Item::DebugString() const {
+  string result = "";
+  result += "filename = ";
+  result += filename_;
+  result += ", prompt = ";
+  result += proposition_;
+  result += "epa = <";
+  for (int i = 0; i < 3; ++i) {
+    result += epa_[i];
+    if (i != 2) {
+      result += ", ";
+    }
+  }
+  result += ">\n";
+  return result;
+}
+
 // ================= End of definition of local class ================
+
+const char* PromptSelecter::HEADER_FILENAME = "filename";
+const char* PromptSelecter::HEADER_PROMPT = "prompt";
+const char* PromptSelecter::HEADER_EVALUATION = "evaluation";
+const char* PromptSelecter::HEADER_POTENCY = "potency";
+const char* PromptSelecter::HEADER_ACTIVITY = "activity";
 
 int compare (const void* a, const void* b) {
   int result = ((Item*)a) -> getProposition() - ((Item*)b) -> getProposition();
@@ -75,17 +112,29 @@ int compare (const void* a, const void* b) {
 	
 PromptSelecter::PromptSelecter(string items_filename, string default_prompt_filename) {
   default_prompt_ = default_prompt_filename;
-  // TODO: open csv file "filename"
-  // TODO: read contents into items_
-  // TODO: close csv file "filename"
+  // read contents into items_ from "filename"
+  io::CSVReader<FIELD_NUMBER_OF_EACH_ITEM> in(items_filename);
+  in.read_header(io::ignore_extra_column, HEADER_FILENAME, HEADER_PROMPT,
+                 HEADER_EVALUATION, HEADER_POTENCY, HEADER_ACTIVITY);
+  string filename;
+  int prompt = -1;
+  double evaluation = 0.0, potency = 0.0, activity = 0.0;
+  while(in.read_row(filename, prompt, evaluation, potency, activity)){
+	double epa_array[] = {evaluation, potency, activity};
+	Item item(filename, prompt, epa_array);
+	cout << "=============== tracy: pushed in item: " << item.DebugString();
+    items_.push_back(item);
+  }
   // sort items in order of proposition, e, p, & a
   qsort(&items_, items_.size(), sizeof(Item), compare);
+  cout << "=========== sorted!" << endl;
   // update index_
   int current_prompt = INVALID_PROMPT;
   for (unsigned int i = 0; i < items_.size(); ++i) {
+	cout << "============= tracy: item = " << items_[i].DebugString();
     if (items_[i].getProposition() != current_prompt) {
       current_prompt = items_[i].getProposition();
-      index_.push_back(make_pair<int, int> (current_prompt, i));
+      index_.push_back(pair<int, unsigned int> (current_prompt, i));
     }
   }  
 }

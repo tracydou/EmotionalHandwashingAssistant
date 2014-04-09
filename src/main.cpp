@@ -18,7 +18,6 @@
 using std::cout;
 using std::endl;
 using std::string;
-using std::make_pair;
 
 using namespace EHwA;
 
@@ -50,7 +49,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       if (tracker_client.GetHandPositionAndAction(
             left_hand_pos, right_hand_pos, current_action)) {
           hand_positions.push_back(
-            make_pair<Position, Position> (left_hand_pos, right_hand_pos));
+            pair<Position, Position> (left_hand_pos, right_hand_pos));
       } else {
           continue;
       }
@@ -70,8 +69,6 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
      }
  }
 	
-
-
 int main() {
   cout << "Hello World for Emotional Handwashing Assistant (EHwA)!"
        << endl;

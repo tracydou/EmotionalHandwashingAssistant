@@ -5,6 +5,8 @@
  *  Define a class that selects proper prompts from <proposition, EPA>
  *  inputs. Selection is based on survey result link-here.
  */
+#ifndef PROMPT_SELECTER_
+#define PROMPT_SELECTER_
 
 #include "defines.hpp"
 #include <string>
@@ -22,6 +24,7 @@ class Item {
 public:
   Item();
   Item(string filename, int proposition, const vector<double> epa);
+  Item(string filename, int proposition, double epa[]);
   Item(const Item& item);
   ~Item();
   
@@ -31,6 +34,8 @@ public:
   string getFilename() const;
   int getProposition() const;
   vector<double> getEPA() const;
+  
+  string DebugString() const;
 
 private:
   string filename_;
@@ -53,8 +58,18 @@ private:
     int FindStartingIndexOfProposition(int proposition);
 
     vector<Item> items_; // sorted Items, originally read from "filename"
-    vector<pair<int, int> > index_; // maps from "prositional prompt" to "starting index in items_" 
+    vector<pair<int, unsigned int> > index_; // maps from "prositional prompt" to "starting index in items_" 
     string default_prompt_;
+    
+    // These constants' values should be consistant with OutputMappingResult in ../data
+    static const int FIELD_NUMBER_OF_EACH_ITEM = 5;
+    static const char* HEADER_FILENAME; // declare here, define in .cpp
+    static const char* HEADER_PROMPT;
+    static const char* HEADER_EVALUATION;
+    static const char* HEADER_POTENCY;
+    static const char* HEADER_ACTIVITY;
 };
     
 }  // namespace EHwA
+
+#endif  // PROMPT_SELECTER_
