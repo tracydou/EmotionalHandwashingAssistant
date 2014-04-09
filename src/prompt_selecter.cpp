@@ -13,6 +13,7 @@
 
 using std::cout;
 using std::endl;
+using std::to_string;
 
 namespace EHwA {
 
@@ -82,10 +83,10 @@ string Item::DebugString() const {
   result += "filename = ";
   result += filename_;
   result += ", prompt = ";
-  result += proposition_;
-  result += "epa = <";
+  result += to_string(proposition_);
+  result += ", epa = <";
   for (int i = 0; i < 3; ++i) {
-    result += epa_[i];
+    result += to_string(epa_[i]);
     if (i != 2) {
       result += ", ";
     }
@@ -112,6 +113,7 @@ int compare (const void* a, const void* b) {
 	
 PromptSelecter::PromptSelecter(string items_filename, string default_prompt_filename) {
   default_prompt_ = default_prompt_filename;
+  items_.resize(0);
   // read contents into items_ from "filename"
   io::CSVReader<FIELD_NUMBER_OF_EACH_ITEM> in(items_filename);
   in.read_header(io::ignore_extra_column, HEADER_FILENAME, HEADER_PROMPT,
@@ -122,16 +124,15 @@ PromptSelecter::PromptSelecter(string items_filename, string default_prompt_file
   while(in.read_row(filename, prompt, evaluation, potency, activity)){
 	double epa_array[] = {evaluation, potency, activity};
 	Item item(filename, prompt, epa_array);
-	cout << "=============== tracy: pushed in item: " << item.DebugString();
+	cout << "==============[log info]= tracy: read from file: item = " << item.DebugString();
     items_.push_back(item);
   }
   // sort items in order of proposition, e, p, & a
-  qsort(&items_, items_.size(), sizeof(Item), compare);
-  cout << "=========== sorted!" << endl;
+  qsort(items_.data(), items_.size(), sizeof(Item), compare);
   // update index_
   int current_prompt = INVALID_PROMPT;
   for (unsigned int i = 0; i < items_.size(); ++i) {
-	cout << "============= tracy: item = " << items_[i].DebugString();
+	cout << "=============[log info]= tracy: after sorting: item = " << items_[i].DebugString();
     if (items_[i].getProposition() != current_prompt) {
       current_prompt = items_[i].getProposition();
       index_.push_back(pair<int, unsigned int> (current_prompt, i));
