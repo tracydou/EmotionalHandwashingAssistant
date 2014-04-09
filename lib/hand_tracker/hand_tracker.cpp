@@ -5133,6 +5133,38 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 	
 	return 0;
 }
+
+/******************************************************************************/
+
+gint fakeHandTrackerIdle(void* data) {
+//	printf("In fakeHandTrackerIdle\n");
+	return true;
+}
+gint fakeProcessRequestsIdle(void* server_stub){
+	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
+	if (request_type == HandTrackerServerStub::TYPE_MESSAGE_SUCCESS) {
+	  printf("==============[FakeHandTrackerServer] Request Received \n");
+	  // fake hand positions and action
+	  vector<Point3_<float> > hand_positions;
+	  hand_positions.push_back(Point3_<float>(100, 200, 300));
+	  hand_positions.push_back(Point3_<float>(100, 200, 300));
+	  int action = UNDEF;
+	  ((HandTrackerServerStub*)server_stub) -> SendResponse(hand_positions, action);
+	  printf("==============[FakeHandTrackerServer] Request Processed! Waiting for new requests... \n");
+	}
+	return true; // always return true
+}
+int fake_hand_tracker_start(int argc, char** argv, HandTrackerServerStub* stub) {
+	g_idle_add( fakeHandTrackerIdle, NULL);
+	g_idle_add(fakeProcessRequestsIdle, (void*)stub);
+	runTimer = g_timer_new();
+	g_timer_start(runTimer);
+	// Start
+	gtk_main ();
+	gdk_threads_leave ();
+	return 0;
+}
+
 /******************************************************************************/
 int compareAndGetHandAction(Point condAction) {
 	int action = UNDEF;
@@ -5156,13 +5188,14 @@ int compareAndGetHandAction(Point condAction) {
 gint processRequestsIdle(void* server_stub){
 	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
 	if (request_type == HandTrackerServerStub::TYPE_MESSAGE_SUCCESS) {
+	  printf("==============[HandTrackerServer] Request Received \n");
 	  // capture the positions of hands as float
 	  vector<Point3_<float> > hand_positions;
 	  hand_positions.push_back(
 	    Point3_<float>(trackModel->partCentres[0].x, trackModel->partCentres[0].y, trackModel->partCentres[0].z));
 	  hand_positions.push_back(
 	    Point3_<float>(trackModel->partCentres[1].x, trackModel->partCentres[1].y, trackModel->partCentres[1].z));
-	  // TODO: call findAction()
+	  // call findAction()
 	  Point condAction = Point(UNDEF, UNDEF);
 	  findAction(hand_positions[0], hand_positions[1], trackModel->handAction, condAction);
 	  int action = compareAndGetHandAction(condAction);

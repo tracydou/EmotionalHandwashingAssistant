@@ -72,6 +72,8 @@ private:
 
 int hand_tracker_start(int argc, char** argv, HandTrackerServerStub* stub);
 
+int fake_hand_tracker_start(int argc, char** argv, HandTrackerServerStub* stub);
+
 // converted from mainIdle() by changing func name
 gint handTrackerIdle(void* data);
 

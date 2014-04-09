@@ -65,7 +65,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       string prompt_filename = "../data/" + prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt_filename is " << prompt_filename << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
-      prompt_player.Play(prompt_filename);
+      // prompt_player.Play(prompt_filename);
      }
  }
 	
@@ -77,7 +77,7 @@ int main() {
   string bayesactClientAddr = "tcp://localhost:5555";
   string trackerServerAddr = "tcp://*:5556";
   string trackerClientAddr = "tcp://localhost:5556";
-  string output_mapping_filename = "";
+  string output_mapping_filename = "../data/OutputMappingResult.csv";
   string default_prompt_filename = "DELTA.MPG";
 
   StartBayesactServer(bayesactServerAddr);
