@@ -36,9 +36,8 @@ class BayesactAssistant:
         self.client_gender="male"
 
         #possibly set the agent id to be something
-        self.agent_id="assistant"
         #if not in database (including "") then it is a randomly drawn id
-        #agent_id=""
+        self.agent_id="assistant"
 
         #can also set the client id here if agent_knowledge = 2 (knows id of client - see above)
         #if agent_knowledge is 0 then this is ignored
@@ -64,7 +63,6 @@ class BayesactAssistant:
             self.fixed_agent_act=sys.argv[2]
         if len(sys.argv) > 3:
             self.fixed_agent_default_act=sys.argv[3]
-
 
         print "true_client_id: ",self.true_client_id
         print "fixed_agent_act: ",self.fixed_agent_act
@@ -199,7 +197,7 @@ class BayesactAssistant:
         #rseed=159199186
         #rseed=167871892
         #rseed=52566448
-        self.rseed=299798854
+        #self.rseed=299798854
         print "random seeed is : ",self.rseed
         NP.random.seed(self.rseed)
         
@@ -316,7 +314,6 @@ class BayesactAssistant:
         self.simul_agent.print_params()
 
         self.learn_avgs=self.learn_agent.initialise_array(self.learn_tau_init,self.learn_prop_init,self.learn_initx)
-
         print "learner (assistant) average sentiments (f) after initialisation: "
         self.learn_avgs.print_val()
 
@@ -472,7 +469,7 @@ class BayesactAssistant:
         self.simul_agent.print_state()
 
 if __name__ == "__main__":
-    bayesact = Bayesact()
-    epa,prompt=bayesact.calculate([1.0,2.0,3.0],2)
+    bayesact_assistant = BayesactAssistant()
+    epa,prompt=bayesact_assistant.calculate([1.0,2.0,3.0],2)
     print "epa=",epa
     print "prompt=",prompt
