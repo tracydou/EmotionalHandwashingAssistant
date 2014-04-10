@@ -37,14 +37,17 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     // Start BayesActClient & TrackerClient clients
     BayesactClient bayesact_client(bayesact_addr);
     TrackerClient tracker_client(hand_tracker_addr);
+    cout << "=============== Clients have been set up! =============" << endl << endl;
     // Define and initianlize pipeline variables
     EPACalculator epa_calculator;
     PromptSelecter prompt_selecter(output_mapping_filename, default_prompt_filename);
     vector<pair<Position, Position> > hand_positions;
     int current_action = UNKNOWN_ACTION;
     PromptPlayer prompt_player;
+    cout << "=============== Initialization ready ! =============" << endl << endl;
     while (true) {
-	  //------------- Get hand-pos info from HandTracker -------
+      cout << endl << "=============== Start of a new iteration: =============" << endl;
+	    //------------- Get hand-pos info from HandTracker -------
       Position left_hand_pos, right_hand_pos;
       if (tracker_client.GetHandPositionAndAction(
             left_hand_pos, right_hand_pos, current_action)) {
@@ -65,7 +68,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       string prompt_filename = "../data/" + prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt_filename is " << prompt_filename << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
-      // prompt_player.Play(prompt_filename);
+      prompt_player.Play(prompt_filename);
      }
  }
 	
