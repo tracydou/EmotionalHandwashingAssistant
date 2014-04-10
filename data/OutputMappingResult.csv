@@ -1,0 +1,4 @@
+filename,prompt,evaluation,potency,activity,unused
+DELTA.MPG,1,0,0,0,1
+test-mpg.mpg,2,0,0,0,1
+test2.mpg,1,0,0,0,1
