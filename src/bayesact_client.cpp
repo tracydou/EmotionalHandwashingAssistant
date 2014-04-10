@@ -43,9 +43,9 @@ bool BayesactClient::Send(const vector<double>& epa, int hand_action) {
     return false;
   } else {
     socket.send(message.c_str(), message.length());
-    cout << "=========[Log Info] Sent Request Message:" << endl
-         << request.DebugString() << endl
-         << "Waiting for response..." << endl;
+    cout << "[Log Info] BayesactClient: Sent Request Message:" << endl
+         << request.DebugString()
+         << "Waiting for BayesactServer's response..." << endl;
     return true;
   }
 }
@@ -59,7 +59,7 @@ bool BayesactClient::Receive() {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
     return false;
   } else {
-    cout << "=========[Log Info] Response Message received:" << endl
+    cout << "[Log Info] BayesactClient: Response Message received:" << endl
          << response.DebugString() << endl;    
     return true;
   }

@@ -57,8 +57,8 @@ bool TrackerClient::SendHandTrackerRequest(
     return false;
   } else {
     handtracker_socket_.send(message.c_str(), message.length());
-    cout << "TrackerClient] Sent Request Message:" << endl
-         << "Waiting for response..." << endl;
+    cout << "[Log Info] TrackerClient: Sent Request Message." << endl
+         << "Waiting for TrackerServer's response..." << endl;
     return true;
   }
 }
@@ -71,7 +71,7 @@ bool TrackerClient::ReceiveHandTrackerResponse(HandTrackerResponse& response) {
     cout << "Message.ParseFromString(message) Failed!" << endl;
     return false;
   } else {
-    cout << "[TrackerClient] Response Message received:" << endl
+    cout << "[Log Info] TrackerClient: Response Message received:" << endl
          << response.DebugString() << endl;    
     return true;
   }
