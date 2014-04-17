@@ -218,18 +218,17 @@ class BayesactAssistant:
             self.agent_id=NP.random.multivariate_normal(self.agent_mean_ids,self.agent_cov_ids)
         self.agent_id=NP.asarray([self.agent_id]).transpose()
 
+        #tracy# client_id: how the agent perceives of the client at the beginning
         self.client_id=getIdentity(self.fifname,self.client_id,self.agent_gender)
         if self.client_id==[]:
             self.client_id =  NP.random.multivariate_normal(self.client_mean_ids,self.client_cov_ids)
         self.client_id=NP.asarray([self.client_id]).transpose()
 
-        #client_agent_id: how the client perceive the agent?
+        #tracy#client_agent_id: how the client perceives the agent
         self.client_agent_id=getIdentity(self.fifname,self.aid,self.client_gender)
         if self.client_agent_id==[]:
             self.client_agent_id=NP.random.multivariate_normal(self.agent_mean_ids,self.agent_cov_ids)
         self.client_agent_id=NP.asarray([self.client_agent_id]).transpose()
-
-
 
         self.true_client_id=getIdentity(self.fifname,self.true_client_id,self.client_gender)
         if self.true_client_id==[]:
@@ -238,7 +237,6 @@ class BayesactAssistant:
 
         #get initial sets of parameters for agent
         (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.client_id,self.client_mean_ids)
-
 
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.agent_knowledge,self.true_client_id,self.client_agent_id,self.agent_mean_ids)
 
