@@ -1,7 +1,7 @@
 """------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Assistance Interactive Example
-Changed from bayesactassistant.py within the same src folder
+Changed from bayesactassistant_sample.py within the same src folder
 Work together with ../src/bayesact_server_stub.py
 ----------------------------------------------------------------------------------------------"""
 
@@ -46,7 +46,6 @@ class BayesactAssistant:
         #what is the client really? 
         self.true_client_id = "patient"
         #true_client_id = "psychotic"
-        #client_id = ""
 
         #initial awareness distribution 0 = aware, 1 = unaware
         self.initial_px = [0.3,0.7]
@@ -87,7 +86,7 @@ class BayesactAssistant:
         #if True, don't ask client just run
         self.do_automatic=False
 
-        self.use_pomcp=True
+        self.use_pomcp=False #tracy# don't use pomcp, use heuristic policy
 
         #parameters for POMCP
         self.numcact=5  #user defined 
@@ -100,16 +99,17 @@ class BayesactAssistant:
             self.numdact=1
             self.numcact=1   ##?? why 1 here - should stay the same at 9?
 
-        print "do_pomcp? :",self.use_pomcp
-        print "pomcp obsres:  ",self.obsres
-        print "pomcp actres:  ",self.actres
-        print "pomcp timeout: ",self.timeout
-        print "pomcp numcact: ",self.numcact
-        print "pomcp numdact: ",self.numdact
+        if self.use_pomcp:
+            print "do_pomcp? :",self.use_pomcp
+            print "pomcp obsres:  ",self.obsres
+            print "pomcp actres:  ",self.actres
+            print "pomcp timeout: ",self.timeout
+            print "pomcp numcact: ",self.numcact
+            print "pomcp numdact: ",self.numdact
 
         self.max_num_iterations=50
 
-        #dictionary giving the state dynamics 
+        #dictionary giving the state dynamics (i.e. nextPlanstepDict)
         self.nextPsDict={0:([0.8,0.2],[2,1]),
                     1:([1.0],[3]),
                     2:([1.0],[3]),
@@ -119,14 +119,14 @@ class BayesactAssistant:
                     6:([1.0],[7]),
                     7:([1.0],[7])}
 
-        self.nextPsDictlinear={0:([1.0],[1]),
-                    1:([1.0],[2]),
-                    2:([1.0],[3]),
-                    3:([1.0],[4]),
-                    4:([1.0],[5]),
-                    5:([1.0],[6]),
-                    6:([1.0],[7]),
-                    7:([1.0],[7])}
+        #self.nextPsDictlinear={0:([1.0],[1]),
+        #            1:([1.0],[2]),
+        #            2:([1.0],[3]),
+        #            3:([1.0],[4]),
+        #            4:([1.0],[5]),
+        #            5:([1.0],[6]),
+        #            6:([1.0],[7]),
+        #            7:([1.0],[7])}
 
 
 
@@ -153,10 +153,10 @@ class BayesactAssistant:
         #these parameters can be tuned, but will generally work "out of the box" for a basic simulation
         #-----------------------------------------------------------------------------------------------------------------------------
 
-        #behaviours file
+        #behaviours file #tracy# should change to file defined by ourselves
         self.fbfname="fbehaviours.dat"
 
-        #identities file
+        #identities file #tracy# should change to file defined by ourselves
         self.fifname="fidentities.dat"
 
         #get some key parameters from the command line
@@ -191,15 +191,10 @@ class BayesactAssistant:
         #do we print out all the samples each time
         self.learn_verbose=False
 
-        #for repeatability
+        #NP.random.randint(low, high) returns a random integar in [low, high)
         self.rseed = NP.random.randint(0,382948932)
-        #rseed=41764004
-        #rseed=159199186
-        #rseed=167871892
-        #rseed=52566448
-        #self.rseed=299798854
         print "random seeed is : ",self.rseed
-        NP.random.seed(self.rseed)
+        NP.random.seed(self.rseed) #Seed random generator
         
         #-----------------------------------------------------------------------------------------------------------------------------
         #code start - here there be dragons - only hackers should proceed, with caution
@@ -228,7 +223,7 @@ class BayesactAssistant:
             self.client_id =  NP.random.multivariate_normal(self.client_mean_ids,self.client_cov_ids)
         self.client_id=NP.asarray([self.client_id]).transpose()
 
-
+        #client_agent_id: how the client perceive the agent?
         self.client_agent_id=getIdentity(self.fifname,self.aid,self.client_gender)
         if self.client_agent_id==[]:
             self.client_agent_id=NP.random.multivariate_normal(self.agent_mean_ids,self.agent_cov_ids)

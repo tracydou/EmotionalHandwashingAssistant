@@ -85,7 +85,7 @@ def run_assistant():
     #agent knowledge of client id: 
     #0 : nothing
     #1 : one of a selection of  num_confusers+1 randoms
-    #2 : exactly - use this to mimic interact
+    #2 : exactly
     #3 : same as 0 but also agent does not know its own id
     agent_knowledge=2
 
