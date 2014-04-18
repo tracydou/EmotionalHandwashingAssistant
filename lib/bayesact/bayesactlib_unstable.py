@@ -337,8 +337,6 @@ class BayesactAssistant:
         print 10*"-","iter ",self.iter,80*"-"
 
 
-
-
         (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
         print "agent action/client observ: ",self.learn_aab        
         self.simul_observ=self.learn_aab
@@ -362,18 +360,18 @@ class BayesactAssistant:
         result_action = self.simul_paab
         
         if self.learn_turn=="agent":
-            #tracy#learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)
-            self.learn_aab=epa
+            #tracy# agent does learned action
+            #learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)
             print "agent does action :",self.learn_aab,"\n"
             self.simul_observ=self.learn_aab
-            self.learn_observ=[]  #awkward
+            #tracy# self.learn_observ=[]  #awkward
         else:
             #now, this is where the client actually decides what to do, possibly looking at the suggested labels 
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
             self.simul_aab=epa
             print "client does action: ",self.simul_aab,"\n"
             self.learn_observ=self.simul_aab
-            self.simul_observ=[]  #awkward
+            #tracy# self.simul_observ=[]  #awkward
 
         
         #observation of planstep - 
