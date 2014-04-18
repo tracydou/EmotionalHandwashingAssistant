@@ -7,7 +7,8 @@ import bayesact_message_pb2
 
 sys.path.append('../lib/bayesact/')
 sys.path.append("../lib/bayesact/gui/")
-from bayesactlib import BayesactAssistant
+#from bayesactlib import BayesactAssistant
+from bayesactlib_unstable import BayesactAssistant
 
 os.chdir('../lib/bayesact/')
 
@@ -40,7 +41,20 @@ def server_stub(address_string):
 		print "Response = \n", response.__str__()
 		socket.send(response_message)
 		print "=============================="
+		
+def bayesact_tester():
+	print("BayesActServer tester started!")
+
+	bayesact = BayesactAssistant()
+	while True:
+		print("using faked epa<0,0,0> for testing...\n")
+		#  Test and print out result
+		(result_epa, result_prompt) = bayesact.calculate([0,0,0], 0)
+		print "result_epa: <",result_epa[0], ", ",result_epa[1], ", ", result_epa[2], ">\n"
+		print "result_prompt: ", result_prompt 
+		print "=============================="
 
 if __name__ == "__main__":
-	server_stub(sys.argv[-1])
+#	server_stub(sys.argv[-1])
+    bayesact_tester()
 
