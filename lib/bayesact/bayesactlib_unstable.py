@@ -1,7 +1,7 @@
 """------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Assistance Interactive Example
-Changed from bayesactassistant_sample.py within the same src folder
+Changed from bayesactassistant.py within the same src folder
 Work together with ../src/bayesact_server_stub.py
 ----------------------------------------------------------------------------------------------"""
 
@@ -16,6 +16,8 @@ class BayesactAssistant:
         #NP.set_printoptions(precision=5)
         #NP.set_printoptions(suppress=True)
         NP.set_printoptions(linewidth=10000)
+         
+
 
         #-----------------------------------------------------------------------------------------------------------------------------
         #user-defined parameters 
@@ -27,15 +29,24 @@ class BayesactAssistant:
         #3 : same as 0 but also agent does not know its own id
         self.agent_knowledge=2
 
-        # agent gender & id
-        # if id not in database (including "") then it is a randomly drawn id
+        # agent gender
         self.agent_gender="male"
+
+        # client gender
+        self.client_gender="male"
+
+        #possibly set the agent id to be something
+        #if not in database (including "") then it is a randomly drawn id
         self.agent_id="assistant"
 
-        # client gender & id
-        self.client_gender="male"
-        self.client_id = "patient" #how the agent perceives the client
-        self.true_client_id = "patient" #what the client really is
+        #can also set the client id here if agent_knowledge = 2 (knows id of client - see above)
+        #if agent_knowledge is 0 then this is ignored
+        self.client_id = "patient"
+
+        #what is the client really? 
+        self.true_client_id = "patient"
+        #true_client_id = "psychotic"
+        #client_id = ""
 
         #initial awareness distribution 0 = aware, 1 = unaware
         self.initial_px = [0.3,0.7]
@@ -76,7 +87,7 @@ class BayesactAssistant:
         #if True, don't ask client just run
         self.do_automatic=False
 
-        self.use_pomcp=False #tracy# don't use pomcp, use heuristic policy
+        self.use_pomcp=False
 
         #parameters for POMCP
         self.numcact=5  #user defined 
@@ -89,17 +100,16 @@ class BayesactAssistant:
             self.numdact=1
             self.numcact=1   ##?? why 1 here - should stay the same at 9?
 
-        if self.use_pomcp:
-            print "do_pomcp? :",self.use_pomcp
-            print "pomcp obsres:  ",self.obsres
-            print "pomcp actres:  ",self.actres
-            print "pomcp timeout: ",self.timeout
-            print "pomcp numcact: ",self.numcact
-            print "pomcp numdact: ",self.numdact
+        print "do_pomcp? :",self.use_pomcp
+        print "pomcp obsres:  ",self.obsres
+        print "pomcp actres:  ",self.actres
+        print "pomcp timeout: ",self.timeout
+        print "pomcp numcact: ",self.numcact
+        print "pomcp numdact: ",self.numdact
 
         self.max_num_iterations=50
 
-        #dictionary giving the state dynamics (i.e. nextPlanstepDict)
+        #dictionary giving the state dynamics 
         self.nextPsDict={0:([0.8,0.2],[2,1]),
                     1:([1.0],[3]),
                     2:([1.0],[3]),
@@ -109,14 +119,14 @@ class BayesactAssistant:
                     6:([1.0],[7]),
                     7:([1.0],[7])}
 
-        #self.nextPsDictlinear={0:([1.0],[1]),
-        #            1:([1.0],[2]),
-        #            2:([1.0],[3]),
-        #            3:([1.0],[4]),
-        #            4:([1.0],[5]),
-        #            5:([1.0],[6]),
-        #            6:([1.0],[7]),
-        #            7:([1.0],[7])}
+        self.nextPsDictlinear={0:([1.0],[1]),
+                    1:([1.0],[2]),
+                    2:([1.0],[3]),
+                    3:([1.0],[4]),
+                    4:([1.0],[5]),
+                    5:([1.0],[6]),
+                    6:([1.0],[7]),
+                    7:([1.0],[7])}
 
 
 
@@ -143,10 +153,10 @@ class BayesactAssistant:
         #these parameters can be tuned, but will generally work "out of the box" for a basic simulation
         #-----------------------------------------------------------------------------------------------------------------------------
 
-        #behaviours file #tracy# should change to file defined by ourselves
+        #behaviours file
         self.fbfname="fbehaviours.dat"
 
-        #identities file #tracy# should change to file defined by ourselves
+        #identities file
         self.fifname="fidentities.dat"
 
         #get some key parameters from the command line
@@ -181,10 +191,15 @@ class BayesactAssistant:
         #do we print out all the samples each time
         self.learn_verbose=False
 
-        #NP.random.randint(low, high) returns a random integar in [low, high)
+        #for repeatability
         self.rseed = NP.random.randint(0,382948932)
+        #rseed=41764004
+        #rseed=159199186
+        #rseed=167871892
+        #rseed=52566448
+        #self.rseed=299798854
         print "random seeed is : ",self.rseed
-        NP.random.seed(self.rseed) #Seed random generator
+        NP.random.seed(self.rseed)
         
         #-----------------------------------------------------------------------------------------------------------------------------
         #code start - here there be dragons - only hackers should proceed, with caution
@@ -208,17 +223,18 @@ class BayesactAssistant:
             self.agent_id=NP.random.multivariate_normal(self.agent_mean_ids,self.agent_cov_ids)
         self.agent_id=NP.asarray([self.agent_id]).transpose()
 
-        #tracy# client_id: how the agent perceives of the client at the beginning
         self.client_id=getIdentity(self.fifname,self.client_id,self.agent_gender)
         if self.client_id==[]:
             self.client_id =  NP.random.multivariate_normal(self.client_mean_ids,self.client_cov_ids)
         self.client_id=NP.asarray([self.client_id]).transpose()
 
-        #tracy#client_agent_id: how the client perceives the agent
+
         self.client_agent_id=getIdentity(self.fifname,self.aid,self.client_gender)
         if self.client_agent_id==[]:
             self.client_agent_id=NP.random.multivariate_normal(self.agent_mean_ids,self.agent_cov_ids)
         self.client_agent_id=NP.asarray([self.client_agent_id]).transpose()
+
+
 
         self.true_client_id=getIdentity(self.fifname,self.true_client_id,self.client_gender)
         if self.true_client_id==[]:
@@ -227,6 +243,7 @@ class BayesactAssistant:
 
         #get initial sets of parameters for agent
         (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.client_id,self.client_mean_ids)
+
 
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.agent_knowledge,self.true_client_id,self.client_agent_id,self.agent_mean_ids)
 
@@ -274,12 +291,12 @@ class BayesactAssistant:
 
 
         #get the agent - can use some other subclass here if wanted 
-#        self.simul_agent=PwD(N=self.num_samples,alpha_value=1.0,
-#                        gamma_value=self.obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
-#                        beta_value_client_init=self.simul_learn_beta_client_init,beta_value_agent_init=self.simul_learn_beta_agent_init,
-#                        client_gender=self.agent_gender,agent_gender=self.client_gender,
-#                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.simul_xobsnoise,
-#                        numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
+        self.simul_agent=PwD(N=self.num_samples,alpha_value=1.0,
+                        gamma_value=self.obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
+                        beta_value_client_init=self.simul_learn_beta_client_init,beta_value_agent_init=self.simul_learn_beta_agent_init,
+                        client_gender=self.agent_gender,agent_gender=self.client_gender,
+                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.simul_xobsnoise,
+                        numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
 
         self.learn_initx=[self.initial_learn_turn,self.initial_px]
         self.simul_initx=[self.initial_simul_turn,self.initial_px]
@@ -293,16 +310,16 @@ class BayesactAssistant:
         print "learner beta client init: ",self.learn_beta_client_init
         print "learner beta agent init: ",self.learn_beta_agent_init
 
-#        print 10*"-","simulated agent parameters: "
-#        self.simul_agent.print_params()
+        print 10*"-","simulated agent parameters: "
+        self.simul_agent.print_params()
 
         self.learn_avgs=self.learn_agent.initialise_array(self.learn_tau_init,self.learn_prop_init,self.learn_initx)
         print "learner (assistant) average sentiments (f) after initialisation: "
         self.learn_avgs.print_val()
 
-#        self.simul_avgs=self.simul_agent.initialise_array(self.simul_tau_init,self.simul_prop_init,self.simul_initx)
-#        print "simulator (pwid) average sentiments (f) after initialisation: "
-#        self.simul_avgs.print_val()
+        self.simul_avgs=self.simul_agent.initialise_array(self.simul_tau_init,self.simul_prop_init,self.simul_initx)
+        print "simulator (pwid) average sentiments (f) after initialisation: "
+        self.simul_avgs.print_val()
 
 
         #cval,numaact,numpact,actres,obsres):
@@ -320,15 +337,50 @@ class BayesactAssistant:
         self.iter=0
         self.ps_obs=0
     
-   
-    # =================================================================================
-    def print_whose_turn(self):
-        print "self.learn_agent_turn: ", self.learn_turn
-#        print "self.simul_agent_turn: ", self.simul_turn
-    
-    def update_everything(self, action):
+    def calculate(self, epa, action):
+        # always agent's turn for learn_turn
+        self.learn_turn = "agent"
+        self.simul_turn = "client"
+            
+        self.observ=[]
+        print 10*"-","iter ",self.iter,80*"-"
+        
+        self.learn_observ=epa
+        (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
+        print "agent action/client observ: ",self.learn_aab        
+ 
+        self.learn_aact=findNearestBehaviour(self.learn_aab,self.fbehaviours_agent)
+        print "suggested action for the agent is :",self.learn_aab,"\n  closest label is: ",self.learn_aact
+        print "agent's proposition action : ",self.learn_paab,"\n"
+        
+        result_epa = self.learn_aab
+        result_action = self.learn_paab
+        
+        if self.learn_turn=="agent":
+            #tracy
+            print "agent does action :",self.learn_aab,"\n"
+            self.simul_observ=self.learn_aab
+            self.learn_observ=[]  #awkward
+        else:
+            #tracy
+            self.simul_aab=epa
+            print "client does action: ",self.simul_aab,"\n"
+            self.learn_observ=self.simul_aab
+            self.simul_observ=[]  #awkward
+
+        
         #observation of planstep - 
-        self.ps_obs = action
+        self.gotps=False
+        while not self.gotps:
+            #tracy#ps_obs = raw_input("Enter planstep observation (from 0 to "+str(num_plansteps)+") : ")
+            self.ps_obs = action
+            try:
+                self.ps_obs = int(self.ps_obs)
+                if self.ps_obs>=0 and self.ps_obs<self.num_plansteps:
+                    self.gotps=True
+            except ValueError:
+                self.gotps=False
+
 
         if self.learn_turn=="client" and self.learn_observ==[]:
             done = True
@@ -336,9 +388,9 @@ class BayesactAssistant:
             done = True
         elif self.iter > self.max_num_iterations:
             done = True
-#        elif self.simul_agent.is_done():
-#            print "all done"
-#            self.done = True
+        elif self.simul_agent.is_done():
+            print "all done"
+            self.done = True
         else:
             self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.ps_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
@@ -347,8 +399,8 @@ class BayesactAssistant:
             self.learn_avgs.print_val()
 
             #learn_paab is passed into client as the x-observation
-#            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
-#            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
+            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
+            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
 
             print "client f is: "
             self.simul_avgs.print_val()
@@ -359,69 +411,19 @@ class BayesactAssistant:
             print "agent thinks it is most likely a: ",self.aid
             print "agent thinks the client is most likely a: ",self.cid
 
-            (self.aid,self.cid)=self.simul_agent.get_avg_ids(self.simul_avgs.f)
-            print "client thinks it is most likely a: ",self.aid
-            print "client thinks the agent is most likely a: ",self.cid
-            
-            print "client state is: "
-            self.simul_agent.print_state()
-
             if self.get_full_id_rate>0 and (self.iter+1)%self.get_full_id_rate==0:
                 (self.cnt_ags,self.cnt_cls)=self.learn_agent.get_all_ids()
                 print "agent thinks of itself as (full distribution): "
                 print self.cnt_ags[0:10]
                 print "agent thinks of the client as (full distribution): "
                 print self.cnt_cls[0:10]
-            self.iter += 1            
-               
+            self.iter += 1
         print "current deflection of averages: ",self.learn_agent.deflection_avg
-
-        print "current deflection of averages (client): ",self.simul_agent.deflection_avg
-                
+               
         self.learn_d=self.learn_agent.compute_deflection()
         print "current deflection (agent's perspective): ",self.learn_d
 
-        self.simul_d=self.simul_agent.compute_deflection()
-        print "current deflection (client's perspective): ",self.simul_d
-     
-    # =================================================================================
-        
-    def calculate(self, epa, action):
-        # ===========  patient did something; asistant should update emotional states
-        self.simul_aab = epa
-        self.learn_observ = self.simul_aab
-        self.learn_turn = "agent"
-        self.simul_turn = "client"
-        self.print_whose_turn()
-        
-        self.update_everything(self,action)
-        (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)    
-        self.simul_observ=self.learn_aab
-        print "assistant action/patient observ: ",self.learn_aab    
-        print "assistant prop. action: ",self.learn_paab
-        self.learn_aact=findNearestBehaviour(self.learn_aab,self.fbehaviours_agent)
-        print "closest label of assistant action is: ",self.learn_aact
-    
-        
-        # ===========  assistant just reacted, so simul_agent should calculate what prompt should be given to patient
-        self.simul_turn = "agent"
-        self.learn_turn = "client"
-        self.print_whose_turn()
-        
-        self.update_everything(self,action)
-        (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
-        self.learn_observ = self.simul_aab # to keep consistant; this assignment doesn't affect results
-        print "SUGGESTED action to patient: ",self.simul_aab,
-        print "SUGGESTED prop. action to patient: ",self.simul_paab
-        self.simul_aact=findNearestBehaviours(self.simul_aab,self.fbehaviours_agent,10)
-        print "closest labels of SUGGESTED actions are: ", [re.sub(r"_"," ",i.strip()) for i in self.simul_aact]
-        
-        result_epa = self.simul_aab
-        result_action = self.simul_paab
-   
         return (result_epa,result_action)
-
-    #==========================================================================
 
     def __del__(self):
         print "final simul agent state: "

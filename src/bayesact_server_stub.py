@@ -46,13 +46,15 @@ def bayesact_tester():
 	print("BayesActServer tester started!")
 
 	bayesact = BayesactAssistant()
-	while True:
+	done = False
+	while not done:
 		print("using faked epa<0,0,0> for testing...\n")
 		#  Test and print out result
 		(result_epa, result_prompt) = bayesact.calculate([0,0,0], 0)
 		print "result_epa: <",result_epa[0], ", ",result_epa[1], ", ", result_epa[2], ">\n"
 		print "result_prompt: ", result_prompt 
 		print "=============================="
+		done = True
 
 if __name__ == "__main__":
 #	server_stub(sys.argv[-1])
