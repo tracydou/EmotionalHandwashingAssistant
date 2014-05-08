@@ -87,7 +87,7 @@ class BayesactAssistant:
         #if True, don't ask client just run
         self.do_automatic=False
 
-        self.use_pomcp=True
+        self.use_pomcp=False
 
         #parameters for POMCP
         self.numcact=5  #user defined 
@@ -101,11 +101,12 @@ class BayesactAssistant:
             self.numcact=1   ##?? why 1 here - should stay the same at 9?
 
         print "do_pomcp? :",self.use_pomcp
-        print "pomcp obsres:  ",self.obsres
-        print "pomcp actres:  ",self.actres
-        print "pomcp timeout: ",self.timeout
-        print "pomcp numcact: ",self.numcact
-        print "pomcp numdact: ",self.numdact
+        if self.use_pomcp:
+            print "pomcp obsres:  ",self.obsres
+            print "pomcp actres:  ",self.actres
+            print "pomcp timeout: ",self.timeout
+            print "pomcp numcact: ",self.numcact
+            print "pomcp numdact: ",self.numdact
 
         self.max_num_iterations=50
 
@@ -336,15 +337,14 @@ class BayesactAssistant:
         self.done = False
         self.iter=0
         self.ps_obs=0
+        
+        print "==================== END of INITIALIZATION ================"
     
-    def calculate(self, epa, action):
+    def calculate_helper(self, epa, action):
         print 10*"#"," current turn: ",self.learn_turn," ",10*"#"
 
         self.observ=[]
         print 10*"-","iter ",self.iter,80*"-"
-
-
-
 
         (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
         print "agent action/client observ: ",self.learn_aab        
@@ -365,13 +365,15 @@ class BayesactAssistant:
         print "client's proposition action : ",self.simul_paab,"\n"
         print "agent advises the following action :",self.simul_aab,"\n  closest labels are: ", [re.sub(r"_"," ",i.strip()) for i in self.simul_aact]
         
-        result_epa = self.simul_aab
-        result_action = self.simul_paab
+        #initialize
+        result_epa = [0,0,0]
+        result_action = 0
         
         if self.learn_turn=="agent":
-            #tracy#learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)
-            self.learn_aab=epa
-            print "agent does action :",self.learn_aab,"\n"
+            #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
+            result_epa = self.learn_aab
+            result_action = self.learn_paab
+            print "agent will act :",self.learn_aab,"\n"
             self.simul_observ=self.learn_aab
             self.learn_observ=[]  #awkward
         else:
@@ -384,29 +386,16 @@ class BayesactAssistant:
 
         
         #observation of planstep - 
-        if self.do_automatic:
-            #really, this would be  - get observation from handtracker and convert to planstep observation
-            #here, we use this simple hack to do this automatically, but this won't work in all cases
-            self.ps_obs=self.simul_paab
-        else:
-            self.gotps=False
-            while not self.gotps:
-                #tracy#ps_obs = raw_input("Enter planstep observation (from 0 to "+str(num_plansteps)+") : ")
-                self.ps_obs = action
-                try:
-                    self.ps_obs = int(self.ps_obs)
-                    if self.ps_obs>=0 and self.ps_obs<self.num_plansteps:
-                        self.gotps=True
-                except ValueError:
-                    self.gotps=False
+        self.ps_obs = action
+        self.ps_obs = int(self.ps_obs)
 
 
         if self.learn_turn=="client" and self.learn_observ==[]:
-            done = True
+            self.done = True
         elif self.learn_turn=="agent" and self.learn_aab==[]:
-            done = True
+            self.done = True
         elif self.iter > self.max_num_iterations:
-            done = True
+            self.done = True
         elif self.simul_agent.is_done():
             print "all done"
             self.done = True
@@ -462,7 +451,11 @@ class BayesactAssistant:
             self.simul_turn="agent"
         elif self.simul_turn=="agent":
             self.simul_turn="client"
-        return (result_epa,result_action)
+        return (self.done,result_epa,result_action)
+        
+    def calculate(self, epa, action):
+		self.calculate_helper(epa, action)
+		return self.calculate_helper(epa, action)
 
     def __del__(self):
         print "final simul agent state: "
@@ -470,6 +463,6 @@ class BayesactAssistant:
 
 if __name__ == "__main__":
     bayesact_assistant = BayesactAssistant()
-    epa,prompt=bayesact_assistant.calculate([1.0,2.0,3.0],2)
+    done,epa,prompt=bayesact_assistant.calculate([1.0,2.0,3.0],2)
     print "epa=",epa
     print "prompt=",prompt

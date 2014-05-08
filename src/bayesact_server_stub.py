@@ -2,13 +2,13 @@ import os
 import sys
 import time
 import zmq
+from array import *
 
 import bayesact_message_pb2
 
 sys.path.append('../lib/bayesact/')
 sys.path.append("../lib/bayesact/gui/")
-#from bayesactlib import BayesactAssistant
-from bayesactlib_unstable import BayesactAssistant
+from bayesactlib import BayesactAssistant
 
 os.chdir('../lib/bayesact/')
 
@@ -44,17 +44,17 @@ def server_stub(address_string):
 		
 def bayesact_tester():
 	print("BayesActServer tester started!")
-
+	finished = False  
+	result_epa = [0,0,0]
+	result_prompt = 0
 	bayesact = BayesactAssistant()
-	done = False
-	while not done:
-		print("using faked epa<0,0,0> for testing...\n")
+	while not finished:
 		#  Test and print out result
-		(result_epa, result_prompt) = bayesact.calculate([0,0,0], 0)
+		(finished, result_epa, result_prompt) = bayesact.calculate(result_epa, result_prompt)
+		print "=============================="
 		print "result_epa: <",result_epa[0], ", ",result_epa[1], ", ", result_epa[2], ">\n"
 		print "result_prompt: ", result_prompt 
 		print "=============================="
-		done = True
 
 if __name__ == "__main__":
 #	server_stub(sys.argv[-1])
