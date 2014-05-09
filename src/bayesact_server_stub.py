@@ -20,17 +20,18 @@ def server_stub(address_string):
 	print("BayesActServer started!")
 
 	bayesact = BayesactAssistant()
-	while True:
-		print("Waiting for request...\n")
+	finished = False
+	while not finished:
+		print("[log] BaysActServer: Waiting for request...\n")
 		#  Wait for next request from client
 		request_message = socket.recv()
 		request = bayesact_message_pb2.BayesactRequest()
 		request.ParseFromString(request_message)
-		print "Request = \n", request.__str__()
+		print "[log] BaysActServer: Request received = \n", request.__str__()
 
 		#  Do some 'work'
 		response = bayesact_message_pb2.BayesactResponse()
-		(result_epa, result_prompt) = bayesact.calculate([request.evaluation, request.potency, request.activity], request.hand_action)
+		(finished, result_epa, result_prompt) = bayesact.calculate([request.evaluation, request.potency, request.activity], request.hand_action)
 		response.evaluation = float(result_epa[0])
 		response.potency = float(result_epa[1])
 		response.activity = float(result_epa[2])
@@ -38,10 +39,14 @@ def server_stub(address_string):
 		
 		#  Send reply back to client
 		response_message = response.SerializeToString()
-		print "Response = \n", response.__str__()
+		print "[log] BayesActServer: Response = \n", response.__str__()
 		socket.send(response_message)
-		print "=============================="
+		print "==============================\n"
 		
+	print "Hoorey! You complished HandWashing Task finished!"
+	print "==============================\n"
+		
+# call this only when to test bayesact.calculate()
 def bayesact_tester():
 	print("BayesActServer tester started!")
 	finished = False  
@@ -57,6 +62,5 @@ def bayesact_tester():
 		print "=============================="
 
 if __name__ == "__main__":
-#	server_stub(sys.argv[-1])
-    bayesact_tester()
+	server_stub(sys.argv[-1])
 

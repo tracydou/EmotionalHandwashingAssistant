@@ -64,9 +64,6 @@ class BayesactAssistant:
         if len(sys.argv) > 3:
             self.fixed_agent_default_act=sys.argv[3]
 
-        print "true_client_id: ",self.true_client_id
-        print "fixed_agent_act: ",self.fixed_agent_act
-        print "fixed_agent_default_act: ",self.fixed_agent_default_act
 
         #who goes first? 
         self.initial_learn_turn="client"
@@ -101,12 +98,6 @@ class BayesactAssistant:
             self.numcact=1   ##?? why 1 here - should stay the same at 9?
 
         print "do_pomcp? :",self.use_pomcp
-        if self.use_pomcp:
-            print "pomcp obsres:  ",self.obsres
-            print "pomcp actres:  ",self.actres
-            print "pomcp timeout: ",self.timeout
-            print "pomcp numcact: ",self.numcact
-            print "pomcp numdact: ",self.numdact
 
         self.max_num_iterations=50
 
@@ -194,11 +185,6 @@ class BayesactAssistant:
 
         #for repeatability
         self.rseed = NP.random.randint(0,382948932)
-        #rseed=41764004
-        #rseed=159199186
-        #rseed=167871892
-        #rseed=52566448
-        #self.rseed=299798854
         print "random seeed is : ",self.rseed
         NP.random.seed(self.rseed)
         
@@ -277,9 +263,6 @@ class BayesactAssistant:
             for a in range(self.numdact):
                 self.fixed_policy[a+1]=mapSentimentLabeltoEPA(self.fbehaviours_agent,self.fixed_agent_act)
 
-        print "fixed policy is: "
-        print self.fixed_policy
-
 
         #get the agent - can use some other subclass here if wanted 
         self.learn_agent=Assistant(N=self.num_samples,alpha_value=1.0,
@@ -303,24 +286,8 @@ class BayesactAssistant:
         self.simul_initx=[self.initial_simul_turn,self.initial_px]
 
 
-
-        print 10*"-","learning agent parameters: "
-        self.learn_agent.print_params()
-        print "learner init tau: ",self.learn_tau_init
-        print "learner prop init: ",self.learn_prop_init
-        print "learner beta client init: ",self.learn_beta_client_init
-        print "learner beta agent init: ",self.learn_beta_agent_init
-
-        print 10*"-","simulated agent parameters: "
-        self.simul_agent.print_params()
-
         self.learn_avgs=self.learn_agent.initialise_array(self.learn_tau_init,self.learn_prop_init,self.learn_initx)
-        print "learner (assistant) average sentiments (f) after initialisation: "
-        self.learn_avgs.print_val()
-
         self.simul_avgs=self.simul_agent.initialise_array(self.simul_tau_init,self.simul_prop_init,self.simul_initx)
-        print "simulator (pwid) average sentiments (f) after initialisation: "
-        self.simul_avgs.print_val()
 
 
         #cval,numaact,numpact,actres,obsres):
@@ -338,7 +305,38 @@ class BayesactAssistant:
         self.iter=0
         self.ps_obs=0
         
+        self.print_parameters_after_initialization()
         print "==================== END of INITIALIZATION ================"
+        
+    def print_parameters_after_initialization(self):
+        if self.use_pomcp:
+            print "pomcp obsres:  ",self.obsres
+            print "pomcp actres:  ",self.actres
+            print "pomcp timeout: ",self.timeout
+            print "pomcp numcact: ",self.numcact
+            print "pomcp numdact: ",self.numdact
+
+        print "true_client_id: ",self.true_client_id
+        print "fixed_agent_act: ",self.fixed_agent_act
+        print "fixed_agent_default_act: ",self.fixed_agent_default_act
+        print "fixed policy is: "
+        print self.fixed_policy
+
+        print 10*"-","learning agent parameters: "
+        self.learn_agent.print_params()
+        print "learner init tau: ",self.learn_tau_init
+        print "learner prop init: ",self.learn_prop_init
+        print "learner beta client init: ",self.learn_beta_client_init
+        print "learner beta agent init: ",self.learn_beta_agent_init
+
+        print 10*"-","simulated agent parameters: "
+        self.simul_agent.print_params()
+        
+        print "learner (assistant) average sentiments (f) after initialisation: "
+        self.learn_avgs.print_val()
+        print "simulator (pwid) average sentiments (f) after initialisation: "
+        self.simul_avgs.print_val()
+		
     
     def calculate_helper(self, epa, action):
         print 10*"#"," current turn: ",self.learn_turn," ",10*"#"
@@ -347,23 +345,23 @@ class BayesactAssistant:
         print 10*"-","iter ",self.iter,80*"-"
 
         (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
-        print "agent action/client observ: ",self.learn_aab        
+#        print "agent action/client observ: ",self.learn_aab        
         self.simul_observ=self.learn_aab
-        print "agent prop. action: ",self.learn_paab
+#        print "agent prop. action: ",self.learn_paab
         
         (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
-        print "client action/agent observ: ",self.simul_aab,
+#        print "client action/agent observ: ",self.simul_aab,
         self.learn_observ=self.simul_aab
-        print "client prop. action: ",self.simul_paab
+#        print "client prop. action: ",self.simul_paab
 
 
-        self.learn_aact=findNearestBehaviour(self.learn_aab,self.fbehaviours_agent)
-        print "suggested action for the agent is :",self.learn_aab,"\n  closest label is: ",self.learn_aact
-        print "agent's proposition action : ",self.learn_paab,"\n"
+#       self.learn_aact=findNearestBehaviour(self.learn_aab,self.fbehaviours_agent)
+#        print "suggested action for the agent is :",self.learn_aab,"\n  closest label is: ",self.learn_aact
+#        print "agent's proposition action : ",self.learn_paab,"\n"
 
-        self.simul_aact=findNearestBehaviours(self.simul_aab,self.fbehaviours_agent,10)
-        print "client's proposition action : ",self.simul_paab,"\n"
-        print "agent advises the following action :",self.simul_aab,"\n  closest labels are: ", [re.sub(r"_"," ",i.strip()) for i in self.simul_aact]
+#        self.simul_aact=findNearestBehaviours(self.simul_aab,self.fbehaviours_agent,10)
+#        print "client's proposition action : ",self.simul_paab,"\n"
+#        print "agent advises the following action :",self.simul_aab,"\n  closest labels are: ", [re.sub(r"_"," ",i.strip()) for i in self.simul_aact]
         
         #initialize
         result_epa = [0,0,0]
@@ -373,14 +371,15 @@ class BayesactAssistant:
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
             result_epa = self.learn_aab
             result_action = self.learn_paab
-            print "agent will act :",self.learn_aab,"\n"
+            print "agent will act :",self.learn_aab
+            print "corresponding propositional prompt is:", self.learn_paab
             self.simul_observ=self.learn_aab
             self.learn_observ=[]  #awkward
         else:
             #now, this is where the client actually decides what to do, possibly looking at the suggested labels 
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
             self.simul_aab=epa
-            print "client does action: ",self.simul_aab,"\n"
+            print "client performed action: ",self.simul_aab
             self.learn_observ=self.simul_aab
             self.simul_observ=[]  #awkward
 
@@ -403,45 +402,47 @@ class BayesactAssistant:
             self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.ps_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
 
-            print "agent f is: "
-            self.learn_avgs.print_val()
+#            print "agent f is: "
+#            self.learn_avgs.print_val()
 
             #learn_paab is passed into client as the x-observation
             self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
             self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
 
-            print "client f is: "
-            self.simul_avgs.print_val()
+#            print "client f is: "
+#            self.simul_avgs.print_val()
 
 
             #I think these should be based on fundamentals, not transients
-            (self.aid,self.cid)=self.learn_agent.get_avg_ids(self.learn_avgs.f)
-            print "agent thinks it is most likely a: ",self.aid
-            print "agent thinks the client is most likely a: ",self.cid
+#            (self.aid,self.cid)=self.learn_agent.get_avg_ids(self.learn_avgs.f)
+#            print "agent thinks it is most likely a: ",self.aid
+#            print "agent thinks the client is most likely a: ",self.cid
 
-            (self.aid,self.cid)=self.simul_agent.get_avg_ids(self.simul_avgs.f)
-            print "client thinks it is most likely a: ",self.aid
-            print "client thinks the agent is most likely a: ",self.cid
+#            (self.aid,self.cid)=self.simul_agent.get_avg_ids(self.simul_avgs.f)
+#            print "client thinks it is most likely a: ",self.aid
+#            print "client thinks the agent is most likely a: ",self.cid
             
-            print "client state is: "
-            self.simul_agent.print_state()
+#            print "client state is: "
+#            self.simul_agent.print_state()
 
-            if self.get_full_id_rate>0 and (self.iter+1)%self.get_full_id_rate==0:
-                (self.cnt_ags,self.cnt_cls)=self.learn_agent.get_all_ids()
-                print "agent thinks of itself as (full distribution): "
-                print self.cnt_ags[0:10]
-                print "agent thinks of the client as (full distribution): "
-                print self.cnt_cls[0:10]
+#            if self.get_full_id_rate>0 and (self.iter+1)%self.get_full_id_rate==0:
+#                (self.cnt_ags,self.cnt_cls)=self.learn_agent.get_all_ids()
+#                print "agent thinks of itself as (full distribution): "
+#                print self.cnt_ags[0:10]
+#                print "agent thinks of the client as (full distribution): "
+#                print self.cnt_cls[0:10]
+
             self.iter += 1
-        print "current deflection of averages: ",self.learn_agent.deflection_avg
+#        print "current deflection of averages: ",self.learn_agent.deflection_avg
 
-        print "current deflection of averages (client): ",self.simul_agent.deflection_avg
+#        print "current deflection of averages (client): ",self.simul_agent.deflection_avg
                 
-        self.learn_d=self.learn_agent.compute_deflection()
-        print "current deflection (agent's perspective): ",self.learn_d
+#        self.learn_d=self.learn_agent.compute_deflection()
+#        print "current deflection (agent's perspective): ",self.learn_d
 
-        self.simul_d=self.simul_agent.compute_deflection()
-        print "current deflection (client's perspective): ",self.simul_d
+#        self.simul_d=self.simul_agent.compute_deflection()
+#        print "current deflection (client's perspective): ",self.simul_d
+
         if self.learn_turn=="client":
             self.learn_turn="agent"
         elif self.learn_turn=="agent":
