@@ -47,6 +47,8 @@ class PromptSelecter {
 public:
     // "filename" must be a csv file cosisting of Items; i.e. each line is
     // <question_number, filename, prompt_purpose, prompt_number, e, p, a>
+    // "default_prompt_filename" is the name of the default video prompt;
+    // it can only be the filename, without path prefix
     PromptSelecter(string items_filename, string default_prompt_filename);
     ~PromptSelecter();
 	
