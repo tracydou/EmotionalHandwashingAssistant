@@ -124,7 +124,6 @@ PromptSelecter::PromptSelecter(string items_filename, string default_prompt_file
   while(in.read_row(filename, prompt, evaluation, potency, activity)){
 	double epa_array[] = {evaluation, potency, activity};
 	Item item(filename, prompt, epa_array);
-	cout << "==============[log info]= tracy: read from file: item = " << item.DebugString();
     items_.push_back(item);
   }
   // sort items in order of proposition, e, p, & a
@@ -132,7 +131,6 @@ PromptSelecter::PromptSelecter(string items_filename, string default_prompt_file
   // update index_
   int current_prompt = INVALID_PROMPT;
   for (unsigned int i = 0; i < items_.size(); ++i) {
-	cout << "=============[log info]= tracy: after sorting: item = " << items_[i].DebugString();
     if (items_[i].getProposition() != current_prompt) {
       current_prompt = items_[i].getProposition();
       index_.push_back(pair<int, unsigned int> (current_prompt, i));
