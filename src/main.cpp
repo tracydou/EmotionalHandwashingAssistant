@@ -83,7 +83,7 @@ int main() {
   string trackerClientAddr = "tcp://localhost:5556";
   string output_mapping_filename = "../data/OutputMappingResult.csv";
   string prompt_foldername = "../data/video_prompts/";
-  string default_prompt_filename = "DELTA.MPG";
+  string default_prompt_filename = "default_prompt.mp4";
 
   StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr);
