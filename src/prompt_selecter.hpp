@@ -46,7 +46,7 @@ private:
 class PromptSelecter {
 public:
     // "filename" must be a csv file cosisting of Items; i.e. each line is
-    // <id, filename, proposition, e, p, a>
+    // <question_number, filename, prompt_purpose, prompt_number, e, p, a>
     PromptSelecter(string items_filename, string default_prompt_filename);
     ~PromptSelecter();
 	
@@ -62,7 +62,7 @@ private:
     string default_prompt_;
     
     // These constants' values should be consistant with OutputMappingResult in ../data
-    static const int FIELD_NUMBER_OF_EACH_ITEM = 5;
+    static const int FIELD_NUMBER_OF_EACH_ITEM = 5; // consist with class Item
     static const char* HEADER_FILENAME; // declare here, define in .cpp
     static const char* HEADER_PROMPT;
     static const char* HEADER_EVALUATION;

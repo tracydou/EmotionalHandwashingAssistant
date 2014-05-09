@@ -98,7 +98,7 @@ string Item::DebugString() const {
 // ================= End of definition of local class ================
 
 const char* PromptSelecter::HEADER_FILENAME = "filename";
-const char* PromptSelecter::HEADER_PROMPT = "prompt";
+const char* PromptSelecter::HEADER_PROMPT = "prompt_number";
 const char* PromptSelecter::HEADER_EVALUATION = "evaluation";
 const char* PromptSelecter::HEADER_POTENCY = "potency";
 const char* PromptSelecter::HEADER_ACTIVITY = "activity";
@@ -114,7 +114,7 @@ int compare (const void* a, const void* b) {
 PromptSelecter::PromptSelecter(string items_filename, string default_prompt_filename) {
   default_prompt_ = default_prompt_filename;
   items_.resize(0);
-  // read contents into items_ from "filename"
+  // read contents into items_ from "items_filename"
   io::CSVReader<FIELD_NUMBER_OF_EACH_ITEM> in(items_filename);
   in.read_header(io::ignore_extra_column, HEADER_FILENAME, HEADER_PROMPT,
                  HEADER_EVALUATION, HEADER_POTENCY, HEADER_ACTIVITY);
