@@ -33,7 +33,8 @@ void StartHandtrackerServer(string addr) {
 }
 	
 void StartClient(string bayesact_addr, string hand_tracker_addr,
-                 string output_mapping_filename, string default_prompt_filename) {
+                 string output_mapping_filename,string prompt_foldername, 
+                 string default_prompt_filename) {
     // Start BayesActClient & TrackerClient clients
     BayesactClient bayesact_client(bayesact_addr);
     TrackerClient tracker_client(hand_tracker_addr);
@@ -65,7 +66,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       vector<double> response_epa = bayesact_client.get_response_epa();
       int response_prompt = bayesact_client.get_response_prompt();
       //----------- Select proper prompt ---------------------
-      string prompt_filename = "../data/" + prompt_selecter.Select(response_epa, response_prompt);
+      string prompt_filename = prompt_foldername + prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt_filename is " << prompt_filename << endl;
       //----------- Play prompt with PromptPlayer (a plug-in)
       prompt_player.Play(prompt_filename);
@@ -81,11 +82,13 @@ int main() {
   string trackerServerAddr = "tcp://*:5556";
   string trackerClientAddr = "tcp://localhost:5556";
   string output_mapping_filename = "../data/OutputMappingResult.csv";
+  string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "DELTA.MPG";
 
   StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr);
-  StartClient(bayesactClientAddr, trackerClientAddr, output_mapping_filename, default_prompt_filename);
+  StartClient(bayesactClientAddr, trackerClientAddr, output_mapping_filename,
+              prompt_foldername, default_prompt_filename);
 
   return 0;
 }
