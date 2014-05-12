@@ -36,6 +36,7 @@ def server_stub(address_string):
 		response.potency = float(result_epa[1])
 		response.activity = float(result_epa[2])
 		response.prompt = int(result_prompt)
+		response.is_done = bool(finished)
 		
 		#  Send reply back to client
 		response_message = response.SerializeToString()
