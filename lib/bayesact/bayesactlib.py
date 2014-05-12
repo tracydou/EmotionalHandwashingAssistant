@@ -72,7 +72,7 @@ class BayesactAssistant:
 
 
         self.num_plansteps=8  #includes the zeroth plan step and the end planstep
-
+        self.num_behaviours=5
 
         #how often do we want to see the full id sets learned by the agent
         self.get_full_id_rate=-1
@@ -102,7 +102,7 @@ class BayesactAssistant:
         self.max_num_iterations=50
 
         #dictionary giving the state dynamics 
-        self.nextPsDict={0:([0.8,0.2],[2,1]),
+        self.nextPsDictOld={0:([0.8,0.2],[2,1]),
                     1:([1.0],[3]),
                     2:([1.0],[3]),
                     3:([1.0],[4]),
@@ -111,6 +111,24 @@ class BayesactAssistant:
                     6:([1.0],[7]),
                     7:([1.0],[7])}
 
+        self.nextPsDict={0:{0:([1.0],[0]),1:([1.0],[2]),2:([1.0],[1]),3:([1.0],[0]),4:([1.0],[0])},
+                    1:{0:([1.0],[1]),1:([1.0],[3]),2:([1.0],[1]),3:([1.0],[1]),4:([1.0],[1])},
+                    2:{0:([1.0],[2]),1:([1.0],[2]),2:([1],[3]),3:([1.0],[2]),4:([1.0],[1])},
+                    3:{0:([1.0],[3]),1:([1.0],[3]),2:([0.6,0.4],[3,2]),3:([1.0],[4]),4:([1.0],[1])},
+                    4:{0:([1.0],[4]),1:([1.0],[3]),2:([1],[6]),3:([1.0],[4]),4:([1.0],[5])},
+                    5:{0:([1.0],[5]),1:([1.0],[3]),2:([1],[7]),3:([1.0],[4]),4:([1.0],[5])},
+                    6:{0:([1.0],[6]),1:([1.0],[2]),2:([1],[6]),3:([1.0],[6]),4:([1.0],[7])},
+                    7:{0:([1.0],[7]),1:([1.0],[2]),2:([0.6,0.4],[7,1]),3:([1.0],[7]),4:([1.0],[7])}}
+
+        self.nextBehDict={0:([0.6,0.4],[2,1]),
+                     1:([1.0],[1]),
+                     2:([1.0],[2]),
+                     3:([1.0],[3]),
+                     4:([0.8,0.2],[2,4]),
+                     5:([1.0],[2]),
+                     6:([1.0],[4]),
+                     7:([1.0],[0])}
+ 
         self.nextPsDictlinear={0:([1.0],[1]),
                     1:([1.0],[2]),
                     2:([1.0],[3]),
@@ -269,7 +287,8 @@ class BayesactAssistant:
                               gamma_value=self.obs_noise,beta_value_agent=self.bvagent,beta_value_client=self.bvclient,
                               beta_value_client_init=self.agent_learn_beta_client_init,beta_value_agent_init=self.learn_beta_agent_init,
                               client_gender=self.client_gender,agent_gender=self.agent_gender,use_pomcp=self.use_pomcp,
-                              agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.xobsnoise, 
+                              agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict,
+                              nextbd = self.nextBehDict, onoise=self.xobsnoise, 
                               fixed_policy=self.fixed_policy,pomcp_interactive=True,
                               numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
 
@@ -279,7 +298,7 @@ class BayesactAssistant:
                         gamma_value=self.obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
                         beta_value_client_init=self.simul_learn_beta_client_init,beta_value_agent_init=self.simul_learn_beta_agent_init,
                         client_gender=self.agent_gender,agent_gender=self.client_gender,
-                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.simul_xobsnoise,
+                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDictOld, onoise=self.simul_xobsnoise,
                         numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
 
         self.learn_initx=[self.initial_learn_turn,self.initial_px]
@@ -370,7 +389,7 @@ class BayesactAssistant:
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
             result_epa = self.learn_aab
-            result_action = self.convert_prompt_number(learn_paab)
+            result_action = self.convert_prompt_number(self.learn_paab)
             print "agent will act :",self.learn_aab
             print "corresponding propositional prompt is:", self.learn_paab
             self.simul_observ=self.learn_aab
@@ -384,9 +403,9 @@ class BayesactAssistant:
             self.simul_observ=[]  #awkward
 
         
-        #observation of planstep - 
-        self.ps_obs = action
-        self.ps_obs = int(self.ps_obs)
+        #observation of behaviour - 
+        self.behav_obs = action
+        self.behav_obs = int(self.behav_obs)
 
 
         if self.learn_turn=="client" and self.learn_observ==[]:
@@ -399,7 +418,7 @@ class BayesactAssistant:
             print "all done"
             self.done = True
         else:
-            self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.ps_obs]
+            self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.behav_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
 
 #            print "agent f is: "

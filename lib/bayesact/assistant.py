@@ -28,8 +28,10 @@ class Assistant(Agent):
         self.obs_noise = kwargs.get("onoise",0.1)
 
         #dictionary defining the dynamics of the state
-        self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})
+        self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})   #to be fixed to include behaviours 
+        self.nextBehDict = kwargs.get("nextbd",{0:([1.0],[1]),1:([1.0],[1])})   #to be fixed to include behaviours 
         self.num_plansteps=len(self.nextPsDict)
+        self.num_behaviours=len(self.nextBehDict)
 
         self.reconPsDict = {0:2,1:3,2:3,3:4,4:5,5:7,6:7,7:7}
         #self.reconPsDict = {0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:7}
@@ -43,8 +45,10 @@ class Assistant(Agent):
 
 
         #observation is only of the planstep (and the turn - [turn,planstep])
-        self.of = (NP.diag(NP.ones(self.num_plansteps)*(1.0-self.obs_noise-(self.obs_noise/(self.num_plansteps-1)))) +
-                   NP.ones((self.num_plansteps,self.num_plansteps))*(self.obs_noise/(self.num_plansteps-1)))
+        #self.of = (NP.diag(NP.ones(self.num_fplansteps)*(1.0-self.obs_noise-(self.obs_noise/(self.num_plansteps-1)))) +
+        #           NP.ones((self.num_plansteps,self.num_plansteps))*(self.obs_noise/(self.num_plansteps-1)))
+        self.of = (NP.diag(NP.ones(self.num_behaviours)*(1.0-self.obs_noise-(self.obs_noise/(self.num_behaviours-1)))) +
+                   NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
         
         self.x_avg=[0,0,0]
         
@@ -73,7 +77,7 @@ class Assistant(Agent):
         #draw a sample from initx over awareness
         initx=list(NP.random.multinomial(1,initpx)).index(1)
         initps=0
-        return [initturn,initps,initx]
+        return [initturn,initps,initx,0]
 
 
     def is_done(self):
@@ -104,9 +108,12 @@ class Assistant(Agent):
             return propositional_action
 
     #get the next planstep to take according to a plan-graph
-    def getNextPlanStep(self,planstep):
-        newps=self.nextPsDict[planstep][1][list(NP.random.multinomial(1,self.nextPsDict[planstep][0])).index(1)]
+    def getNextPlanStep(self,planstep,behaviour):
+        newps=self.nextPsDict[planstep][behaviour][1][list(NP.random.multinomial(1,self.nextPsDict[planstep][behaviour][0])).index(1)]
         return newps 
+    def getNextBehaviour(self,planstep):
+        newbeh=self.nextBehDict[planstep][1][list(NP.random.multinomial(1,self.nextBehDict[planstep][0])).index(1)]
+        return newbeh 
 
     #def getRecommendedNextPlanStep(self,planstep):
     #    return min(self.num_plansteps-1,planstep+1)   #in general, could be next step according to some plan-graph
@@ -117,10 +124,15 @@ class Assistant(Agent):
     def sampleXvar(self,f,tau,state,aab,paab):
         #there is no prompt, the planstep only changes based on awareness
         #and awareness only decreases
+
+        behaviour=state.x[3]
+
         awareness=state.x[2]
         planstep=state.x[1]
         new_awareness=awareness
         new_planstep=planstep
+
+        new_behaviour = 0  #could be randomized
 
         if state.get_turn()=="agent":
             #agent turn - save action
@@ -136,10 +148,13 @@ class Assistant(Agent):
             if self.lastPrompt == 0:
                 #without a prompt, the client will do the right thing and stay aware if deflection is low
                 if NP.random.random() < self.defbnp[min(9,int(round(D)))]: #> 0.5:
-                    new_planstep = self.getNextPlanStep(planstep)
+                    new_behaviour = self.getNextBehaviour(planstep)
+                    new_planstep = self.getNextPlanStep(planstep,new_behaviour)
+                    
                 #otherwise, loses awareness
                 else:
                     new_awareness = 0
+
                 #without a prompt, the client is likely to do the right thing
                 #if NP.random.random() > 0.5:
                 #    new_planstep = self.getNextPlanStep(planstep)
@@ -156,7 +171,9 @@ class Assistant(Agent):
                     new_awareness = 0
                 #otherwise, is unlikely to mess things up unless it is wrong
                 elif NP.random.random() > 0.3:
-                    new_planstep=self.getNextPlanStep(planstep)
+                    new_behaviour = self.getNextBehaviour(planstep)
+                    new_planstep = self.getNextPlanStep(planstep,new_behaviour)
+
                 #but if it does, the client may lose awareness, and this is deflection dependent
                 elif NP.random.random() > self.defb[min(9,int(round(D)))]: #0.8:
                     new_awareness = 0
@@ -167,25 +184,27 @@ class Assistant(Agent):
                 #very likely that client will do nothing, 
                 #but might randomly gain awareness and move on
                 if NP.random.random() > 0.99:
-                    new_planstep = self.getNextPlanStep(planstep)
+                    new_behaviour = self.getNextBehaviour(planstep)
+                    new_planstep = self.getNextPlanStep(planstep,new_behaviour)
                     new_awareness = 1
             else:
                 #with a low-deflection prompt for the next step, user will likely move on
                 # and gain awareness
                 if NP.random.random() < self.defb[min(9,int(round(D)))] and self.lastPrompt in self.nextPsDict[planstep][1]:
-                    new_planstep = self.getNextPlanStep(planstep)   #should be more biased towards lastPrompt 
+                    new_behaviour = self.getNextBehaviour(planstep)
+                    new_planstep = self.getNextPlanStep(planstep,new_behaviour)   #should be more biased towards lastPrompt 
                     new_awareness = 1
                 else:
                     #high deflection prompt will be unlikely to have an effect
                     if NP.random.random() > 0.99:
                         new_awareness = 1
-        return [state.invert_turn(),new_planstep,new_awareness]
+        return [state.invert_turn(),new_planstep,new_awareness,new_behaviour]
     
     #this must be in the class
     def evalSampleXvar(self,sample,xobs):
         #print sample.x[0],sample.x[1],xobs,self.of[sample.x[1]][xobs[1]]
         if sample.x[0]==xobs[0]:
-            return self.of[sample.x[1]][xobs[1]]
+            return self.of[sample.x[3]][xobs[1]]
         else:
             return 0.0
 
@@ -246,4 +265,3 @@ class Assistant(Agent):
             return math.sqrt(raw_dist(obs1[0],obs2[0]))
         else:
             return -2
-
