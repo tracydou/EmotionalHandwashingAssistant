@@ -45,8 +45,9 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     vector<pair<Position, Position> > hand_positions;
     int current_action = UNKNOWN_ACTION;
     PromptPlayer prompt_player;
+    bool is_done = false;
     cout << "=============== Initialization ready ! =============" << endl << endl;
-    while (true) {
+    while (not is_done) {
       cout << endl << "=============== Start of a new iteration: =============" << endl;
 	    //------------- Get hand-pos info from HandTracker -------
       Position left_hand_pos, right_hand_pos;
@@ -65,6 +66,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       bayesact_client.Receive();
       vector<double> response_epa = bayesact_client.get_response_epa();
       int response_prompt = bayesact_client.get_response_prompt();
+      is_done = bayesact_client.is_done();
       //----------- Select proper prompt ---------------------
       string prompt_filename = prompt_foldername + prompt_selecter.Select(response_epa, response_prompt);
       cout << "Proper prompt_filename is " << prompt_filename << endl;
