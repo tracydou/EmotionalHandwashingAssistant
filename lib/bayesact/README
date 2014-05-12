@@ -1,3 +1,22 @@
+Places changed by Luyuan Lin:
+
+* Wrote bayesactlib.py basing on bayesactassistant.py
+  - packed funcs in the latter into class BayesactAssistant defined in the former
+  - set use_pomcp to FALSE
+  - the most essential changes are:
+    (in member func calculate()) patient actions are passed in as arguments and prompts
+    the assistant should perform are returned
+* Added member func "convert_prompt_number()", which converts learn_paab
+  to prompt-number value that is consistant with ../../data/OutputMappingResult.csv
+  and thus can be recoganized correctly by PromptSelecter
+  - this func depends on the hard-coded values of reconPsDict in bayesact.py
+  - this func should be consistant with values of "prompt_number" in
+    ../../data/OutputMappingResult.csv
+    
+
+
+
+----------------------------- Original README Followed --------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey

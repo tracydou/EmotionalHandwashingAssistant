@@ -23,6 +23,17 @@ const double MAX_DIST = 3000000; // used in PromptSelecter
 
 /***************************************************************/
 
+// ----------- Constant variable "Prompt Number" ---------------------------
+
+// "Propositional prompt number" used by Bayesact and "prompt number" used
+// in PromptSelecter/ OutputMappingResult.csv should be consistant.
+// To achieve this, a member func convert_prompt_number() is added in
+// ../lib/bayesact/bayesactlib.py
+
+/***************************************************************/
+
+// ------------ Constant variable "Action" ---------------------------------
+
 // Currently, type condHandAction, defined in ../lib/hand_tracker/defines.h
 // is used by the HandTrackerServer.
 // See processRequestsIdle() defined in ../lib/hand_tracker/hand_tracker.hpp for details
@@ -30,6 +41,7 @@ const double MAX_DIST = 3000000; // used in PromptSelecter
 // ../lib/hand_tracker/config.txt (the activity part)
 // These values are shared between HandTrackerServer and bayesactlib.py
 
+// TODO: make sure these values are consistant with each other
 /***************************************************************/
 
 }  // namespace EHwA

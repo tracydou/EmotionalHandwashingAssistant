@@ -370,7 +370,7 @@ class BayesactAssistant:
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
             result_epa = self.learn_aab
-            result_action = self.learn_paab
+            result_action = self.convert_prompt_number(learn_paab)
             print "agent will act :",self.learn_aab
             print "corresponding propositional prompt is:", self.learn_paab
             self.simul_observ=self.learn_aab
@@ -457,6 +457,21 @@ class BayesactAssistant:
     def calculate(self, epa, action):
 		self.calculate_helper(epa, action)
 		return self.calculate_helper(epa, action)
+		
+    def convert_prompt_number(self, learn_paab):
+		curr_planstep = int(self.learn_agent.x_avg[1])
+		if (curr_planstep==0 and learn_paab==1) or (curr_planstep==2 and learn_paab==3):
+			return 1
+		elif (curr_planstep==0 and learn_paab==2) or (curr_planstep==1 and learn_paab==3):
+			return 2
+		elif (curr_planstep==3 and learn_paab==4):
+			return 3
+		elif (curr_planstep==4 and learn_paab==5) or (curr_planstep==6 and learn_paab==7):
+			return 5
+		elif (curr_planstep==4 and learn_paab==6) or (curr_planstep==5 and learn_paab==7):
+			return 4
+		elif (curr_planstep==7 and learn_paab==7):
+			return 6
 
     def __del__(self):
         print "final simul agent state: "
