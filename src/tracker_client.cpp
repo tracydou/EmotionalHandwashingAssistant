@@ -42,7 +42,7 @@ bool TrackerClient::GetHandPositionAndAction(Position& left_hand_pos,
 	  right_hand_pos.x = response.right_hand_position().x();
 	  right_hand_pos.y = response.right_hand_position().y();
 	  right_hand_pos.z = response.right_hand_position().z();
-    action = response.action();
+	  action = convert_tracker_action_to_bayesact_behaviour(response.action());
 	  return true;
   }
 }
