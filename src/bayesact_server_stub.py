@@ -20,8 +20,7 @@ def server_stub(address_string):
 	print("BayesActServer started!")
 
 	bayesact = BayesactAssistant()
-	finished = False
-	while not finished:
+	while True:
 		print("[log] BaysActServer: Waiting for request...\n")
 		#  Wait for next request from client
 		request_message = socket.recv()

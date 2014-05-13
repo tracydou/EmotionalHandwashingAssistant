@@ -412,8 +412,8 @@ class BayesactAssistant:
             self.done = True
         elif self.learn_turn=="agent" and self.learn_aab==[]:
             self.done = True
-        elif self.iter > self.max_num_iterations:
-            self.done = True
+#        elif self.iter > self.max_num_iterations:
+#            self.done = True
         elif self.simul_agent.is_done():
             print "all done"
             self.done = True
