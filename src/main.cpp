@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <list>
+
 #include "bayesact_client.hpp"
 #include "defines.hpp"
 #include "EPACalculator/epa_calculator.hpp"
@@ -17,6 +19,7 @@
 
 using std::cout;
 using std::endl;
+using std::list;
 using std::string;
 
 using namespace EHwA;
@@ -39,10 +42,10 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     BayesactClient bayesact_client(bayesact_addr);
     TrackerClient tracker_client(hand_tracker_addr);
     cout << "=============== Clients have been set up! =============" << endl << endl;
-    // Define and initianlize pipeline variables
+    // Define and initialize pipeline variables
     EPACalculator epa_calculator;
     PromptSelecter prompt_selecter(output_mapping_filename, default_prompt_filename);
-    vector<pair<Position, Position> > hand_positions;
+    list<pair<Position, Position> > hand_positions;
     int current_action = UNKNOWN_ACTION;
     PromptPlayer prompt_player;
     bool is_done = false;
@@ -53,13 +56,18 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       Position left_hand_pos, right_hand_pos;
       if (tracker_client.GetHandPositionAndAction(
             left_hand_pos, right_hand_pos, current_action)) {
-          hand_positions.push_back(
+          hand_positions.push_front(
             pair<Position, Position> (left_hand_pos, right_hand_pos));
       } else {
           continue;
       }
       //---------------- Calculate EPA values -------------------------
+      // NUM_POSITIONS_NEEDED, defined in defines.hpp, is the number of 
+      // handpositions needed by epa-calc to compute epa values
       epa_calculator.Calculate(hand_positions);
+      if (hand_positions.size() > NUM_POSITIONS_NEEDED) {
+          hand_positions.pop_back();
+      }
       //-------- Send currentEPA & handAction to server -------
       bayesact_client.Send(epa_calculator.get_current_epa(), current_action);
       //----------- Get response from server --------------
