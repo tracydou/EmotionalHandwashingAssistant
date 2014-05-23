@@ -361,16 +361,16 @@ class BayesactAssistant:
         print 10*"#"," current turn: ",self.learn_turn," ",10*"#"
 
         self.observ=[]
-        print 10*"-","iter ",self.iter,80*"-"
+#        print 10*"-","iter ",self.iter,80*"-"
 
         (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
 #        print "agent action/client observ: ",self.learn_aab        
-        self.simul_observ=self.learn_aab
+#        self.simul_observ=self.learn_aab
 #        print "agent prop. action: ",self.learn_paab
         
-        (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
+#        (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
 #        print "client action/agent observ: ",self.simul_aab,
-        self.learn_observ=self.simul_aab
+#        self.learn_observ=self.simul_aab
 #        print "client prop. action: ",self.simul_paab
 
 
@@ -392,15 +392,15 @@ class BayesactAssistant:
             result_action = self.convert_prompt_number(self.learn_paab)
             print "agent will act :",self.learn_aab
             print "corresponding propositional prompt is:", self.learn_paab
-            self.simul_observ=self.learn_aab
+#            self.simul_observ=self.learn_aab
             self.learn_observ=[]  #awkward
         else:
             #now, this is where the client actually decides what to do, possibly looking at the suggested labels 
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
-            self.simul_aab=epa
-            print "client performed action: ",self.simul_aab
-            self.learn_observ=self.simul_aab
-            self.simul_observ=[]  #awkward
+#            self.simul_aab=epa
+            print "client performed action: ",epa
+            self.learn_observ=epa
+#            self.simul_observ=[]  #awkward
 
         
         #observation of behaviour - 
@@ -414,9 +414,9 @@ class BayesactAssistant:
             self.done = True
 #        elif self.iter > self.max_num_iterations:
 #            self.done = True
-        elif self.simul_agent.is_done():
-            print "all done"
-            self.done = True
+#        elif self.simul_agent.is_done():
+#            print "all done"
+#            self.done = True
         else:
             self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.behav_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
@@ -425,8 +425,8 @@ class BayesactAssistant:
 #            self.learn_avgs.print_val()
 
             #learn_paab is passed into client as the x-observation
-            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
-            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
+#            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
+#            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
 
 #            print "client f is: "
 #            self.simul_avgs.print_val()
@@ -467,10 +467,10 @@ class BayesactAssistant:
         elif self.learn_turn=="agent":
             self.learn_turn="client"
 
-        if self.simul_turn=="client":
-            self.simul_turn="agent"
-        elif self.simul_turn=="agent":
-            self.simul_turn="client"
+#       if self.simul_turn=="client":
+#            self.simul_turn="agent"
+#        elif self.simul_turn=="agent":
+#            self.simul_turn="client"
         return (self.done,result_epa,result_action)
         
     def calculate(self, epa, action):
@@ -493,8 +493,8 @@ class BayesactAssistant:
 			return 6
 
     def __del__(self):
-        print "final simul agent state: "
-        self.simul_agent.print_state()
+        #print "final simul agent state: "
+        #self.simul_agent.print_state()
 
 if __name__ == "__main__":
     bayesact_assistant = BayesactAssistant()

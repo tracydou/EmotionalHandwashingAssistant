@@ -21,6 +21,12 @@ const int INVALID_PROMPT = -1; // used in PromptSelecter
 const int NOT_FOUND_PROPOSITION_PROMPT = -1; // used in PromptSelecter
 const double MAX_DIST = 3000000; // used in PromptSelecter
 
+const unsigned int NUM_POSITIONS_NEEDED = 2; // Maximum # of handpositions needed; used in EPACalc & main.cpp
+                                     // No minimum requirement
+
+/***************************************************************/
+float get_distance_between_points(Position p1, Position p2);
+
 /***************************************************************/
 
 // ----------- Constant variable "Prompt Number" ---------------------------
