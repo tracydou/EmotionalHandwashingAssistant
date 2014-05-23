@@ -77,7 +77,11 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
       is_done = bayesact_client.is_done();
       //----------- Select proper prompt ---------------------
       string prompt_filename = prompt_foldername + prompt_selecter.Select(response_epa, response_prompt);
-      cout << "Proper prompt_filename is " << prompt_filename << endl;
+      if (prompt_filename == "") {
+		  cout << "No Prompt is needed at this time;" << endl;
+	  } else {		  
+          cout << "Proper prompt_filename is " << prompt_filename << endl;
+	  }
       //----------- Play prompt with PromptPlayer (a plug-in)
       prompt_player.Play(prompt_filename);
      }

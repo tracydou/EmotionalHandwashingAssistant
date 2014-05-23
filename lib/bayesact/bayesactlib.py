@@ -480,17 +480,19 @@ class BayesactAssistant:
     def convert_prompt_number(self, learn_paab):
 		curr_planstep = int(self.learn_agent.x_avg[1])
 		if (curr_planstep==0 and learn_paab==1) or (curr_planstep==2 and learn_paab==3):
-			return 1
+			return 1 #behaviour: wateron
 		elif (curr_planstep==0 and learn_paab==2) or (curr_planstep==1 and learn_paab==3):
-			return 2
+			return 2 #behaviour: put on soap
 		elif (curr_planstep==3 and learn_paab==4):
-			return 3
+			return 3 #behaviour: rinse hands
 		elif (curr_planstep==4 and learn_paab==5) or (curr_planstep==6 and learn_paab==7):
-			return 5
+			return 5 #behaviour: use towel
 		elif (curr_planstep==4 and learn_paab==6) or (curr_planstep==5 and learn_paab==7):
-			return 4
+			return 4 #behaviour: wateroff
 		elif (curr_planstep==7 and learn_paab==7):
-			return 6
+			return 6 #behaviour: all done; goodbye
+		else:
+		    return 0 #behaviour: nothing(i.e. no prompt)
 
     def __del__(self):
         print "destructing... "

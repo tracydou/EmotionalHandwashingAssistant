@@ -18,6 +18,7 @@ namespace EHwA {
 typedef Point3_<float> Position; // used in TrackerClient & BayesactClient
 const int UNKNOWN_ACTION = -1; // used in TrackerClient
 const int INVALID_PROMPT = -1; // used in PromptSelecter
+const int NO_PROMPT_PLEASE = 0; //used in PromptSelecter
 const int NOT_FOUND_PROPOSITION_PROMPT = -1; // used in PromptSelecter
 const double MAX_DIST = 3000000; // used in PromptSelecter
 
