@@ -13,7 +13,15 @@ Places changed by Luyuan Lin:
   - this func should be consistant with values of "prompt_number" in
     ../../data/OutputMappingResult.csv
     
-
+* If you want to try out the most recent implementation of bayesact engine, then you should
+  1) copy & update the following files from https://github.com/jessehoey/bayesact:
+     - bayesact.py
+     - assistant.py
+     - pwid.py (optional; recommend to change)
+     - bayesactassistant.py (optional; recommend to change)
+  2) update bayesactlib.py if needed. For example, if signature of member funcs in class Assistant
+     changed, then you might need to update bayesactlib.py as well. A good way to decide if
+     bayesactlib.py needs change or not is to compare the latest bayesactassistant.py with current one. 
 
 
 ----------------------------- Original README Followed --------------------------------------------------------
