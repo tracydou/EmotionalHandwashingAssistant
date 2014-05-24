@@ -414,7 +414,7 @@ done = False
 iter=0
 ps_obs=0
 while not done:
-    print 10*"#"," current turn: ",learn_turn," ",10*"#"
+    print "\n\n", 10*"#"," current turn: ",learn_turn," ",10*"#"
 
     observ=[]
     print 10*"-","iter ",iter,80*"-"
@@ -528,8 +528,11 @@ while not done:
         print "client thinks it is most likely a: ",aid
         print "client thinks the agent is most likely a: ",cid
         
-        print "client state is: "
+        print "simul_agent state is: "
         simul_agent.print_state()
+        
+        print "learn_agent get_most_likely_planstep is:",learn_agent.get_most_likely_planstep()
+        print "learn_agent x_avg is:",learn_agent.x_avg[1]
 
         if get_full_id_rate>0 and (iter+1)%get_full_id_rate==0:
             (cnt_ags,cnt_cls)=learn_agent.get_all_ids()

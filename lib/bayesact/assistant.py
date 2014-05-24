@@ -81,7 +81,17 @@ class Assistant(Agent):
 
 
     def is_done(self):
-        return abs(self.x_avg[1]-self.num_plansteps+1)<=0.1
+        curr_planstep = self.get_most_likely_planstep()
+        return abs(curr_planstep-self.num_plansteps+1)<=0.1
+
+
+    def get_most_likely_planstep(self):
+        ps_votes=[0]*self.num_plansteps
+        for s in self.samples[1:]:
+            ps_votes[s.x[1]] += 1
+        print "in get_most_likely_planstep(), planstep votes =", ps_votes
+        return NP.argmax(ps_votes)
+
 
 
     #called from get_next_action (bayesact.py)
@@ -116,7 +126,9 @@ class Assistant(Agent):
             awareness = self.x_avg[2]
             #zero is to do nothing at all
             propositional_action=0
-            curr_planstep = round(self.x_avg[1])
+            curr_avg_planstep = round(self.x_avg[1])
+            curr_planstep = self.get_most_likely_planstep()
+            print "average estimate of planstep: ",curr_avg_planstep," most likely planstep: ",curr_planstep
             if awareness < 0.4:
                 propositional_action=self.getRecommendedNextBehaviour(curr_planstep)  #used to add 1 here, but that was wrong
             print "using heuristic policy .... awareness: ",awareness," planstep: ",curr_planstep," action : ",propositional_action
