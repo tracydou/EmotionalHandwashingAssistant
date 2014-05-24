@@ -130,7 +130,7 @@ nextPsDict={0:{0:([1.0],[0]),1:([1.0],[2]),2:([0.8,0.2],[1,0]),3:([1.0],[0]),4:(
 
 
 
-nextBehDict={0:([0.8,0.2],[1,2]),
+nextBehDict={0:([0.8,0.2],[2,1]),
              1:([1.0],[1]),
              2:([1.0],[2]),
              3:([1.0],[3]),
@@ -195,7 +195,7 @@ roughening_noise=num_samples**(-1.0/3.0)
 #set to 0.05 or less to mimic interact
 obs_noise=0.5
 
-xobsnoise=0.2
+xobsnoise=0.01
 simul_xobsnoise=0.00001
 
 if mimic_interact:
@@ -220,6 +220,7 @@ rseed = NP.random.randint(0,382948932)
 #rseed=167871892
 #rseed=52566448
 #rseed=299798854
+rseed=169814251
 print "random seeed is : ",rseed
 NP.random.seed(rseed)
 

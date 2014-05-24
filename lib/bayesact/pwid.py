@@ -44,7 +44,8 @@ class PwD(Agent):
         #these are the numbers for a person losing awareness spontaneously, without a prompt
         #defbnp[d] gives the probability that a person will move to the next planstep
         #if they are aware and the deflection has value d
-        self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
+        #self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
+        self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
 
         self.currPlanStep=0
         self.currBehaviour=0
@@ -102,7 +103,8 @@ class PwD(Agent):
         sump = sum(pNextBehaviours)
         pNextBehaviours = map(lambda x: x/sump,pNextBehaviours)
         
-        
+        print "sampling from: ",pNextBehaviours," behaviours: ",nextBehaviours
+
         newbeh=nextBehaviours[list(NP.random.multinomial(1,pNextBehaviours)).index(1)]
         return newbeh 
             

@@ -40,7 +40,8 @@ class Assistant(Agent):
         self.px = [0.9,0.1]
 
         self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
-        self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
+        #self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
+        self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
 
 
         #observation is only of the planstep (and the turn - [turn,planstep])
@@ -50,7 +51,6 @@ class Assistant(Agent):
                    NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
         
         self.x_avg=[0,0,0,0]
-        self.currPlanStep=0
         
         self.lastPrompt = 0
 
@@ -81,8 +81,7 @@ class Assistant(Agent):
 
 
     def is_done(self):
-        #return abs(self.x_avg[1]-self.num_plansteps+1)<=0.1
-        return abs(self.currPlanStep-self.num_plansteps+1)<=0.1
+        return abs(self.x_avg[1]-self.num_plansteps+1)<=0.1
 
 
     #called from get_next_action (bayesact.py)
@@ -117,11 +116,10 @@ class Assistant(Agent):
             awareness = self.x_avg[2]
             #zero is to do nothing at all
             propositional_action=0
-            #curr_planstep = round(self.x_avg[1])
-            curr_planstep = round(self.currPlanStep)
+            curr_planstep = round(self.x_avg[1])
             if awareness < 0.4:
                 propositional_action=self.getRecommendedNextBehaviour(curr_planstep)  #used to add 1 here, but that was wrong
-            print "using heuristic policy .... awareness: ",awareness," planstep: ",curr_planstep,"propositional_action: ",propositional_action
+            print "using heuristic policy .... awareness: ",awareness," planstep: ",curr_planstep," action : ",propositional_action
             return propositional_action
 
     #get the next planstep to take according to a plan-graph
@@ -145,8 +143,7 @@ class Assistant(Agent):
         behaviour=state.x[3]
 
         awareness=state.x[2]
-        #planstep=state.x[1]
-        planstep=self.currPlanStep
+        planstep=state.x[1]
         new_awareness=awareness
         new_planstep=planstep
 
@@ -217,7 +214,6 @@ class Assistant(Agent):
                     #high deflection prompt or incorrect prompt will be unlikely to have an effect
                     if NP.random.random() > 0.99:
                         new_awareness = 1
-        self.currPlanStep = new_planstep
         return [state.invert_turn(),new_planstep,new_awareness,new_behaviour]
     
     #this must be in the class
