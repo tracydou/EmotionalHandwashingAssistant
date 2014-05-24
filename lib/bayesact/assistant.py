@@ -8,39 +8,39 @@ Please do not re-distribute without written permission from the author
 Any commerical uses strictly forbidden.
 Code is provided without any guarantees.
 Research sponsored by the Natural Sciences and Engineering Council of Canada (NSERC).
-use python2.6
 see README for details
 ----------------------------------------------------------------------------------------------"""
 
 from bayesact import *
-
+import copy
 
 class Assistant(Agent):
     def __init__(self,*args,**kwargs):
 
         super(Assistant, self).__init__(self,*args,**kwargs)
-        #x for the Assistant is a triple: 
+        #x for the Assistant is a 4-tuple: 
         #the first is the turn (required)
-        #the second value
-        #is the planstep (0 to N-1) and the third
-        # is the binary awareness of the client 0/1
+        #the second value is the planstep (0 to N-1) 
+        #the third is the binary awareness of the client 0/1
+        #the fourth is the last behaviour of the client
 
         self.obs_noise = kwargs.get("onoise",0.1)
 
         #dictionary defining the dynamics of the state
-        self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})   #to be fixed to include behaviours 
-        self.nextBehDict = kwargs.get("nextbd",{0:([1.0],[1]),1:([1.0],[1])})   #to be fixed to include behaviours 
+        self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})
+        self.nextBehDict = kwargs.get("nextbd",{0:{0:([1.0],[0]),1:([1.0],[1])},1:{0:([1.0],[1]),1:([1.0],[1])}})
         self.num_plansteps=len(self.nextPsDict)
         self.num_behaviours=len(self.nextBehDict)
 
-        self.reconPsDict = {0:1,1:2,2:3,3:4,4:5,5:7,6:7,7:7}
+        self.reconBehDict = {0:2,1:1,2:2,3:3,4:2,5:2,6:4,7:0}
+        #self.reconPsDict = {0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:7}
 
 
         #initial awarness distribution
-        self.px = [0.3,0.7]
+        self.px = [0.9,0.1]
 
-        self.defb = [1.0,0.99,0.95,0.5,0.3,0.2,0.1,0.05,0.02,0.01]
-        self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
+        self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
+        self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
 
 
         #observation is only of the planstep (and the turn - [turn,planstep])
@@ -49,7 +49,8 @@ class Assistant(Agent):
         self.of = (NP.diag(NP.ones(self.num_behaviours)*(1.0-self.obs_noise-(self.obs_noise/(self.num_behaviours-1)))) +
                    NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
         
-        self.x_avg=[0,0,0]
+        self.x_avg=[0,0,0,0]
+        self.currPlanStep=0
         
         self.lastPrompt = 0
 
@@ -80,7 +81,22 @@ class Assistant(Agent):
 
 
     def is_done(self):
-        return abs(self.x_avg[1]-self.num_plansteps+1)<=0.1
+        #return abs(self.x_avg[1]-self.num_plansteps+1)<=0.1
+        return abs(self.currPlanStep-self.num_plansteps+1)<=0.1
+
+
+    #called from get_next_action (bayesact.py)
+    #we could put this in here if we want to assistant to 
+    #take a propositional action at each time step
+    def get_default_action(self,state):
+        if state.get_turn()=="agent":
+            (aab,paab)=self.get_default_predicted_action(state)
+        else:
+            (aab,paab)=self.get_null_action()
+            #in any case, get the propositional action (always happens)
+            paab = self.get_prop_action(state)
+            
+        return (aab,paab)
 
     #implement a default policy where we look at the client's current awareness  (average x[] value)
     #and prompt if this is less than a fixed threshold.
@@ -101,9 +117,11 @@ class Assistant(Agent):
             awareness = self.x_avg[2]
             #zero is to do nothing at all
             propositional_action=0
-            curr_planstep = int(self.x_avg[1])
+            #curr_planstep = round(self.x_avg[1])
+            curr_planstep = round(self.currPlanStep)
             if awareness < 0.4:
-                propositional_action=self.getRecommendedNextPlanStep(curr_planstep)  #used to add 1 here, but that was wrong
+                propositional_action=self.getRecommendedNextBehaviour(curr_planstep)  #used to add 1 here, but that was wrong
+            print "using heuristic policy .... awareness: ",awareness," planstep: ",curr_planstep,"propositional_action: ",propositional_action
             return propositional_action
 
     #get the next planstep to take according to a plan-graph
@@ -113,11 +131,11 @@ class Assistant(Agent):
     def getNextBehaviour(self,planstep):
         newbeh=self.nextBehDict[planstep][1][list(NP.random.multinomial(1,self.nextBehDict[planstep][0])).index(1)]
         return newbeh 
-
+        
     #def getRecommendedNextPlanStep(self,planstep):
     #    return min(self.num_plansteps-1,planstep+1)   #in general, could be next step according to some plan-graph
-    def getRecommendedNextPlanStep(self,planstep):
-        return self.reconPsDict[planstep]
+    def getRecommendedNextBehaviour(self,planstep):
+        return self.reconBehDict[planstep]
 
     #aab is the affective part of the action, paab is the propositional part
     def sampleXvar(self,f,tau,state,aab,paab):
@@ -127,21 +145,25 @@ class Assistant(Agent):
         behaviour=state.x[3]
 
         awareness=state.x[2]
-        planstep=state.x[1]
+        #planstep=state.x[1]
+        planstep=self.currPlanStep
         new_awareness=awareness
         new_planstep=planstep
 
         new_behaviour = 0  #could be randomized
 
+
         if state.get_turn()=="agent":
-            #agent turn - save action
+            #agent turn - save action - why?
             self.lastPrompt  = paab
-        
+            # we now return without updating because that will happen on the next step when it is client turn
+            return [state.invert_turn(),new_planstep,new_awareness,new_behaviour]
+
         #compute deflection between f and tau
         #x moves towards goalx inversely proportionally to 
         #the deflection
         D=NP.dot(f-tau,f-tau)
-        #print "D: ",D," awareness: ",awareness, "planstep: ",planstep, " lastprompt: ",self.lastPrompt
+        #print "D: ",D," awareness: ",awareness, "planstep: ",planstep, " lastprompt: ",self.lastPrompt,"...new awareness: "
         if awareness == 1:
             #the client is aware
             if self.lastPrompt == 0:
@@ -149,11 +171,9 @@ class Assistant(Agent):
                 if NP.random.random() < self.defbnp[min(9,int(round(D)))]: #> 0.5:
                     new_behaviour = self.getNextBehaviour(planstep)
                     new_planstep = self.getNextPlanStep(planstep,new_behaviour)
-                    
                 #otherwise, loses awareness
                 else:
                     new_awareness = 0
-
                 #without a prompt, the client is likely to do the right thing
                 #if NP.random.random() > 0.5:
                 #    new_planstep = self.getNextPlanStep(planstep)
@@ -166,7 +186,7 @@ class Assistant(Agent):
                 if NP.random.random() > self.defb[min(9,int(round(D)))]: 
                     new_awareness = 0
                 #otherwise, a prompt for the wrong thing will also mess things up
-                elif not self.lastPrompt in self.nextPsDict[planstep][1]:
+                elif not self.lastPrompt in self.nextBehDict[planstep][1]:
                     new_awareness = 0
                 #otherwise, is unlikely to mess things up unless it is wrong
                 elif NP.random.random() > 0.3:
@@ -189,14 +209,15 @@ class Assistant(Agent):
             else:
                 #with a low-deflection prompt for the next step, user will likely move on
                 # and gain awareness
-                if NP.random.random() < self.defb[min(9,int(round(D)))] and self.lastPrompt in self.nextPsDict[planstep][1]:
+                if NP.random.random() < self.defb[min(9,int(round(D)))] and self.lastPrompt in self.nextBehDict[planstep][1]:
                     new_behaviour = self.getNextBehaviour(planstep)
                     new_planstep = self.getNextPlanStep(planstep,new_behaviour)   #should be more biased towards lastPrompt 
                     new_awareness = 1
                 else:
-                    #high deflection prompt will be unlikely to have an effect
+                    #high deflection prompt or incorrect prompt will be unlikely to have an effect
                     if NP.random.random() > 0.99:
                         new_awareness = 1
+        self.currPlanStep = new_planstep
         return [state.invert_turn(),new_planstep,new_awareness,new_behaviour]
     
     #this must be in the class

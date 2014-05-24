@@ -366,75 +366,84 @@ def getbvars(fvars,vars,flag=True):
         return map(lambda x: x[1], filter(lambda x: not x[0][1]=="b", zip(fvars,vars)))
 
 
-#jth column of H is given by h_fun(H[j],tau)
-#alpha and beta must be greater than 0 and less than infinity
-#these special cases would have to be treated separately
-#Also unchecked if beta_value is < 0 (ignore beta_value part)
-def sampleFvar(fvars,tvars,H,C,isiga,isigf,tau,f,turn="agent",aab=[],observ=[]):
+class FVarSampler:
+    def _computeWeight(self):
+        return 0.0;
 
+    def _computeMuSig(self, f, isiga, isigf):
+        zmat= NP.zeros((3,9))
+        I = NP.eye(9)
+        k0 = NP.vstack([zmat, self.h, zmat])
+        k0 = k0.transpose()
+        K = I - k0
+    
+        #including beta, full version using a draw from a multivariate_normal
+        #this will be slower I guess, but I can't find a way to split these into two
+        #one way might be to sample without the beta term, then weight using the difference
+        # from the previous fundamental
+        ka=NP.dot(K.transpose(),isiga)
+    
+        #this is K^{-1} \Sig K^{-1}  or (K\Sig^{-1} K)^{-1}
+        #this is actually (K\Sig^{-1} K)  - not sure what the previous comment line was supposd to mean - delete?
+        mean_prediction = NP.dot(ka, K)
+        val = mean_prediction + isigf
+        sig_n = NP.linalg.inv(val) # TODO Optimize
 
-    #if a "reset" is done, then we always use "client" turn
-    reset=False
-    if turn=="creset":
-        turn="client"
-        reset=True
-        thesigf=isigf["agent"]
-    else:
-        thesigf=isigf[turn]
+        #mean value
+        mu_n = NP.dot(sig_n,(NP.dot(ka,self.c)+NP.dot(isigf,NP.array([f]).transpose())))
 
-    #now we will insert aab into f here
-    #this seems like a hack, but in fact it is only a small one
-    #we are "using" the "b" slot in f to hold what the agent action is
-    #and when turn=="agent", the variance on b is tiny, so forces
-    #the samples to have a Fb-value which is the same as aab
-    #here, we could also replace f[0:3] with aab if aab is 6-D :
-    #f=NP.concatenate((aab,f[6:9]))
-    #this would happen if the agent can also set its own identity with an action
-    #the isigf would also need to be modified to reflect this
-    #see in the constructor the comment about this - search for AAB6D
-    if turn=="agent" and not aab==[]:
-        f=NP.concatenate((f[0:3],aab,f[6:9]))
+        # f_s = NP.random.multivariate_normal(NP.asarray(mu_n).flatten(1),sig_n).transpose()
+        #TODO: Verify correctness (use above line as reference)
+        mu_n = NP.asarray(mu_n).flatten(1)
 
-    #special case - observation is used as f_b directly if there was a reset
-    if reset and not observ==[]:
-        f=NP.concatenate((f[0:3],observ,f[6:9]))
+        return (mu_n, sig_n)
+        
 
+    def __init__(self, isiga, isigf, tau, f, agent, turn="agent", aab=[], observ=[]):
+        #if a "reset" is done, then we always use "client" turn
+        reset=False
+        if turn=="creset":
+            turn="client"
+            reset=True
+            isigf = isigf["agent"] # Note the type of isigf is changed here. TODO Fix it
+        else:
+            isigf = isigf[turn]
 
+        #now we will insert aab into f here
+        #this seems like a hack, but in fact it is only a small one
+        #we are "using" the "b" slot in f to hold what the agent action is
+        #and when turn=="agent", the variance on b is tiny, so forces
+        #the samples to have a Fb-value which is the same as aab
+        #here, we could also replace f[0:3] with aab if aab is 6-D :
+        #f=NP.concatenate((aab,f[6:9]))
+        #this would happen if the agent can also set its own identity with an action
+        #the isigf would also need to be modified to reflect this
+        #see in the constructor the comment about this - search for AAB6D
+        if turn=="agent" and not aab==[]:
+            f=NP.concatenate((f[0:3],aab,f[6:9]))
+    
+        #special case - observation is used as f_b directly if there was a reset
+        if reset and not observ==[]:
+            f=NP.concatenate((f[0:3],observ,f[6:9]))
 
-    #get the instantiated versions of H and C - these have the actual values from tau
-    (tmpH,tmpC)=instHCfromTau(tvars,H,C,tau,turn)
-    #this version tries to use list comprehensions and numpy more, but doesn't speed anything up -
-    #need to pass in GG and MM instead of iH and iC
-    #(tmpH,tmpC)=instHCfromTauNew(tvars,GG,MM,tau,turn)
+        #get the instantiated versions of H and C - these have the actual values from tau
+        if turn=="agent":
+           (self.h, self.c) = agent.agentMappings.getHC(tau);
+        elif turn=="client": 
+           (self.h, self.c) = agent.clientMappings.getHC(tau);
 
+    
+        self.c = self.c.transpose()
 
-    theweight=0.0
+        self.weight = self._computeWeight()
 
-    zmat= NP.zeros((3,9))
-    K= NP.eye(9)-NP.vstack([zmat, tmpH, zmat]).transpose()
+        (self.mu_n, self.sig_n) = self._computeMuSig(f, isiga, isigf)
 
-    #including beta, full version using a draw from a multivariate_normal
-    #this will be slower I guess, but I can't find a way to split these into two
-    #one way might be to sample without the beta term, then weight using the difference
-    # from the previous fundamental
-    ka=NP.dot(K.transpose(),isiga)
-
-    #this is K^{-1} \Sig K^{-1}  or (K\Sig^{-1} K)^{-1}
-    #this is actually (K\Sig^{-1} K)  - not sure what the previous comment line was supposd to mean - delete?
-    mean_prediction = NP.dot(ka,K)
-    sig_n=NP.linalg.inv(mean_prediction+thesigf)
-
-
-
-    #mean value
-    mu_n=NP.dot(sig_n,(NP.dot(ka,tmpC)+NP.dot(thesigf,NP.array([f]).transpose())))
-
-
-
-    f_s=NP.random.multivariate_normal(NP.asarray(mu_n).flatten(1),sig_n).transpose()
-
-
-    return (f_s,theweight,tmpH,tmpC)
+    def sampleNewFVar(self):
+        self.f_s = NP.random.multivariate_normal(self.mu_n, self.sig_n)
+        self.f_s = self.f_s.transpose()
+    
+        return self.f_s
 
 
 
@@ -517,8 +526,9 @@ def sampleMean(samples):
     sumw = reduce(lambda x,y: x+float(y.weight), samples, 0.0)
     avgstate = samples[0].apply_weight()
     if sumw:
-        for s in samples[1:]:
-            avgstate = avgstate+s.apply_weight()
+        f = lambda x, y: x + y.apply_weight()
+        avgstate = reduce(f, samples, State.zero())
+
         avgstate = avgstate/sumw
     else:
         avgstate=sampleMeanUnweighted(samples)
@@ -653,6 +663,86 @@ def printHeavySamples(samples,heavy):
     map(lambda x: x.print_val(), filter(lambda x: x.weight>heavy, samples))
 
 
+def getFactor(indices, tau):
+    return reduce(lambda x, i: x*tau[i], indices, 1)
+
+def swapActorClientValues(vector):
+    return NP.concatenate((vector[6:9], vector[3:6], vector[0:3]))
+
+def swapActorClientTdyn(tdyn):
+    return map(lambda x: [swapACVars(x[0]), swapActorClientValues(x[1])], tdyn)
+
+class TauMappings:
+    def __init__ (self, tdyn, tvars):
+        self.gTemplateTbe = [];
+        self.gTemplateTbp = [];
+        self.gTemplateTba = [];
+        self.gTemplateTau = [];
+
+        self.mTbe = [];
+        self.mTbp = [];
+        self.mTba = [];
+        self.mTau = [];
+
+        self.tau = NP.zeros(9);
+
+        self.H = NP.ndarray(shape=(3,9));
+        self.C = NP.ndarray(shape=(1,9));
+
+        for col in tdyn:
+            if has_variable(col[0], "Tbe"):
+               self.gTemplateTbe += [map(lambda x: tvars.index(x), filter(lambda y: y != "Tbe" , col[0]))]
+               self.mTbe += [col[1]];
+            elif has_variable(col[0], "Tbp"):
+               self.gTemplateTbp += [map(lambda x: tvars.index(x), filter(lambda y: y != "Tbp" , col[0]))]
+               self.mTbp += [col[1]];
+            elif has_variable(col[0], "Tba"):
+               self.gTemplateTba += [map(lambda x: tvars.index(x), filter(lambda y: y != "Tba" , col[0]))]
+               self.mTba += [col[1]];
+            else:
+               self.gTemplateTau += [map(lambda x: tvars.index(x) , col[0])]
+               self.mTau += [col[1]];
+
+#    def getM(self):
+        
+
+#    def getTau(self):
+
+    def computeG(self, tau):
+            self.gTbe = map(lambda i: getFactor(i, tau), self.gTemplateTbe)
+            self.gTbp = map(lambda i: getFactor(i, tau), self.gTemplateTbp)
+            self.gTba = map(lambda i: getFactor(i, tau), self.gTemplateTba)
+            self.gTau = map(lambda i: getFactor(i, tau), self.gTemplateTau)
+
+    def getHC(self, tau):
+      #  if ((self.tau != tau).any()):
+            self.tau = tau;
+
+            self.gTbe = map(lambda i: getFactor(i, tau), self.gTemplateTbe)
+            self.gTbp = map(lambda i: getFactor(i, tau), self.gTemplateTbp)
+            self.gTba = map(lambda i: getFactor(i, tau), self.gTemplateTba)
+            self.gTau = map(lambda i: getFactor(i, tau), self.gTemplateTau)
+
+            self.H[0] = NP.dot(self.gTbe, self.mTbe)
+            self.H[1] = NP.dot(self.gTbp, self.mTbp)
+            self.H[2] = NP.dot(self.gTba, self.mTba)
+            self.C[0] = NP.dot(self.gTau, self.mTau)
+
+            return (self.H, self.C)
+        
+#---------------------------------------------------------------------------------------------------------------------------
+#class to describe the state - including fundamental and transient sentiments and x
+#this will be used for sampling, so includes a weight
+#note that the "State" will change in subclasses of "Agent", but this is defined on-the-fly by simply
+#initialising the "x" component to a certain size array.  However, the "x" component must always contain
+#the "turn" as the first element.
+#---------------------------------------------------------------------------------------------------------------------------
+
+
+class State(object):
+
+    turnnames=["agent","client"]
+
 #---------------------------------------------------------------------------------------------------------------------------
 #class to describe the state - including fundamental and transient sentiments and x
 #this will be used for sampling, so includes a weight
@@ -664,6 +754,10 @@ def printHeavySamples(samples,heavy):
 class State(object):
 
     turnnames=["agent","client"]
+
+    @staticmethod
+    def zero():
+        return State(NP.zeros(9), NP.zeros(9), [0], 0)
 
     def __init__(self,f,tau,x,weight):
         #fundamentals
@@ -679,7 +773,6 @@ class State(object):
     def invert_turn(self):
         return self.turnnames.index(invert_turn(self.get_turn()))
 
-
     #operators that must be defined
     def __add__(self,other):
         return State(self.f+other.f,self.tau+other.tau,self.x+other.x,self.weight+other.weight)
@@ -688,13 +781,25 @@ class State(object):
     def __div__(self,other):
         return State(NP.divide(self.f,other),NP.divide(self.tau,other),NP.divide(self.x,other),NP.divide(self.weight,other))
 
-    #incremental add
     def __iadd__(self,other):
         self.f=NP.add(self.f,other.f)
         self.tau=NP.add(self.tau,other.tau)
         self.x=NP.add(self.x,other.x)
         self.weight=NP.add(self.weight,other.weight)
         return self
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+           return False
+        retval = True
+        retval = retval & (self.f == other.f).all()
+        retval = retval & (self.tau == other.tau).all()
+        retval = retval & (self.weight == other.weight)
+        retval = retval & (self.x == other.x)
+        return retval
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     #make a copy and return it
     def get_copy(self):
@@ -814,7 +919,9 @@ class Agent(object):
         #initialisation routines
         self.init_covariances()
         self.init_sentiment_dictionaries(self.fifname)
-        self.init_HC()
+
+        self.agentMappings  = TauMappings(self.tdyn, tvars)
+        self.clientMappings = TauMappings(swapActorClientTdyn(self.tdyn), tvars)
 
 
     def print_params(self):
@@ -1014,15 +1121,17 @@ class Agent(object):
     #---------------------------------------------------------------------------
     #sampling functions
     #---------------------------------------------------------------------------
-    def sample_next_f(self,state,N=100):
+    def sample_next_f(self, state, N=100):
         #draw a set of samples over the next fundamental sentiment
         fvsamples=[]
+        fsampler = FVarSampler(self.isiga, self.isigf_unconstrained_b, \
+                             state.tau, state.f, self, state.get_turn())
         for x in range(N):
-            (tmpfv,wgt,tmpH,tmpC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf_unconstrained_b,state.tau,state.f,state.get_turn(),[],[])
-            tmpfv=tmpfv.transpose()
-            fvsamples.append(tmpfv)
+            fv = fsampler.sampleNewFVar()
+            fv = fv.transpose()
+            fvsamples.append(fv)
 
-        avgf=fsampleMean(fvsamples)
+        avgf = fsampleMean(fvsamples)
         return avgf
 
 
@@ -1038,25 +1147,23 @@ class Agent(object):
 
     #draw a next sample from a currrent one "state" by sampling f, tau and x in that order
     #turn can eventually be removed from the list of arguments, but left in now so other things keep working
-    def sampleNext(self,fvars,tvars,state,turn,aab,observ,paab=None):
+    def sampleNext(self, fVarSampler, fvars, tvars, state, aab, paab=None):
+        h   = fVarSampler.h
+        c   = fVarSampler.c
+        wgt = fVarSampler.weight
 
+        fsample = fVarSampler.sampleNewFVar()
 
-        use_turn=state.get_turn()
-        #sampleFvar will use the reset mode
-        if turn=="creset" or turn=="areset":
-            use_turn=turn
-
-
-        #these are generic methods that can be outside the class
-        (fsample,wgt,instH,instC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf,state.tau,state.f,use_turn,aab,observ)
-
-        #sample from T using the H and C matrices we computed from tau in sampleFvar
-        tsample=sampleTvars(tvars,instH,instC,fsample)
+        #sample from T using the H and C matrices we computed from
+        #    tau in sampleNewFVar
+        #TODO: Move these functions into (renamed) FVarSample or
+        #      new similar class
+        tsample = sampleTvars(tvars, h, c, fsample)
 
         #this is class dependent
-        xsample=self.sampleXvar(fsample,tsample,state,aab,paab)
+        xsample = self.sampleXvar(fsample,tsample,state,aab,paab)
 
-        return State(fsample,tsample,xsample,wgt)
+        return State(fsample, tsample, xsample, wgt)
 
 
     #function that must be overloaded in any subclass
@@ -1112,12 +1219,22 @@ class Agent(object):
         #send new samples to plotter
         if (None != plotter):
             self.sendSamplesToPlotter(new_samples,plotter,agent)
+            
+            if (eTurn.learner == agent):
+                plotter.m_LearnerPreviousAction = aab
+            else:
+                plotter.m_SimulatorPreviousAction = aab
 
         #propagate forward
         self.samples=[]
         totweight=0.0
         for sample in new_samples:
-            newsample = self.sampleNext(fvars,tvars,sample,sample.get_turn(),aab,observ,paab)
+            fVarSampler = FVarSampler(self.isiga, self.isigf, sample.tau, \
+                                      sample.f, self, sample.get_turn(), \
+                                      aab, observ)
+
+            newsample = self.sampleNext(fVarSampler, fvars, tvars, sample, \
+                                        aab, paab)
 
             theweight = self.evalSampleFvar(fvars,self.tdyn,newsample,self.theivar,self.ldenom,sample.get_turn(),observ)
             newweight = newsample.weight+theweight
@@ -1140,7 +1257,12 @@ class Agent(object):
             self.samples=[]
             totweight=0.0
             for sample in new_samples:
-                newsample = self.sampleNext(fvars,tvars,sample,"creset",aab,observ,paab)
+                fVarSampler = FVarSampler(self.isiga, self.isigf, sample.tau, \
+                                          sample.f, self, "creset", \
+                                          aab, observ)
+
+                newsample = self.sampleNext(fVarSampler, fvars, tvars, sample, \
+                                            aab, paab)
                 theweight = 0.0
                 newweight = newsample.weight+theweight
 
@@ -1165,8 +1287,7 @@ class Agent(object):
         if self.use_pomcp:
             #possibly allow the user the explore the POMCP tree
             if self.pomcp_doInteractive:
-                #askq=raw_input("POMCP about to prune  - do you want to interactively explore the tree? (enter means no, anything else is yes):")
-                askq = ""
+                askq=raw_input("POMCP about to prune  - do you want to interactively explore the tree? (enter means no, anything else is yes):")
                 if not askq == "":
                     self.pomcp_agent.POMCP_interactiveExplorePlanTree()
             #prune the tree
@@ -1236,14 +1357,17 @@ class Agent(object):
         max_rrew=0
         best_action=[]
 
+        fVarSampler = FVarSampler(self.isiga, self.isigf, state.tau, state.f, \
+                                  self, sample.get_turn(), aab, [])
         for x in range(N):
-            (tmpfv,wgt,tmpH,tmpC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf_unconstrained_b,state.tau,state.f,state.get_turn(),[],[])
-            tmpfv=tmpfv.transpose()
-            aab=map(lambda x: float(x), tmpfv[3:6])
+            fv = fVarSampler.sampleNewFVar()
+            fv = fv.transpose()
+            aab=map(lambda x: float(x), fv[3:6])
             #simulate next state given that action
             rrew=0.0
             for y in range(M):
-                sample=self.sampleNext(fvars,tvars,state,state.get_turn(),aab,[],paab)
+                sample = self.sampleNext(fVarSampler, fvars, tvars, state, \
+                                         aab, paab)
                 #get reward of that -
                 rrew += self.reward(sample)
             rrew = rrew/M
@@ -1360,12 +1484,19 @@ class Agent(object):
         #if client turn, we need to generate observ, and aab is ignored
         if state.get_turn()=="client":
             #sample what client would do next
-            (fsample,wgt,instH,instC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf_unconstrained_b,state.tau,state.f,"client",[],[])
+            fsampler = FVarSampler(self.isiga, self.isigf_unconstrained_b, \
+                                   state.tau, state.f, self, "client")
+            fsample = fsampler.sampleNewFVar()
+
             #sample an observation from fsample
             observ=sampleObservation(fvars,fsample,self.gamma_value_pomcp)
 
         #sample a next state
-        newsample = self.sampleNext(fvars,tvars,state,state.get_turn(),aab,observ,paab)
+        fVarSampler = FVarSampler(self.isiga, self.isigf, state.tau, state.f, \
+                                  self, state.get_turn(), aab, observ)
+ 
+        newsample = self.sampleNext(fVarSampler, fvars, tvars, state, aab, paab)
+
 
         xobserv=self.sampleXObservation(newsample)
 
@@ -1400,9 +1531,12 @@ class Agent(object):
                 #when doing a rollout, want to cast a wider net?
                 if rollout:
                     usesiga=self.isiga
-                (tmpfv,wgt,tmpH,tmpC)=sampleFvar(fvars,tvars,self.iH,self.iC,usesiga,self.isigf_unconstrained_b,
-                                                 state.tau,state.f,state.get_turn(),[],[])
-                a=map(lambda x: float(x), tmpfv[3:6])
+                fsampler = FVarSampler(usesiga, self.isigf_unconstrained_b, \
+                                       state.tau, state.f, self, \
+                                       state.get_turn())
+                tmpfv = fsampler.sampleNewFVar()
+
+                a = map(lambda x: float(x), tmpfv[3:6])
         return (a,paab)
 
 
