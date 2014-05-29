@@ -183,7 +183,7 @@ class BayesactAssistant:
         #set to 0.05 or less to mimic interact
         self.obs_noise=0.5
 
-        self.xobsnoise=0.01
+        self.xobsnoise=0.00001
         self.simul_xobsnoise=0.00001
 
         if self.mimic_interact:
@@ -404,8 +404,19 @@ class BayesactAssistant:
 
         
         #observation of behaviour - 
-        self.behav_obs = action
-        self.behav_obs = int(self.behav_obs)
+        if self.do_automatic:
+            self.behav_obs = action
+            self.behav_obs = int(self.behav_obs)
+        else:
+		    gotbeh=False
+		    while not gotbeh:
+		        self.behav_obs = raw_input("Enter behaviour observation (from 0 to "+str(self.num_behaviours-1)+") : ")
+		        try:
+		            self.behav_obs = int(self.behav_obs)
+		            if self.behav_obs>=0 and self.behav_obs<self.num_behaviours:
+		                gotbeh=True
+		        except ValueError:
+		            gotbeh=False
 
 
         if self.learn_turn=="client" and self.learn_observ==[]:

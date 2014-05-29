@@ -24,13 +24,13 @@ class Assistant(Agent):
         #the third is the binary awareness of the client 0/1
         #the fourth is the last behaviour of the client
 
-        self.obs_noise = kwargs.get("onoise",0.1)
+        self.obs_noise = kwargs.get("onoise",0.001)
 
         #dictionary defining the dynamics of the state
         self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})
         self.nextBehDict = kwargs.get("nextbd",{0:{0:([1.0],[0]),1:([1.0],[1])},1:{0:([1.0],[1]),1:([1.0],[1])}})
         self.num_plansteps=len(self.nextPsDict)
-        self.num_behaviours=len(self.nextBehDict)
+        self.num_behaviours=kwargs.get("numberbh",5)
 
         self.reconBehDict = {0:2,1:1,2:2,3:3,4:2,5:2,6:4,7:0}
         #self.reconPsDict = {0:1,1:2,2:3,3:4,4:5,5:6,6:7,7:7}

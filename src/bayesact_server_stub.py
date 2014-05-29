@@ -62,6 +62,6 @@ def bayesact_tester():
 		print "=============================="
 
 if __name__ == "__main__":
-	server_stub(sys.argv[-1])
-#	bayesact_tester()
+#	server_stub(sys.argv[-1])
+	bayesact_tester()
 
