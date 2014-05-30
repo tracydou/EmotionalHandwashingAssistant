@@ -171,7 +171,7 @@ class BayesactAssistant:
 
         #get some key parameters from the command line
         #set much larger to mimic interact (>5000)
-        self.num_samples=100
+        self.num_samples=1000
 
 
         # use 0.0 for mimic interact simulations

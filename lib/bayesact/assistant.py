@@ -47,8 +47,13 @@ class Assistant(Agent):
         #observation is only of the planstep (and the turn - [turn,planstep])
         #self.of = (NP.diag(NP.ones(self.num_fplansteps)*(1.0-self.obs_noise-(self.obs_noise/(self.num_plansteps-1)))) +
         #           NP.ones((self.num_plansteps,self.num_plansteps))*(self.obs_noise/(self.num_plansteps-1)))
-        self.of = (NP.diag(NP.ones(self.num_behaviours)*(1.0-self.obs_noise-(self.obs_noise/(self.num_behaviours-1)))) +
-                   NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
+        #self.of = (NP.diag(NP.ones(self.num_behaviours)*(1.0-self.obs_noise-(self.obs_noise/(self.num_behaviours-1)))) +
+        #           NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
+        self.of = [ [ (1.0-self.obs_noise), self.obs_noise/4, self.obs_noise/4, self.obs_noise/4, self.obs_noise/4],
+                    [ self.obs_noise/3,    (1.0-self.obs_noise),     0,         self.obs_noise/3, self.obs_noise/3],
+                    [ self.obs_noise/2,             0,        (1.0-self.obs_noise), self.obs_noise/2,     0       ],
+                    [ self.obs_noise,               0,               0,         (1.0-self.obs_noise),     0       ],
+                    [ self.obs_noise,               0,               0,               0,      (1.0-self.obs_noise)]]
         
         self.x_avg=[0,0,0,0]
         
@@ -232,7 +237,7 @@ class Assistant(Agent):
     def evalSampleXvar(self,sample,xobs):
         #print sample.x[0],sample.x[1],xobs,self.of[sample.x[1]][xobs[1]]
         if sample.x[0]==xobs[0]:
-            return self.of[sample.x[3]][xobs[1]]
+            return self.of[xobs[1]][sample.x[3]]
         else:
             return 0.0
 
