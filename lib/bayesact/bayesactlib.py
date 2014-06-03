@@ -82,7 +82,7 @@ class BayesactAssistant:
         self.mimic_interact=False
 
         #if True, don't ask client just run
-        self.do_automatic=False
+        self.do_automatic=True
 
         self.use_pomcp=False
 

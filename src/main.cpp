@@ -99,8 +99,8 @@ int main() {
   string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "default_prompt.mp4";
 
-  StartBayesactServer(bayesactServerAddr);
-  StartHandtrackerServer(trackerServerAddr);
+//  StartBayesactServer(bayesactServerAddr);
+//  StartHandtrackerServer(trackerServerAddr);
   StartClient(bayesactClientAddr, trackerClientAddr, output_mapping_filename,
               prompt_foldername, default_prompt_filename);
 
