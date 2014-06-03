@@ -72,7 +72,7 @@ class BayesactAssistant:
 
 
         self.num_plansteps=8  #includes the zeroth plan step and the end planstep
-
+        self.num_behaviours=5
 
         #how often do we want to see the full id sets learned by the agent
         self.get_full_id_rate=-1
@@ -82,7 +82,7 @@ class BayesactAssistant:
         self.mimic_interact=False
 
         #if True, don't ask client just run
-        self.do_automatic=False
+        self.do_automatic=True
 
         self.use_pomcp=False
 
@@ -102,7 +102,7 @@ class BayesactAssistant:
         self.max_num_iterations=50
 
         #dictionary giving the state dynamics 
-        self.nextPsDict={0:([0.8,0.2],[2,1]),
+        self.nextPsDictOld={0:([0.8,0.2],[2,1]),
                     1:([1.0],[3]),
                     2:([1.0],[3]),
                     3:([1.0],[4]),
@@ -111,6 +111,24 @@ class BayesactAssistant:
                     6:([1.0],[7]),
                     7:([1.0],[7])}
 
+        self.nextPsDict={0:{0:([1.0],[0]),1:([1.0],[2]),2:([0.8,0.2],[1,0]),3:([1.0],[0]),4:([1.0],[0])},
+                    1:{0:([1.0],[1]),1:([1.0],[3]),2:([0.8,0.2],[1,0]),3:([1.0],[1]),4:([1.0],[1])},
+                    2:{0:([1.0],[2]),1:([1.0],[2]),2:([0.8,0.2],[3,2]),3:([1.0],[2]),4:([1.0],[0])},
+                    3:{0:([1.0],[3]),1:([1.0],[3]),2:([0.6,0.4],[3,2]),3:([1.0],[4]),4:([1.0],[1])},
+                    4:{0:([1.0],[4]),1:([1.0],[3]),2:([0.8,0.2],[6,4]),3:([1.0],[4]),4:([1.0],[5])},
+                    5:{0:([1.0],[5]),1:([1.0],[3]),2:([0.8,0.2],[7,5]),3:([1.0],[4]),4:([1.0],[5])},
+                    6:{0:([1.0],[6]),1:([1.0],[2]),2:([0.8,0.2],[6,4]),3:([1.0],[6]),4:([1.0],[7])},
+                    7:{0:([1.0],[7]),1:([1.0],[2]),2:([0.6,0.4],[7,5]),3:([1.0],[7]),4:([1.0],[7])}}
+
+        self.nextBehDict={0:([0.8,0.2],[1,2]),
+                    1:([1.0],[1]),
+                    2:([1.0],[2]),
+                    3:([1.0],[3]),
+                    4:([0.6,0.4],[2,4]),
+                    5:([1.0],[2]),
+                    6:([1.0],[4]),
+                    7:([1.0],[0])}
+ 
         self.nextPsDictlinear={0:([1.0],[1]),
                     1:([1.0],[2]),
                     2:([1.0],[3]),
@@ -153,7 +171,7 @@ class BayesactAssistant:
 
         #get some key parameters from the command line
         #set much larger to mimic interact (>5000)
-        self.num_samples=100
+        self.num_samples=1000
 
 
         # use 0.0 for mimic interact simulations
@@ -165,7 +183,7 @@ class BayesactAssistant:
         #set to 0.05 or less to mimic interact
         self.obs_noise=0.5
 
-        self.xobsnoise=0.01
+        self.xobsnoise=0.00001
         self.simul_xobsnoise=0.00001
 
         if self.mimic_interact:
@@ -269,7 +287,8 @@ class BayesactAssistant:
                               gamma_value=self.obs_noise,beta_value_agent=self.bvagent,beta_value_client=self.bvclient,
                               beta_value_client_init=self.agent_learn_beta_client_init,beta_value_agent_init=self.learn_beta_agent_init,
                               client_gender=self.client_gender,agent_gender=self.agent_gender,use_pomcp=self.use_pomcp,
-                              agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.xobsnoise, 
+                              agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict,
+                              nextbd = self.nextBehDict, onoise=self.xobsnoise, 
                               fixed_policy=self.fixed_policy,pomcp_interactive=True,
                               numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
 
@@ -279,7 +298,7 @@ class BayesactAssistant:
                         gamma_value=self.obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
                         beta_value_client_init=self.simul_learn_beta_client_init,beta_value_agent_init=self.simul_learn_beta_agent_init,
                         client_gender=self.agent_gender,agent_gender=self.client_gender,
-                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDict, onoise=self.simul_xobsnoise,
+                        agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDictOld, onoise=self.simul_xobsnoise,
                         numcact=self.numcact,numdact=self.numdact,obsres=self.obsres,actres=self.actres,pomcp_timeout=self.timeout)
 
         self.learn_initx=[self.initial_learn_turn,self.initial_px]
@@ -339,19 +358,19 @@ class BayesactAssistant:
 		
     
     def calculate_helper(self, epa, action):
-        print 10*"#"," current turn: ",self.learn_turn," ",10*"#"
+        print 10*"-"," current turn: ",self.learn_turn," ",10*"-"
 
         self.observ=[]
-        print 10*"-","iter ",self.iter,80*"-"
+#        print 10*"-","iter ",self.iter,80*"-"
 
         (self.learn_aab,self.learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
 #        print "agent action/client observ: ",self.learn_aab        
-        self.simul_observ=self.learn_aab
+#        self.simul_observ=self.learn_aab
 #        print "agent prop. action: ",self.learn_paab
         
-        (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
+#        (self.simul_aab,self.simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
 #        print "client action/agent observ: ",self.simul_aab,
-        self.learn_observ=self.simul_aab
+#        self.learn_observ=self.simul_aab
 #        print "client prop. action: ",self.simul_paab
 
 
@@ -370,44 +389,55 @@ class BayesactAssistant:
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
             result_epa = self.learn_aab
-            result_action = self.learn_paab
+            result_action = self.convert_prompt_number(self.learn_paab)
             print "agent will act :",self.learn_aab
             print "corresponding propositional prompt is:", self.learn_paab
-            self.simul_observ=self.learn_aab
+#            self.simul_observ=self.learn_aab
             self.learn_observ=[]  #awkward
         else:
             #now, this is where the client actually decides what to do, possibly looking at the suggested labels 
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
-            self.simul_aab=epa
-            print "client performed action: ",self.simul_aab
-            self.learn_observ=self.simul_aab
-            self.simul_observ=[]  #awkward
+#            self.simul_aab=epa
+            print "client performed action: ",epa
+            self.learn_observ=epa
+#            self.simul_observ=[]  #awkward
 
         
-        #observation of planstep - 
-        self.ps_obs = action
-        self.ps_obs = int(self.ps_obs)
+        #observation of behaviour - 
+        if self.do_automatic:
+            self.behav_obs = action
+            self.behav_obs = int(self.behav_obs)
+        else:
+		    gotbeh=False
+		    while not gotbeh:
+		        self.behav_obs = raw_input("Enter behaviour observation (from 0 to "+str(self.num_behaviours-1)+") : ")
+		        try:
+		            self.behav_obs = int(self.behav_obs)
+		            if self.behav_obs>=0 and self.behav_obs<self.num_behaviours:
+		                gotbeh=True
+		        except ValueError:
+		            gotbeh=False
 
 
         if self.learn_turn=="client" and self.learn_observ==[]:
             self.done = True
         elif self.learn_turn=="agent" and self.learn_aab==[]:
             self.done = True
-        elif self.iter > self.max_num_iterations:
-            self.done = True
-        elif self.simul_agent.is_done():
-            print "all done"
-            self.done = True
+#        elif self.iter > self.max_num_iterations:
+#            self.done = True
+#        elif self.simul_agent.is_done():
+#            print "all done"
+#            self.done = True
         else:
-            self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.ps_obs]
+            self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.behav_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
 
 #            print "agent f is: "
 #            self.learn_avgs.print_val()
 
             #learn_paab is passed into client as the x-observation
-            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
-            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
+#            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
+#            self.simul_avgs=self.simul_agent.propagate_forward(self.simul_aab,self.simul_observ,xobserv=self.simul_xobs,paab=None,verb=self.learn_verbose)
 
 #            print "client f is: "
 #            self.simul_avgs.print_val()
@@ -448,19 +478,36 @@ class BayesactAssistant:
         elif self.learn_turn=="agent":
             self.learn_turn="client"
 
-        if self.simul_turn=="client":
-            self.simul_turn="agent"
-        elif self.simul_turn=="agent":
-            self.simul_turn="client"
+#       if self.simul_turn=="client":
+#            self.simul_turn="agent"
+#        elif self.simul_turn=="agent":
+#            self.simul_turn="client"
         return (self.done,result_epa,result_action)
         
     def calculate(self, epa, action):
 		self.calculate_helper(epa, action)
 		return self.calculate_helper(epa, action)
+		
+    def convert_prompt_number(self, learn_paab):
+		curr_planstep = int(self.learn_agent.get_most_likely_planstep())
+		if (curr_planstep==0 and learn_paab==2) or (curr_planstep==2 and learn_paab==2):
+			return 1 #behaviour: wateron
+		elif (learn_paab==1):
+			return 2 #behaviour: put on soap
+		elif (learn_paab==3):
+			return 3 #behaviour: rinse hands
+		elif (learn_paab==4):
+			return 5 #behaviour: use towel
+		elif (curr_planstep==4 and learn_paab==2) or (curr_planstep==5 and learn_paab==2):
+			return 4 #behaviour: wateroff
+		elif (curr_planstep==7):
+			return 6 #behaviour: all done; goodbye
+		else:
+		    return 0 #behaviour: nothing(i.e. no prompt)
 
     def __del__(self):
-        print "final simul agent state: "
-        self.simul_agent.print_state()
+        print "destructing... "
+        #self.simul_agent.print_state()
 
 if __name__ == "__main__":
     bayesact_assistant = BayesactAssistant()

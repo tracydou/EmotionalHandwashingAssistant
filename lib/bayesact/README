@@ -1,3 +1,30 @@
+Places changed by Luyuan Lin:
+
+* Wrote bayesactlib.py basing on bayesactassistant.py
+  - packed funcs in the latter into class BayesactAssistant defined in the former
+  - set use_pomcp to FALSE
+  - the most essential changes are:
+    (in member func calculate()) patient actions are passed in as arguments and prompts
+    the assistant should perform are returned
+* Added member func "convert_prompt_number()", which converts learn_paab
+  to prompt-number value that is consistant with ../../data/OutputMappingResult.csv
+  and thus can be recoganized correctly by PromptSelecter
+  - this func depends on the hard-coded values of reconPsDict in bayesact.py
+  - this func should be consistant with values of "prompt_number" in
+    ../../data/OutputMappingResult.csv
+    
+* If you want to try out the most recent implementation of bayesact engine, then you should
+  1) copy & update the following files from https://github.com/jessehoey/bayesact:
+     - bayesact.py
+     - assistant.py
+     - pwid.py (optional; recommend to change)
+     - bayesactassistant.py (optional; recommend to change)
+  2) update bayesactlib.py if needed. For example, if signature of member funcs in class Assistant
+     changed, then you might need to update bayesactlib.py as well. A good way to decide if
+     bayesactlib.py needs change or not is to compare the latest bayesactassistant.py with current one. 
+
+
+----------------------------- Original README Followed --------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey

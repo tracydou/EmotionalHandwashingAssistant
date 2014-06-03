@@ -165,8 +165,12 @@ double distance(const vector<double>& real_epa, const vector<double>& desired_ep
 
 // If no proper prompt is found, then a default video will be played    
 string PromptSelecter::Select(const vector<double>& EPA, int prompt) {
-	string prompt_filename = default_prompt_;
-	int starting_index = FindStartingIndexOfProposition(prompt);
+  string prompt_filename = "";
+  if (prompt == NO_PROMPT_PLEASE) {
+    return prompt_filename;
+  }
+  prompt_filename = default_prompt_;
+  int starting_index = FindStartingIndexOfProposition(prompt);
   if (starting_index != NOT_FOUND_PROPOSITION_PROMPT) {
     double current_dist = MAX_DIST;
     for (unsigned int i = starting_index; i < items_.size(); ++i) {

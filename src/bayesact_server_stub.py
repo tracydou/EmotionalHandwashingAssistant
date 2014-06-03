@@ -20,8 +20,7 @@ def server_stub(address_string):
 	print("BayesActServer started!")
 
 	bayesact = BayesactAssistant()
-	finished = False
-	while not finished:
+	while True:
 		print("[log] BaysActServer: Waiting for request...\n")
 		#  Wait for next request from client
 		request_message = socket.recv()
@@ -36,6 +35,7 @@ def server_stub(address_string):
 		response.potency = float(result_epa[1])
 		response.activity = float(result_epa[2])
 		response.prompt = int(result_prompt)
+		response.is_done = bool(finished)
 		
 		#  Send reply back to client
 		response_message = response.SerializeToString()
@@ -63,4 +63,5 @@ def bayesact_tester():
 
 if __name__ == "__main__":
 	server_stub(sys.argv[-1])
+#	bayesact_tester()
 

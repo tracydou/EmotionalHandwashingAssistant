@@ -18,10 +18,10 @@ class BayesactRequest;
 class BayesactResponse;
 
 BayesactClient::BayesactClient(string addr):
-  context(1), socket(context, ZMQ_REQ) {
+  context_(1), socket_(context_, ZMQ_REQ) {
   // set up connection to server
   cout << "Connecting to server..." << endl;
-  socket.connect(addr.c_str());
+  socket_.connect(addr.c_str());
 }
 
 BayesactClient::~BayesactClient() {
@@ -42,7 +42,7 @@ bool BayesactClient::Send(const vector<double>& epa, int hand_action) {
     cout << "Message.SerializeToString(&buffer) Failed!" << endl;
     return false;
   } else {
-    socket.send(message.c_str(), message.length());
+    socket_.send(message.c_str(), message.length());
     cout << "[Log Info] BayesactClient: Sent Request Message:" << endl
          << request.DebugString()
          << "Waiting for BayesactServer's response..." << endl;
@@ -53,28 +53,32 @@ bool BayesactClient::Send(const vector<double>& epa, int hand_action) {
 // receive & decode responded epa & prompt
 bool BayesactClient::Receive() {
   zmq::message_t message;
-  socket.recv(&message);
-  if (!response.ParseFromString(
+  socket_.recv(&message);
+  if (!response_.ParseFromString(
     string((const char *)message.data(), message.size()))) {
     cout << "Message.ParseFromString(buffer) Failed!" << endl;
     return false;
   } else {
     cout << "[Log Info] BayesactClient: Response Message received:" << endl
-         << response.DebugString() << endl;    
+         << response_.DebugString() << endl;    
     return true;
   }
 }
 
 vector<double> BayesactClient::get_response_epa() {
   vector<double> epa(3);
-  epa[0] = response.evaluation();
-  epa[1] = response.potency();
-  epa[2] = response.activity();
+  epa[0] = response_.evaluation();
+  epa[1] = response_.potency();
+  epa[2] = response_.activity();
   return epa;
 }
 
 int BayesactClient::get_response_prompt() {
-  return response.prompt();
+  return response_.prompt();
+}
+
+bool BayesactClient::is_done() {
+	return response_.is_done();
 }
 
 }  // namespace EHwA

@@ -1,7 +1,7 @@
 # Makefile for building the files together
 EXE_EHWA = EHwA
 
-OBJS = main.o bayesact_client.o bayesact_message.pb.o epa_calculator.o \
+OBJS = main.o bayesact_client.o bayesact_message.pb.o epa_calculator.o defines.o \
 prompt_selecter.o tracker_client.o prompt_player.o hand_tracker_message.pb.o
 
 HDRS = bayesact_client.hpp bayesact_message.pb.h EPACalculator/epa_calculator.hpp \
@@ -25,13 +25,16 @@ bayesact_message.pb.o : bayesact_message.pb.h bayesact_message.pb.cc
 	$(CC) $(CFLAGS) bayesact_message.pb.cc
 
 bayesact_client.o : bayesact_client.hpp bayesact_message.pb.h bayesact_client.cpp defines.hpp
-	$(CC) $(CFLAGS) bayesact_client.cpp
+	$(CC) $(CFLAGS) bayesact_client.cpp defines.cpp
 
 epa_calculator.o : EPACalculator/epa_calculator.hpp defines.hpp EPACalculator/epa_calculator.cpp 
-	$(CC) $(CFLAGS) EPACalculator/epa_calculator.cpp 
+	$(CC) $(CFLAGS) EPACalculator/epa_calculator.cpp defines.cpp
+
+defines.o : defines.hpp defines.cpp
+	$(CC) $(CFLAGS) defines.cpp
 
 tracker_client.o : tracker_client.hpp defines.hpp ../lib/hand_tracker/hand_tracker_message.pb.h tracker_client.cpp
-	$(CC) $(CFLAGS) tracker_client.cpp ../lib/hand_tracker/hand_tracker_message.pb.cc
+	$(CC) $(CFLAGS) tracker_client.cpp defines.cpp ../lib/hand_tracker/hand_tracker_message.pb.cc
 	
 prompt_selecter.o : prompt_selecter.hpp ../lib/csv_parser/csv_v3.h prompt_selecter.cpp
 	$(CC) $(CFLAGS) prompt_selecter.cpp

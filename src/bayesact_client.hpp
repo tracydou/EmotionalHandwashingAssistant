@@ -28,11 +28,12 @@ public:
   bool Receive(); // receive & decode responded epa & prompt
   vector<double> get_response_epa(); // call after Receive() is called
   int get_response_prompt(); // call after Receive() is called
+  bool is_done(); // call after Receive() is called
   
 private:
-  zmq::context_t context;
-  zmq::socket_t socket;
-  BayesactResponse response;
+  zmq::context_t context_;
+  zmq::socket_t socket_;
+  BayesactResponse response_;
 };
 
 }  // namespace EHwA
