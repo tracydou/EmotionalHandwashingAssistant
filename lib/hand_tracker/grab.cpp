@@ -72,6 +72,53 @@ int Grabber::setupGrabber(cameraSource typ, int width, int height, ROI roi) {
 
 		cout << "\tCamera initialized." << endl;
 		break;
+	case VID:
+		cout << "\tReading from oni file" << endl;
+
+		capture.open("vid.oni");
+		if (!capture.isOpened()) {
+			cout << "\toni file cannot be read." << endl;
+			return (0);
+		} else {
+			isCamera = 1;			// Camera connected and initialized
+
+			// Read depth generator sensor configuration data
+
+			// OpenNI stuff for projective-world coordinate conversion
+			xn::DepthGenerator depth;
+
+			// Initialize context object
+			if( context.Init() != XN_STATUS_OK){
+				cout << "\tFailed to initialize context object." << endl;
+			}
+
+			// Create a depth generator node
+			if(depth.Create(context) != XN_STATUS_OK){
+				cout << "\tFailed to create depth generator node." << endl;
+				return(1);
+			}
+			else{
+				cout << "\tDepth generator node created." << endl;
+				isDepthGenerator = 1;
+			}
+
+			// Capture sensor confguration parameters for future use with conversion between projective and real-world coordinates
+			XnMapOutputMode depthMapMode;
+			depth.GetMapOutputMode(depthMapMode);
+
+			xRes = depthMapMode.nXRes;
+			yRes = depthMapMode.nYRes;
+
+			XnFieldOfView FOV;
+			depth.GetFieldOfView(FOV);
+
+			fXToZ = tan(FOV.fHFOV/2)*2;
+			fYToZ = tan(FOV.fVFOV/2)*2;
+
+			cout << "\toni file initialized." << endl;
+			
+		}
+		break;
 	case KIN:
 	{
 		cout << "\tInitializing Kinect..." << endl;
@@ -188,6 +235,7 @@ int Grabber::getRawRGBImage( Mat &rgbim) {
 
 	switch (source) {
 	case WEB:
+	case VID:
 	case KIN:{
 
 		captureRGB(rgbim);
@@ -220,6 +268,7 @@ int Grabber::getRawDepthImage(Mat& depthim, Mat& depthmask) {
 
 	}
 	break;
+	case VID:
 	case KIN:{
 		if( !capture.grab() )
 		{
@@ -299,6 +348,7 @@ int Grabber::getRawImages(Mat& rgbim, Mat &depthim, Mat& depthmask) {
 
 	}
 	break;
+	case VID:
 	case KIN:{
 
 		if( !capture.grab() )
@@ -677,6 +727,7 @@ int Grabber::release(){
 int Grabber::shutDown() {
 	switch ( source ){
 	case WEB:
+	case VID:
 	case KIN:
 		context.Release();
 		if (capture.isOpened())

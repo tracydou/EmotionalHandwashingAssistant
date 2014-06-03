@@ -201,7 +201,7 @@ int trainTree(string dirTrain = "", string dirCheck = "");
 
 // Main
 void usage();
-gint mainIdle(void* data);
+gint handTrackerIdle(void* data);
 
 // decision tree training thread parameters
 struct trainParams{
@@ -569,6 +569,14 @@ static void gtkSwitchSource ( GtkWidget *widget, gpointer data){
 		gtk_button_set_label(GTK_BUTTON(sourceButton), "Source: DISK");
 	}
 	else if (curSource == DISK){
+		runConf.source = VID;
+		initGrabber(VID, 640, 480, roi, BUFFER_SIZE);
+
+		updateGrabber(0);
+
+		gtk_button_set_label(GTK_BUTTON(sourceButton), "Source: VID");
+	}
+	else if (curSource == VID) {
 		runConf.source = KIN;
 		initGrabber(KIN, 640, 480, roi, BUFFER_SIZE);
 
@@ -1734,6 +1742,8 @@ void loadConfig (string file)
 					runConf.source = KIN;
 				else if (type == "DISK")
 					runConf.source = DISK;
+				else if (type == "VID")
+					runConf.source = VID;
 			}
 			else if (head == "DISK_PATH"){
 				string path;

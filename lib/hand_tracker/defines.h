@@ -53,7 +53,8 @@ typedef enum {
 	NONE = 0,
 	WEB,			// Webcam
 	KIN,			// Kinect
-	DISK			// File
+	DISK,			// File
+	VID			// Video file (added by lly)
 } cameraSource;
 
 typedef enum {
