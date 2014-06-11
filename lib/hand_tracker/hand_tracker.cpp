@@ -2116,7 +2116,7 @@ void initGrabber(cameraSource typ, int ncols, int nrows, ROI roi, unsigned int s
 	// TODO add something here to release the grabber if it already exists before initializing it again
 	grabber = new Grabber(typ, 640, 480, roi, BUFFER_SIZE);
 
-	if (grabber->source == DISK || grabber->source == NONE){
+	if (grabber->source == DISK || grabber->source == VID || grabber->source == NONE){
 		if(loadCamConfig("/configCamera.txt")){				// Load camera parameters for conversion between real-world and projective coordinates
 			if(VERBOSE)
 				cout << "Camera configuration file loaded successfully." << endl;
