@@ -1,10 +1,10 @@
 # Makefile for building the files together
 EXE_EHWA = EHwA
 
-OBJS = main.o bayesact_client.o bayesact_message.pb.o epa_calculator.o defines.o \
+OBJS = main.o bayesact_client.o bayesact_message.pb.o buffer.o epa_calculator.o defines.o \
 prompt_selecter.o tracker_client.o prompt_player.o hand_tracker_message.pb.o
 
-HDRS = bayesact_client.hpp bayesact_message.pb.h EPACalculator/epa_calculator.hpp \
+HDRS = bayesact_client.hpp bayesact_message.pb.h buffer.hpp EPACalculator/epa_calculator.hpp \
 prompt_selecter.hpp defines.hpp tracker_client.hpp ../lib/hand_tracker/hand_tracker_message.pb.h \
 prompt_player.hpp
 
@@ -26,6 +26,9 @@ bayesact_message.pb.o : bayesact_message.pb.h bayesact_message.pb.cc
 
 bayesact_client.o : bayesact_client.hpp bayesact_message.pb.h bayesact_client.cpp defines.hpp
 	$(CC) $(CFLAGS) bayesact_client.cpp defines.cpp
+
+buffer.o : buffer.hpp EPACalculator/epa_calculator.hpp buffer.cpp EPACalculator/epa_calculator.cpp  
+	$(CC) $(CFLAGS) buffer.cpp EPACalculator/epa_calculator.cpp 
 
 epa_calculator.o : EPACalculator/epa_calculator.hpp defines.hpp EPACalculator/epa_calculator.cpp 
 	$(CC) $(CFLAGS) EPACalculator/epa_calculator.cpp defines.cpp
@@ -49,4 +52,4 @@ handtracker_proto : ../lib/hand_tracker/hand_tracker_message.proto
 	$(PBC) ../lib/hand_tracker/hand_tracker_message.proto --proto_path=../lib/hand_tracker/ --cpp_out=../lib/hand_tracker/
 
 clean :
-	\rm $(EXE_EHWA) $(OBJS) bayesact_message.pb.* bayesact_message_pb2.*
+	\rm $(EXE_EHWA) $(OBJS) bayesact_message.pb.* bayesact_message_pb2.* EPACalculator/*.o

@@ -7,17 +7,13 @@
 #include "epa_calculator.hpp"
 namespace EHwA {
 
-const double EPACalculator::THRESHOLD_DIST_FOR_POTENCY = 100;
-const double EPACalculator::THRESHOLD_DIFF_FOR_ACTIVITY = 100;
+const double EPACalculator::THRESHOLD_DIST_FOR_POTENCY = 150;
+const double EPACalculator::THRESHOLD_DIFF_FOR_ACTIVITY = 30;
 const double EPACalculator::max_epa = 4.3;
 const double EPACalculator::min_epa = -4.3;
 
 EPACalculator::EPACalculator() {
-  // init currentEPA to <0,0,0>
-  current_epa_.resize(3);
-  for (int i = 0; i < 3; ++i) {
-	  current_epa_[i] = 0.0;
-  }
+  // do nothing
 }
 
 EPACalculator::~EPACalculator() {
@@ -68,18 +64,11 @@ double EPACalculator::ConvertDiffToActivity(
 vector<double> EPACalculator::Calculate(
   const list<pair<Position, Position> >& hand_pos) {
   // currently "evaluation" stays as 0.0 for the whole process
-  current_epa_[1] = ConvertDistToPotency(hand_pos);
-  current_epa_[2] = ConvertDiffToActivity(hand_pos);
-  return current_epa_;
-}
-
-vector<double> EPACalculator::get_current_epa() const{
-  //return current_epa_;
-  vector<double> v;
-  for (int i = 0; i < 3; ++i) {
-    v.push_back(current_epa_[i]);
-  }
-  return v;
+  vector<double> epa(3);
+  epa[0] = 0;
+  epa[1] = ConvertDistToPotency(hand_pos);
+  epa[2] = ConvertDiffToActivity(hand_pos);
+  return epa;
 }
 
 }  // namespace

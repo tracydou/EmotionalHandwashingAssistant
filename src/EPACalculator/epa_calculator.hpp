@@ -32,9 +32,8 @@ class EPACalculator {
     // Input positions of hands frames over a set of frames,
     // update & return currentEPA
     // Prerequest: most recent positions are at the beginning of hand_pos
-    vector<double> Calculate(
+    static vector<double> Calculate(
       const list<pair<Position, Position> >& hand_pos);
-    vector<double> get_current_epa() const;
     
     // define here, instantiate in .cpp
     const static double THRESHOLD_DIST_FOR_POTENCY;
@@ -43,12 +42,10 @@ class EPACalculator {
     const static double min_epa;
    
   protected:
-    double ConvertDistToPotency(
+    static double ConvertDistToPotency(
       const list<pair<Position, Position> >& hand_pos);
-    double ConvertDiffToActivity(
+    static double ConvertDiffToActivity(
       const list<pair<Position, Position> >& hand_pos);
-  
-    vector<double> current_epa_;
 };
 
 }    // namespace EHwA
