@@ -386,6 +386,13 @@ class BayesactAssistant:
         result_epa = [0,0,0]
         result_action = 0
         
+        if self.learn_turn=="client" and self.do_automatic == False:
+            e = raw_input("Enter epa values of user action: ")
+            p = raw_input("Enter epa values of user action: ")
+            a = raw_input("Enter epa values of user action: ")
+            epa = [float(e),float(p),float(a)]
+            
+                
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
             result_epa = self.learn_aab
@@ -397,9 +404,11 @@ class BayesactAssistant:
         else:
             #now, this is where the client actually decides what to do, possibly looking at the suggested labels 
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
-#            self.simul_aab=epa
+            #self.simul_aab=epa
             print "client performed action: ",epa
-            self.learn_observ=epa
+            # feedin "default-value-as-fb + epa-calculated-for-behaviours"
+            # func convert_epa(epa) defined at end of file
+            self.learn_observ=self.convert_epa_for_user_behaviour(epa)
 #            self.simul_observ=[]  #awkward
 
         
@@ -408,15 +417,15 @@ class BayesactAssistant:
             self.behav_obs = action
             self.behav_obs = int(self.behav_obs)
         else:
-		    gotbeh=False
-		    while not gotbeh:
-		        self.behav_obs = raw_input("Enter behaviour observation (from 0 to "+str(self.num_behaviours-1)+") : ")
-		        try:
-		            self.behav_obs = int(self.behav_obs)
-		            if self.behav_obs>=0 and self.behav_obs<self.num_behaviours:
-		                gotbeh=True
-		        except ValueError:
-		            gotbeh=False
+            gotbeh=False
+            while not gotbeh:
+                self.behav_obs = raw_input("Enter behaviour observation (from 0 to "+str(self.num_behaviours-1)+") : ")
+                try:
+                    self.behav_obs = int(self.behav_obs)
+                    if self.behav_obs>=0 and self.behav_obs<self.num_behaviours:
+                        gotbeh=True
+                except ValueError:
+                    gotbeh=False
 
 
         if self.learn_turn=="client" and self.learn_observ==[]:
@@ -432,8 +441,24 @@ class BayesactAssistant:
             self.learn_xobs=[State.turnnames.index(invert_turn(self.learn_turn)),self.behav_obs]
             self.learn_avgs=self.learn_agent.propagate_forward(self.learn_aab,self.learn_observ,xobserv=self.learn_xobs,paab=self.learn_paab,verb=self.learn_verbose)
 
-#            print "agent f is: "
-#            self.learn_avgs.print_val()
+            if self.learn_turn == "agent":
+                outfile = open("agent.txt", "a")
+                outfile.write(str(self.learn_agent.get_most_likely_planstep())) #ps
+                outfile.write(" ")
+                outfile.write(str(result_action)) #prop of prompt
+                outfile.write(" ")
+                outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
+                outfile.write(" ")
+                outfile.write(str(result_epa)[1:-1]) #epa of prompt
+                outfile.write("\n")
+                outfile.close()
+            else:
+                outfile = open("client.txt", "a")
+                outfile.write(str(epa)[1:-1]) #epa of action
+                outfile.write(" ")
+                outfile.write(str(action)) #prop of action
+                outfile.write("\n")
+                outfile.close()
 
             #learn_paab is passed into client as the x-observation
 #            self.simul_xobs=[State.turnnames.index(invert_turn(self.simul_turn)),self.learn_paab]
@@ -490,6 +515,7 @@ class BayesactAssistant:
 		
     def convert_prompt_number(self, learn_paab):
 		curr_planstep = int(self.learn_agent.get_most_likely_planstep())
+		print "Most likely current planstep: ", curr_planstep
 		if (curr_planstep==0 and learn_paab==2) or (curr_planstep==2 and learn_paab==2):
 			return 1 #behaviour: wateron
 		elif (learn_paab==1):
@@ -504,6 +530,15 @@ class BayesactAssistant:
 			return 6 #behaviour: all done; goodbye
 		else:
 		    return 0 #behaviour: nothing(i.e. no prompt)
+            
+    def convert_epa_for_user_behaviour(self, epa):
+        result_epa = self.learn_avgs.f[3:6]
+        for i in [0,1,2] :
+            print "i=", i
+            print "result_epa[i]=", result_epa[i]
+            print "epa[i]=", epa[i]
+            result_epa[i] += epa[i]/2
+        return result_epa
 
     def __del__(self):
         print "destructing... "
