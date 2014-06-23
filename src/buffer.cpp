@@ -50,6 +50,7 @@ namespace EHwA {
         if (hand_action == behaviour_state_A_) {
             time_count_A_ ++;
             if (time_count_A_ == threshold_timeout_) {
+                cout << "[loginfo:] ---------- timeout!" << endl;
                 ChangeToState(STATE_C, behaviour_state_A_);
             }
         } else {
@@ -80,11 +81,8 @@ namespace EHwA {
                
   void Buffer::ChangeToState(int new_state, int new_behaviour) {
     if (new_state == STATE_C) { // current behaviour already been assigned to behaviour_state_A_
-        if (current_state_ == STATE_A) {
-            time_count_A_ = 0;
-        } else { // if (current_state_ == STATE_B) 
-            time_count_B_ = 0;
-        }
+        time_count_A_ = 0;
+        time_count_B_ = 0;
         current_state_ = STATE_C;
     } else if (new_state == STATE_A) {
         if (current_state_ == STATE_C) {
