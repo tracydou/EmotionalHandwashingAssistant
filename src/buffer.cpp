@@ -87,8 +87,10 @@ namespace EHwA {
         }
         current_state_ = STATE_C;
     } else if (new_state == STATE_A) {
-        if (current_state_ == STATE_C) { // current behaviour already been assigned to behaviour_state_A_
+        if (current_state_ == STATE_C) {
             time_count_A_ = 0;
+            behaviour_state_A_ = new_behaviour;
+            current_state_ = STATE_A;
         } else { // current_state_ == STATE_B
             if (time_count_A_ + time_count_B_ >= threshold_timeout_) {
                 if (time_count_A_ > time_count_B_) {
@@ -104,7 +106,8 @@ namespace EHwA {
     } else { // new_state == STATE_B, current_state_ == STATE_A
         time_count_B_ = 0;
         behaviour_state_B_ = new_behaviour;
-    }  
+        current_state_ = STATE_B;
+    }
   }
   
 }  // namespace EHwA
