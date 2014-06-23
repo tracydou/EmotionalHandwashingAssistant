@@ -82,7 +82,7 @@ class BayesactAssistant:
         self.mimic_interact=False
 
         #if True, don't ask client just run
-        self.do_automatic=True
+        self.do_automatic=False
 
         self.use_pomcp=False
 
@@ -385,13 +385,12 @@ class BayesactAssistant:
         #initialize
         system_action_epa = [0,0,0]
         system_action = 0
-        
-        if self.learn_turn=="client" and self.do_automatic == False:
-            e = raw_input("Enter epa values of user action: ")
-            p = raw_input("Enter epa values of user action: ")
-            a = raw_input("Enter epa values of user action: ")
-            epa = [float(e),float(p),float(a)]
-            
+      
+#        if self.learn_turn=="client" and self.do_automatic == False:
+#            e = raw_input("Enter epa values of user action: ")
+#            p = raw_input("Enter epa values of user action: ")
+#            a = raw_input("Enter epa values of user action: ")
+#            epa = [float(e),float(p),float(a)]         
                 
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
@@ -534,9 +533,6 @@ class BayesactAssistant:
     def convert_epa_for_user_behaviour(self, epa):
         result_epa = self.learn_avgs.f[3:6]
         for i in [0,1,2] :
-            print "i=", i
-            print "result_epa[i]=", result_epa[i]
-            print "epa[i]=", epa[i]
             result_epa[i] += epa[i]/2
         return result_epa
 
