@@ -383,8 +383,8 @@ class BayesactAssistant:
 #        print "agent advises the following action :",self.simul_aab,"\n  closest labels are: ", [re.sub(r"_"," ",i.strip()) for i in self.simul_aact]
         
         #initialize
-        result_epa = [0,0,0]
-        result_action = 0
+        system_action_epa = [0,0,0]
+        system_action = 0
         
         if self.learn_turn=="client" and self.do_automatic == False:
             e = raw_input("Enter epa values of user action: ")
@@ -395,8 +395,8 @@ class BayesactAssistant:
                 
         if self.learn_turn=="agent":
             #tracy#used to call "learn_aab=ask_client(fbehaviours_agent,learn_aact,learn_aab)"
-            result_epa = self.learn_aab
-            result_action = self.convert_prompt_number(self.learn_paab)
+            system_action_epa = self.learn_aab
+            system_action = self.convert_prompt_number(self.learn_paab)
             print "agent will act :",self.learn_aab
             print "corresponding propositional prompt is:", self.learn_paab
 #            self.simul_observ=self.learn_aab
@@ -445,11 +445,11 @@ class BayesactAssistant:
                 outfile = open("agent.txt", "a")
                 outfile.write(str(self.learn_agent.get_most_likely_planstep())) #ps
                 outfile.write(" ")
-                outfile.write(str(result_action)) #prop of prompt
+                outfile.write(str(system_action)) #prop of prompt
                 outfile.write(" ")
                 outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
                 outfile.write(" ")
-                outfile.write(str(result_epa)[1:-1]) #epa of prompt
+                outfile.write(str(system_action_epa)[1:-1]) #epa of prompt
                 outfile.write("\n")
                 outfile.close()
             else:
@@ -507,7 +507,7 @@ class BayesactAssistant:
 #            self.simul_turn="agent"
 #        elif self.simul_turn=="agent":
 #            self.simul_turn="client"
-        return (self.done,result_epa,result_action)
+        return (self.done,system_action_epa,system_action)
         
     def calculate(self, epa, action):
 		self.calculate_helper(epa, action)
