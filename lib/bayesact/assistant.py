@@ -11,6 +11,7 @@ Research sponsored by the Natural Sciences and Engineering Council of Canada (NS
 see README for details
 ----------------------------------------------------------------------------------------------"""
 
+from random import randint
 from bayesact import *
 import copy
 
@@ -96,11 +97,15 @@ class Assistant(Agent):
 
 
     def get_most_likely_planstep(self):
-        ps_votes=[0]*self.num_plansteps
+        ps_belief=[0]*self.num_plansteps
         for s in self.samples[1:]:
-            ps_votes[s.x[1]] += 1
-        print "in get_most_likely_planstep(), planstep votes =", ps_votes
-        return NP.argmax(ps_votes)
+            ps_belief[s.x[1]] += s.weight
+        print "in get_most_likely_planstep(), planstep belief =", ps_belief
+        outfile = open("ps_belief.txt", "a")
+        outfile.write(str(ps_belief)[1:-1])
+        outfile.write("\n")
+        outfile.close()
+        return NP.argmax(ps_belief)
 
 
 
@@ -169,8 +174,8 @@ class Assistant(Agent):
         new_awareness=awareness
         new_planstep=planstep
 
-        new_behaviour = 0  #could be randomized
-
+        new_behaviour = 0
+#        new_behaviour = randint(0,4)  #initialize behaviour randomly
 
         if state.get_turn()=="agent":
             #agent turn - save action - why?
