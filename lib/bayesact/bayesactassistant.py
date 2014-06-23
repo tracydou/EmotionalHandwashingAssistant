@@ -1,4 +1,6 @@
 """------------------------------------------------------------------------------------------
+** This file is copied from the bayesactassistant.py file from Jesse's github - June 20, 2014
+
 Bayesian Affect Control Theory
 Assistance Interactive Example
 Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey
@@ -32,7 +34,9 @@ NP.set_printoptions(linewidth=10000)
 #1 : one of a selection of  num_confusers+1 randoms
 #2 : exactly - use this to mimic interact
 #3 : same as 0 but also agent does not know its own id
-agent_knowledge=0
+agent_knowledge=2
+
+client_knowledge=2
 
 # agent gender
 agent_gender="male"
@@ -47,10 +51,12 @@ agent_id="assistant"
 
 #can also set the client id here if agent_knowledge = 2 (knows id of client - see above)
 #if agent_knowledge is 0 then this is ignored
-client_id = "patient"
+#client_id = "patient"
+client_id = "boss"
 
 #what is the client really? 
-true_client_id = "patient"
+#true_client_id = "patient"
+true_client_id = "elder"
 #true_client_id = "psychotic"
 #client_id = ""
 
@@ -93,7 +99,7 @@ get_full_id_rate=-1
 mimic_interact=False
 
 #if True, don't ask client just run
-do_automatic=False
+do_automatic=True
 
 use_pomcp=False
 
@@ -122,11 +128,11 @@ max_num_iterations=50
 nextPsDict={0:{0:([1.0],[0]),1:([1.0],[2]),2:([0.8,0.2],[1,0]),3:([1.0],[0]),4:([1.0],[0])},
             1:{0:([1.0],[1]),1:([1.0],[3]),2:([0.8,0.2],[1,0]),3:([1.0],[1]),4:([1.0],[1])},
             2:{0:([1.0],[2]),1:([1.0],[2]),2:([0.8,0.2],[3,2]),3:([1.0],[2]),4:([1.0],[0])},
-            3:{0:([1.0],[3]),1:([1.0],[3]),2:([0.8,0.2],[3,2]),3:([1.0],[4]),4:([1.0],[1])},
+            3:{0:([1.0],[3]),1:([1.0],[3]),2:([0.6,0.4],[3,2]),3:([1.0],[4]),4:([1.0],[1])},
             4:{0:([1.0],[4]),1:([1.0],[3]),2:([0.8,0.2],[6,4]),3:([1.0],[4]),4:([1.0],[5])},
             5:{0:([1.0],[5]),1:([1.0],[3]),2:([0.8,0.2],[7,5]),3:([1.0],[4]),4:([1.0],[5])},
             6:{0:([1.0],[6]),1:([1.0],[2]),2:([0.8,0.2],[6,4]),3:([1.0],[6]),4:([1.0],[7])},
-            7:{0:([1.0],[7]),1:([1.0],[2]),2:([0.8,0.2],[7,5]),3:([1.0],[7]),4:([1.0],[7])}}
+            7:{0:([1.0],[7]),1:([1.0],[2]),2:([0.6,0.4],[7,5]),3:([1.0],[7]),4:([1.0],[7])}}
 
 
 
@@ -195,7 +201,7 @@ roughening_noise=num_samples**(-1.0/3.0)
 #set to 0.05 or less to mimic interact
 obs_noise=0.5
 
-xobsnoise=0.00001
+xobsnoise=0.01
 simul_xobsnoise=0.00001
 
 if mimic_interact:
@@ -215,12 +221,7 @@ learn_verbose=False
 
 #for repeatability
 rseed = NP.random.randint(0,382948932)
-#rseed=41764004
-#rseed=159199186
-#rseed=167871892
-#rseed=52566448
-#rseed=299798854
-rseed=169814251
+#rseed=259721666
 print "random seeed is : ",rseed
 NP.random.seed(rseed)
 
@@ -320,7 +321,7 @@ true_client_id=NP.asarray([true_client_id]).transpose()
 (learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,client_mean_ids)
 
 
-(simul_tau_init,simul_prop_init,simul_beta_client_init,simul_beta_agent_init)=init_id(agent_knowledge,true_client_id,client_agent_id,agent_mean_ids)
+(simul_tau_init,simul_prop_init,simul_beta_client_init,simul_beta_agent_init)=init_id(client_knowledge,true_client_id,client_agent_id,agent_mean_ids)
 
 #overwrite these values for the interactive script only
 #do this for mimicking interact
@@ -414,7 +415,7 @@ done = False
 iter=0
 ps_obs=0
 while not done:
-    print "\n\n", 10*"#"," current turn: ",learn_turn," ",10*"#"
+    print 10*"#"," current turn: ",learn_turn," ",10*"#"
 
     observ=[]
     print 10*"-","iter ",iter,80*"-"
@@ -437,12 +438,8 @@ while not done:
             #learn_aab=[-0.09, 1.29, 1.59]  #force command every time
 
     
-    simul_agent.set_last_prompt(learn_paab)
 
-    (simul_aab,simul_paab)=simul_agent.get_next_action(simul_avgs)
-    print "client action/agent observ: ",simul_aab
-    learn_observ=simul_aab
-    print "client prop. action: ",simul_paab
+
 
 
     if learn_turn=="agent":
@@ -457,7 +454,13 @@ while not done:
         simul_observ=learn_aab
         learn_observ=[]  #awkward
 
+        #remember for next update of pwid
+        simul_agent.set_last_prompt(learn_paab)
 
+    (simul_aab,simul_paab)=simul_agent.get_next_action(simul_avgs)
+    print "client action/agent observ: ",simul_aab
+    learn_observ=simul_aab
+    print "client prop. action: ",simul_paab
 
 
     if simul_turn=="agent":
@@ -492,16 +495,7 @@ while not done:
                 gotbeh=False
         simul_agent.set_behaviour(beh_obs)
     else:
-#        beh_obs=simul_paab
-        gotbeh=False
-        while not gotbeh:
-            beh_obs = raw_input("Enter behaviour observation (from 0 to "+str(num_behaviours-1)+") : ")
-            try:
-                beh_obs = int(beh_obs)
-                if beh_obs>=0 and beh_obs<num_behaviours:
-                    gotbeh=True
-            except ValueError:
-                gotbeh=False
+        beh_obs=simul_paab
 
 
     if learn_turn=="client" and learn_observ==[]:
@@ -537,11 +531,8 @@ while not done:
         print "client thinks it is most likely a: ",aid
         print "client thinks the agent is most likely a: ",cid
         
-        print "simul_agent state is: "
+        print "client state is: "
         simul_agent.print_state()
-        
-        print "learn_agent get_most_likely_planstep is:",learn_agent.get_most_likely_planstep()
-        print "learn_agent x_avg is:",learn_agent.x_avg[1]
 
         if get_full_id_rate>0 and (iter+1)%get_full_id_rate==0:
             (cnt_ags,cnt_cls)=learn_agent.get_all_ids()
