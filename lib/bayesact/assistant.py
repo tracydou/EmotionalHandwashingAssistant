@@ -249,8 +249,7 @@ class Assistant(Agent):
     def evalSampleXvar(self,sample,xobs):
         #print sample.x[0],sample.x[1],xobs,self.of[sample.x[1]][xobs[1]]
         if sample.x[0]==xobs[0]:
-            return self.of[xobs[1]][sample.x[3]]
-            #? return self.of[sample.x[3]][xobs[1]]
+            return self.of[sample.x[3]][xobs[1]]
         else:
             return 0.0
 
