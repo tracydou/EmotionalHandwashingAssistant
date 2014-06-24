@@ -23,6 +23,7 @@ public:
 	// constructor: initializes image sizes generically,
 	// sets up the camera (if needed) of type typ
 	Grabber(cameraSource typ, int width, int height, ROI roi, unsigned int size);
+	static string vidpath;
 
 	void setDiskPath(string diskpath, string valParentDir = "");
 

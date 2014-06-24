@@ -1,4 +1,5 @@
 
+
 #include "hand_tracker.hpp"
 
 using namespace std;
@@ -4559,6 +4560,7 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 
 	char* argflag=NULL;
 	vector<string> savedTrees;
+	char* vidpath=NULL;
 
 	// Training setup - command line arguments
 	float s_band = -1;												// spearmint bandwidth
@@ -4583,6 +4585,11 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 
 		if (strcmp(argflag, "projectpath") == 0) {
 			projectPath = *++argv;
+		}
+		else if (strcmp(argflag, "vidpath") == 0) {
+			stringstream ss;
+			ss << *++argv;
+			Grabber::vidpath = ss.str();
 		}
 		else if (strcmp(argflag, "offset") == 0) {
 			offset = atoi(*++argv);
@@ -4659,7 +4666,7 @@ int hand_tracker_start( int argc, char** argv, HandTrackerServerStub* server_stu
 
 	// Initialize grabber
 	initGrabber(runConf.source, 640, 480, roi, BUFFER_SIZE);
-
+	
 	updateGrabber(0);
 
 	if (spearmint == 2)	// optimizing modefind parameters

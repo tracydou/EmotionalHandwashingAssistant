@@ -17,6 +17,8 @@
 
 using namespace std;
 
+string Grabber::vidpath;
+
 /*****************************************************************************/
 Grabber::Grabber(cameraSource typ, int ncols, int nrows, ROI roi, unsigned int size) : histogram(WIDTH*HEIGHT, vector<int>(256)) {
 
@@ -73,9 +75,9 @@ int Grabber::setupGrabber(cameraSource typ, int width, int height, ROI roi) {
 		cout << "\tCamera initialized." << endl;
 		break;
 	case VID:
-		cout << "\tReading from oni file" << endl;
+		cout << "\tReading from oni file: " << Grabber::vidpath << endl;
 
-		capture.open("vid.oni");
+		capture.open(Grabber::vidpath);
 		if (!capture.isOpened()) {
 			cout << "\toni file cannot be read." << endl;
 			return (0);
@@ -220,7 +222,6 @@ void Grabber::setDiskPath(string diskpath, string valParentDir){
 
 	this->cur_image = 0;
 	this->last_image = -1;
-
 }
 
 void Grabber::getRGBImage(Mat &rgbim) {
