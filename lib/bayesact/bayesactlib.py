@@ -183,7 +183,7 @@ class BayesactAssistant:
         #set to 0.05 or less to mimic interact
         self.obs_noise=0.5
 
-        self.xobsnoise=0.00001
+        self.xobsnoise=0.01
         self.simul_xobsnoise=0.00001
 
         if self.mimic_interact:
