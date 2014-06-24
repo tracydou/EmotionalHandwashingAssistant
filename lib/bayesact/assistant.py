@@ -25,7 +25,7 @@ class Assistant(Agent):
         #the third is the binary awareness of the client 0/1
         #the fourth is the last behaviour of the client
 
-        self.obs_noise = kwargs.get("onoise",0.001)
+        self.obs_noise = kwargs.get("onoise",0.1)
 
         #dictionary defining the dynamics of the state
         self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})
@@ -38,11 +38,10 @@ class Assistant(Agent):
 
 
         #initial awarness distribution
-        self.px = [0.9,0.1]
+        self.px = [0.3,0.7]
 
-        self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
-        #self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
-        self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
+        self.defb = [1.0,0.99,0.9,0.3,0.2,0.1,0.05,0.005,0.001,0.0001]
+        self.defbnp = [0.8,0.6,0.3,0.2,0.1,0.05,0.005,0.002,0.001,0.0001]
 
 
         #observation is only of the planstep (and the turn - [turn,planstep])
@@ -117,8 +116,6 @@ class Assistant(Agent):
             (aab,paab)=self.get_default_predicted_action(state)
         else:
             (aab,paab)=self.get_null_action()
-            #in any case, get the propositional action (always happens)
-            paab = self.get_prop_action(state)
             
         return (aab,paab)
 
@@ -248,6 +245,7 @@ class Assistant(Agent):
         #print sample.x[0],sample.x[1],xobs,self.of[sample.x[1]][xobs[1]]
         if sample.x[0]==xobs[0]:
             return self.of[xobs[1]][sample.x[3]]
+            #? return self.of[sample.x[3]][xobs[1]]
         else:
             return 0.0
 
