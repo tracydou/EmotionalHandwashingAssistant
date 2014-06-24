@@ -43,7 +43,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     TrackerClient tracker_client(hand_tracker_addr);
     cout << "=============== Clients have been set up! =============" << endl << endl;
     // Define and initialize pipeline variables
-    Buffer buffer(100,1);
+    Buffer buffer(300,1);
     PromptSelecter prompt_selecter(output_mapping_filename, default_prompt_filename);
     PromptPlayer prompt_player;
     bool is_done = false;
@@ -79,7 +79,7 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
           cout << "Proper prompt_filename is " << prompt_filename << endl;
 	  }
       //----------- Play prompt with PromptPlayer (a plug-in)
-      //prompt_player.Play(prompt_filename);
+      prompt_player.Play(prompt_filename);
      }
  }
 	
@@ -95,7 +95,7 @@ int main() {
   string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "default_prompt.mp4";
   string default_vid_path = "/home/l39lin/TracyThesis/EmotionalHandwashingAssistant" \
-                        "/lib/hand_tracker/videos/vid-success3-with-detour.oni";
+                        "/lib/hand_tracker/videos/vid-success1.oni";
 
 //  StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr,default_vid_path);
