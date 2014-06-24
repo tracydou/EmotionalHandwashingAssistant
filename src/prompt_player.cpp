@@ -18,7 +18,7 @@ void PromptPlayer::Play(string media_filename) {
   // Play the media player; let is play for a while and then stop playing
   // TODO: how to decide how long to "sleep()"
   libvlc_media_player_play (mp);
-  sleep(6);
+  sleep(10);
   libvlc_media_player_stop (mp);
   // Release media & media-player  
   libvlc_media_release (m);
