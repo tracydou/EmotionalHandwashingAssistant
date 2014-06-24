@@ -95,16 +95,20 @@ class Assistant(Agent):
         return abs(curr_planstep-self.num_plansteps+1)<=0.1
 
 
-    def get_most_likely_planstep(self):
+    def get_most_likely_planstep(self,if_print=True):
         ps_belief=[0]*self.num_plansteps
         for s in self.samples[1:]:
             ps_belief[s.x[1]] += s.weight
-        print "in get_most_likely_planstep(), planstep belief =", ps_belief
-        outfile = open("ps_belief.txt", "a")
-        outfile.write(str(ps_belief)[1:-1])
-        outfile.write("\n")
-        outfile.close()
-        return NP.argmax(ps_belief)
+        most_likely_ps = NP.argmax(ps_belief)
+        if (if_print==True):
+            print "in get_most_likely_planstep(), planstep belief =", ps_belief
+            outfile = open("ps_belief.txt", "a")
+            outfile.write(str(most_likely_ps)) #most-likely-ps
+            outfile.write(" ")
+            outfile.write(str(ps_belief)[1:-1]) #ps_beliefs
+            outfile.write("\n")
+            outfile.close()
+        return most_likely_ps
 
 
 
@@ -140,6 +144,7 @@ class Assistant(Agent):
             propositional_action=0
             curr_avg_planstep = round(self.x_avg[1])
             curr_planstep = self.get_most_likely_planstep()
+            self.x_avg[1] = curr_planstep
             print "average estimate of planstep: ",curr_avg_planstep," most likely planstep: ",curr_planstep
             if awareness < 0.4:
                 propositional_action=self.getRecommendedNextBehaviour(curr_planstep)  #used to add 1 here, but that was wrong

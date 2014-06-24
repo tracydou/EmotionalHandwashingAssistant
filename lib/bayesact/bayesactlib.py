@@ -82,7 +82,7 @@ class BayesactAssistant:
         self.mimic_interact=False
 
         #if True, don't ask client just run
-        self.do_automatic=False
+        self.do_automatic=True
 
         self.use_pomcp=False
 
@@ -443,20 +443,18 @@ class BayesactAssistant:
 
             if self.learn_turn == "agent":
                 outfile = open("agent.txt", "a")
-                outfile.write(str(self.learn_agent.get_most_likely_planstep())) #ps
+                outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
                 outfile.write(" ")
                 outfile.write(str(system_action)) #prop of prompt
-                outfile.write(" ")
-                outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
                 outfile.write(" ")
                 outfile.write(str(system_action_epa)[1:-1]) #epa of prompt
                 outfile.write("\n")
                 outfile.close()
             else:
                 outfile = open("client.txt", "a")
-                outfile.write(str(epa)[1:-1]) #epa of action
-                outfile.write(" ")
                 outfile.write(str(action)) #prop of action
+                outfile.write(" ")
+                outfile.write(str(epa)[1:-1]) #epa of action
                 outfile.write("\n")
                 outfile.close()
 
@@ -514,7 +512,7 @@ class BayesactAssistant:
 		return self.calculate_helper(epa, action)
 		
     def convert_prompt_number(self, learn_paab):
-		curr_planstep = int(self.learn_agent.get_most_likely_planstep())
+		curr_planstep = int(self.learn_agent.x_avg[1]) # is set to most_likely_ps in get_prop_action() in Assistant 
 		print "Most likely current planstep: ", curr_planstep
 		if (curr_planstep==0 and learn_paab==2) or (curr_planstep==2 and learn_paab==2):
 			return 1 #behaviour: wateron
