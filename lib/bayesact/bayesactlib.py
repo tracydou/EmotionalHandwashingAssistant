@@ -27,7 +27,7 @@ class BayesactAssistant:
         #1 : one of a selection of  num_confusers+1 randoms
         #2 : exactly
         #3 : same as 0 but also agent does not know its own id
-        self.agent_knowledge=2
+        self.agent_knowledge=0
 
         # agent gender
         self.agent_gender="male"
@@ -44,9 +44,7 @@ class BayesactAssistant:
         self.client_id = "patient"
 
         #what is the client really? 
-        self.true_client_id = "patient"
-        #true_client_id = "psychotic"
-        #client_id = ""
+        self.true_client_id = "elder"
 
         #initial awareness distribution 0 = aware, 1 = unaware
         self.initial_px = [0.3,0.7]
@@ -242,12 +240,13 @@ class BayesactAssistant:
 
 
         self.true_client_id=getIdentity(self.fifname,self.true_client_id,self.client_gender)
+        self.tcid=self.true_client_id
         if self.true_client_id==[]:
             self.true_client_id =  NP.random.multivariate_normal(self.client_mean_ids,self.client_cov_ids)
         self.true_client_id=NP.asarray([self.true_client_id]).transpose()
 
         #get initial sets of parameters for agent
-        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.client_id,self.client_mean_ids)
+        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.client_id,self.tcid)
 
 
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.agent_knowledge,self.true_client_id,self.client_agent_id,self.agent_mean_ids)
