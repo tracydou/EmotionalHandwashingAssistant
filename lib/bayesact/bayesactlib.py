@@ -407,7 +407,8 @@ class BayesactAssistant:
             print "client performed action: ",epa
             # feedin "default-value-as-fb + epa-calculated-for-behaviours"
             # func convert_epa(epa) defined at end of file
-            self.learn_observ=self.convert_epa_for_user_behaviour(epa)
+            epa = self.convert_epa_for_user_behaviour(epa)
+            self.learn_observ=epa
 #            self.simul_observ=[]  #awkward
 
         
