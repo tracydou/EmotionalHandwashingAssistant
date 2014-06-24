@@ -187,7 +187,7 @@ fifname="fidentities.dat"
 
 #get some key parameters from the command line
 #set much larger to mimic interact (>5000)
-num_samples=1000
+num_samples=2000
 
 
 # use 0.0 for mimic interact simulations
@@ -195,11 +195,12 @@ num_samples=1000
 roughening_noise=num_samples**(-1.0/3.0)
 
 
-#the observation noise
-#set to 0.05 or less to mimic interact
-obs_noise=0.5
+#in our current assistant, the EPA measurements are null on the E dimension (we can't measure this yet)
+# and pretty bad on the other two, so we adjust here for that
+obs_noise=(100000,3.5,1.5)
 
-xobsnoise=0.01
+simul_obs_noise=0.5
+xobsnoise=0.1
 simul_xobsnoise=0.00001
 
 if mimic_interact:
@@ -369,7 +370,7 @@ learn_agent=Assistant(N=num_samples,alpha_value=1.0,
 
 #get the agent - can use some other subclass here if wanted 
 simul_agent=PwD(N=num_samples,alpha_value=1.0,
-                gamma_value=obs_noise,beta_value_agent=simul_bvagent,beta_value_client=simul_bvclient,
+                gamma_value=simul_obs_noise,beta_value_agent=simul_bvagent,beta_value_client=simul_bvclient,
                 beta_value_client_init=simul_learn_beta_client_init,beta_value_agent_init=simul_learn_beta_agent_init,
                 client_gender=agent_gender,agent_gender=client_gender,
                 agent_rough=roughening_noise,client_rough=roughening_noise, nextpsd = nextPsDict, nextbd = nextBehDict, onoise=simul_xobsnoise,
@@ -496,7 +497,9 @@ while not done:
         simul_agent.set_behaviour(beh_obs)
     else:
         beh_obs=simul_paab
-
+  
+    print "agent planstep distribution before update: "
+    curr_planstep = learn_agent.get_most_likely_planstep()
 
     if learn_turn=="client" and learn_observ==[]:
         done = True
@@ -513,6 +516,9 @@ while not done:
 
         print "agent f is: "
         learn_avgs.print_val()
+
+        print "agent planstep distribution: "
+        curr_planstep = learn_agent.get_most_likely_planstep()
 
         #learn_paab is passed into client as the x-observation
         simul_xobs=[State.turnnames.index(invert_turn(simul_turn)),learn_paab]

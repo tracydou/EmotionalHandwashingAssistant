@@ -67,6 +67,17 @@ class Assistant(Agent):
         #propositional (discrete) actions are 0 (do nothing) and a=1...num_plansetps-1 (prompt for planstep a)
         self.numDiscActions=self.num_plansteps   #one action (number 0) is "do nothing" or "None"
 
+    #overridden from Agent because the covariance here is 3D and non-spherical 
+    def init_output_covariances(self):
+ 
+        #self.gamma_value2=self.gamma_value*self.gamma_value
+        #precomputed stuff for computing normal pdfs for 3D vectors
+        self.theivar=(0.5/float(self.gamma_value[0]*self.gamma_value[0]),
+                 0.5/float(self.gamma_value[1]*self.gamma_value[1]),
+                 0.5/float(self.gamma_value[2]*self.gamma_value[2]))
+                 
+        thedet=self.gamma_value[0]*self.gamma_value[1]*self.gamma_value[2]
+        self.ldenom=math.log(math.pow((2*NP.pi),1.5)*thedet)
 
     def print_params(self):
         Agent.print_params(self)
@@ -256,6 +267,13 @@ class Assistant(Agent):
     #an observation sample is [turn, planstep]
     def sampleXObservation(self,sample):
         return [sample.x[0],list(NP.random.multinomial(1,self.of[sample.x[1]])).index(1)]
+
+    #this version allows for different variances in each dimension
+    def normpdf(self,x, mean, ivar, ldenom):
+         num=0.0
+         for (xv,iv) in zip(x,ivar):
+             num = num-iv*( float(xv) - float(mean) )**2            
+         return num-ldenom
 
     def reward(self,sample,action=None):
         xreward=0.0

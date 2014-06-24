@@ -480,17 +480,6 @@ def getDefaultMeanF(fvars,tvars,H,C,tau,f,turn="agent",aab=[],observ=[]):
 
 
 
-
-#compute the log-PDF of a normal with mean mean and
-#constant multiplicative factor in the exponent ivar,
-#and log-denominator ldenom
-def normpdf(x, mean, ivar, ldenom):
-    num=0.0
-    for xv in x:
-        num = num-ivar*( float(xv) - float(mean) )**2
-
-    return num-ldenom
-
 #multi-variate normalpdf function (unused)
 def mvar_normpdf(x, mean, cov):
     size=len(x)
@@ -1010,7 +999,10 @@ class Agent(object):
 
         self.isiga_pomcp=NP.eye(9,9)/(self.alpha_value_pomcp**2)
 
+        self.init_output_covariances()
 
+    #needs to be a separate function, because we may want to override this in applications/subclasses
+    def init_output_covariances(self):
         self.gamma_value2=self.gamma_value*self.gamma_value
 
         #precomputed stuff for computing normal pdfs for 3D vectors
@@ -1181,14 +1173,24 @@ class Agent(object):
         noiseVector=NP.concatenate((NP.ones((3,1))*self.agent_rough,NP.zeros((3,1)),NP.ones((3,1))*self.client_rough)).flatten(1)
         map(lambda x: x.roughen(noiseVector),samples)
 
-
+    #compute the log-PDF of a normal with mean mean and
+     #constant multiplicative factor in the exponent ivar,
+     #and log-denominator ldenom
+     #mean is a scalar value (usually zero)
+     def normpdf(self,x, mean, ivar, ldenom):
+         num=0.0
+         for xv in x:
+             num = num-ivar*( float(xv) - float(mean) )**2
+  
+         return num-ldenom
+ 
     #evaluates a sample of Fvar'=state.f
     def evalSampleFvar(self,fvars,tdyn,state,ivar,ldenom,turn,observ):
         weight=0.0
         if (not observ==[]) and turn=="client":
             fb=getbvars(fvars,state.f)
             dvo=NP.array(fb)-NP.array(observ)
-            weight += normpdf(dvo,0.0,ivar,ldenom)
+            weight += self.normpdf(dvo,0.0,ivar,ldenom)
         else:
             weight=0.0
         return weight
