@@ -1,6 +1,4 @@
 """------------------------------------------------------------------------------------------
-** This file is copied from the bayesactassistant.py file from Jesse's github - June 20, 2014
-
 Bayesian Affect Control Theory
 Assistance Interactive Example
 Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey
@@ -34,7 +32,7 @@ NP.set_printoptions(linewidth=10000)
 #1 : one of a selection of  num_confusers+1 randoms
 #2 : exactly - use this to mimic interact
 #3 : same as 0 but also agent does not know its own id
-agent_knowledge=2
+agent_knowledge=0
 
 client_knowledge=2
 
@@ -51,8 +49,8 @@ agent_id="assistant"
 
 #can also set the client id here if agent_knowledge = 2 (knows id of client - see above)
 #if agent_knowledge is 0 then this is ignored
-#client_id = "patient"
-client_id = "boss"
+client_id = "elder"
+#client_id = "boss"
 
 #what is the client really? 
 #true_client_id = "patient"
@@ -99,7 +97,7 @@ get_full_id_rate=-1
 mimic_interact=False
 
 #if True, don't ask client just run
-do_automatic=True
+do_automatic=False
 
 use_pomcp=False
 
@@ -313,12 +311,14 @@ client_agent_id=NP.asarray([client_agent_id]).transpose()
 
 
 true_client_id=getIdentity(fifname,true_client_id,client_gender)
+tcid=true_client_id
 if true_client_id==[]:
     true_client_id =  NP.random.multivariate_normal(client_mean_ids,client_cov_ids)
 true_client_id=NP.asarray([true_client_id]).transpose()
 
 #get initial sets of parameters for agent
-(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,client_mean_ids)
+#(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,client_mean_ids)
+(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,tcid)
 
 
 (simul_tau_init,simul_prop_init,simul_beta_client_init,simul_beta_agent_init)=init_id(client_knowledge,true_client_id,client_agent_id,agent_mean_ids)
