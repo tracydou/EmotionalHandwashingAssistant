@@ -29,9 +29,9 @@ void StartBayesactServer(string addr) {
     system(cmd.c_str());
 }
 
-void StartHandtrackerServer(string addr) {
+void StartHandtrackerServer(string addr, string vidpath) {
     string cmd = "gnome-terminal -e \
-      '../lib/hand_tracker/build/HAND_TRACKER -projectpath ../lib/hand_tracker -vidpath ~/Downloads/vid-success1.oni " + addr + "'";
+      '../lib/hand_tracker/build/HAND_TRACKER -projectpath ../lib/hand_tracker -vidpath " +vidpath + " "+ addr + "'";
     system(cmd.c_str());
 }
 	
@@ -94,9 +94,11 @@ int main() {
   string output_mapping_filename = "../data/OutputMappingResult.csv";
   string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "default_prompt.mp4";
+  string default_vid_path = "/home/l39lin/TracyThesis/EmotionalHandwashingAssistant" \
+                        "/lib/hand_tracker/videos/vid-success3-with-detour.oni";
 
-  //StartBayesactServer(bayesactServerAddr);
-  //StartHandtrackerServer(trackerServerAddr);
+//  StartBayesactServer(bayesactServerAddr);
+  StartHandtrackerServer(trackerServerAddr,default_vid_path);
   StartClient(bayesactClientAddr, trackerClientAddr, output_mapping_filename,
               prompt_foldername, default_prompt_filename);
 
