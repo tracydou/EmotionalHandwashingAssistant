@@ -1177,12 +1177,11 @@ class Agent(object):
      #constant multiplicative factor in the exponent ivar,
      #and log-denominator ldenom
      #mean is a scalar value (usually zero)
-     def normpdf(self,x, mean, ivar, ldenom):
-         num=0.0
-         for xv in x:
-             num = num-ivar*( float(xv) - float(mean) )**2
-  
-         return num-ldenom
+    def normpdf(self,x, mean, ivar, ldenom):
+        num=0.0
+        for xv in x:
+            num = num-ivar*( float(xv) - float(mean) )**2
+        return num-ldenom
  
     #evaluates a sample of Fvar'=state.f
     def evalSampleFvar(self,fvars,tdyn,state,ivar,ldenom,turn,observ):
