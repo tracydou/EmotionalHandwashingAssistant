@@ -179,8 +179,8 @@ class BayesactAssistant:
 
         #the observation noise
         #set to 0.05 or less to mimic interact
-        self.obs_noise=0.5
-
+        self.obs_noise=(100000,3.5,1.5)
+        self.simul_obs_noise=0.5
         self.xobsnoise=0.01
         self.simul_xobsnoise=0.00001
 
@@ -294,7 +294,7 @@ class BayesactAssistant:
 
         #get the agent - can use some other subclass here if wanted 
         self.simul_agent=PwD(N=self.num_samples,alpha_value=1.0,
-                        gamma_value=self.obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
+                        gamma_value=self.simul_obs_noise,beta_value_agent=self.simul_bvagent,beta_value_client=self.simul_bvclient,
                         beta_value_client_init=self.simul_learn_beta_client_init,beta_value_agent_init=self.simul_learn_beta_agent_init,
                         client_gender=self.agent_gender,agent_gender=self.client_gender,
                         agent_rough=self.roughening_noise,client_rough=self.roughening_noise, nextpsd = self.nextPsDictOld, onoise=self.simul_xobsnoise,
@@ -404,9 +404,13 @@ class BayesactAssistant:
             #tracy#simul_aab=ask_client(fbehaviours_client,simul_aact[0],simul_aab)
             #self.simul_aab=epa
             print "client performed action: ",epa
-            # feedin "default-value-as-fb + epa-calculated-for-behaviours"
-            # func convert_epa(epa) defined at end of file
-            epa = self.convert_epa_for_user_behaviour(epa)
+            
+            # if the uncertainty of our epa-calc hasn't been ecplicitly expressed in obs_noise,
+            # then should feedin "default-value-as-fb + epa-calculated-for-behaviours".
+            # func convert_epa(epa) is defined at end of file
+            
+            #epa = self.convert_epa_for_user_behaviour_with_fb(epa)
+            
             self.learn_observ=epa
 #            self.simul_observ=[]  #awkward
 
@@ -527,8 +531,9 @@ class BayesactAssistant:
 			return 6 #behaviour: all done; goodbye
 		else:
 		    return 0 #behaviour: nothing(i.e. no prompt)
-            
-    def convert_epa_for_user_behaviour(self, epa):
+    
+    #this is called when the uncertainty about our epa-calc hasn't been ecplicitly expressed
+    def convert_epa_for_user_behaviour_with_fb(self, epa):
         result_epa = self.learn_avgs.f[3:6]
         for i in [0,1,2] :
             result_epa[i] += epa[i]/2
