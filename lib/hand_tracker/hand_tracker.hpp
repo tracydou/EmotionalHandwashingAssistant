@@ -49,6 +49,14 @@
 #include "../cppzmq/zmq.hpp"
 #include "hand_tracker_message.pb.h"
 
+// to get current time
+#include <time.h>
+
+// write to file
+#include <iostream>
+#include <fstream>
+using std::ofstream;
+
 using std::string;
 using std::vector;
 
@@ -79,5 +87,8 @@ gint handTrackerIdle(void* data);
 
 // listen to requests from "client" and process recordingly
 gint processRequestsIdle(void* server_stub);
+
+// write hand-movement variances (i.e. diff & dist) between neighbouring frames to file
+void write_to_file();
 
 #endif  // TRACKER_

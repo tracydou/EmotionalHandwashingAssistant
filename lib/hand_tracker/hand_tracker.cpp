@@ -5202,7 +5202,54 @@ int compareAndGetHandAction(Point condAction) {
 	return action;
 }
 
+void write_to_file() {
+    double dx = trackModel->partCentres[0].x - trackModel->partCentres[1].x;
+	double dy = trackModel->partCentres[0].y - trackModel->partCentres[1].y;
+	double dz = trackModel->partCentres[0].z - trackModel->partCentres[1].z;
+	double dist = sqrt(dx * dx + dy * dy + dz * dz);
+	
+	static double last_x1 = 0;
+	static double last_x2 = 0;
+	static double last_y1 = 0;
+	static double last_y2 = 0;
+	static double last_z1 = 0;
+	static double last_z2 = 0;
+	double dx1 = trackModel->partCentres[0].x - last_x1;
+	double dx2 = trackModel->partCentres[1].x - last_x2;
+	double dy1 = trackModel->partCentres[0].y - last_y1;
+	double dy2 = trackModel->partCentres[1].y - last_y2;
+	double dz1 = trackModel->partCentres[0].z - last_z1;
+	double dz2 = trackModel->partCentres[1].z - last_z2;
+	double diff1 = sqrt(dx1 * dx1 + dy1 * dy1 + dz1 * dz1);
+	double diff2 = sqrt(dx2 * dx2 + dy2 * dy2 + dz2 * dz2);
+	last_x1 = trackModel->partCentres[0].x;
+	last_x2 = trackModel->partCentres[1].x;
+	last_y1 = trackModel->partCentres[0].y;
+	last_y2 = trackModel->partCentres[1].y;
+	last_z1 = trackModel->partCentres[0].z;
+	last_z2 = trackModel->partCentres[1].z;
+	
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    
+    // outfile declared in .hpp file
+    ofstream outfile;
+    outfile.open("threshold.txt", ios::out|ios::app);
+    //outfile << "localtime: " << asctime(timeinfo) << ",\t";
+    outfile << "Left hand:\t" << trackModel->partCentres[0].x << ", "
+            << trackModel->partCentres[0].y << ", "
+		    << trackModel->partCentres[0].z << "\t\t";
+	outfile << "Right hand:\t" << trackModel->partCentres[1].x << ", "
+		    << trackModel->partCentres[1].y << ", "
+		    << trackModel->partCentres[1].z << ",\t";
+	outfile << "dist: " << dist << ",\tdiff1: " << diff1 << ",\tdiff2: " << diff2 << endl;
+    outfile.close();
+}
+
 gint processRequestsIdle(void* server_stub){
+    //write_to_file();
 	int request_type = ((HandTrackerServerStub*)server_stub) -> ReceiveRequest();
 	if (request_type == HandTrackerServerStub::TYPE_MESSAGE_SUCCESS) {
 	  printf("==============[HandTrackerServer] Request Received \n");
