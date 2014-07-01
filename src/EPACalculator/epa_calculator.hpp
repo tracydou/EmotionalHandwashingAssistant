@@ -36,10 +36,11 @@ class EPACalculator {
       const list<pair<Position, Position> >& hand_pos);
     
     // define here, instantiate in .cpp
-    const static double THRESHOLD_DIST_FOR_POTENCY;
-    const static double THRESHOLD_DIFF_FOR_ACTIVITY;
-    const static double max_epa;
-    const static double min_epa;
+    const static double THRESHOLD_DIST[];
+    const static double THRESHOLD_DIFF[];
+    const static double THRESHOLD_POTECY[];
+    const static double THRESHOLD_ACTIVITY[];
+    const static int LENGTH_FOR_POTENCY, LENGTH_FOR_ACTIVITY;
    
   protected:
     static double ConvertDistToPotency(
