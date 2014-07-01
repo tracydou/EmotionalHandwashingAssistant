@@ -1,9 +1,0 @@
-# Regions - handwashing shelf - child lab: (x y z radius)
-AWAY 0 0 0 0
-SINK 0 0 0 0
-SOAP 450 245 66 50
-WATER 290 160 70 50
-L_TAP 340 260 63 30
-R_TAP 340 260 63 30
-TOWEL 190 180 65 30
-
