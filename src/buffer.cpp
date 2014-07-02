@@ -47,7 +47,7 @@ namespace EHwA {
                const Position& right_hand_pos) {
     // State changes according to hand_action recognized
     if (current_state_ == STATE_A) {
-        if (hand_action == behaviour_state_A_) {
+        if (hand_action == BAYESACT_NOTHING || hand_action == behaviour_state_A_) {
             time_count_A_ ++;
             if (time_count_A_ == threshold_timeout_) {
                 cout << "[loginfo:] ---------- timeout!" << endl;
