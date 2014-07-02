@@ -18,8 +18,8 @@ namespace EHwA {
     current_state_ = STATE_A;
     time_count_A_ = 0;
     time_count_B_ = 0;
-    behaviour_state_A_ = UNKNOWN_ACTION; // default value
-    behaviour_state_B_ = UNKNOWN_ACTION; // default value
+    behaviour_state_A_ = BAYESACT_NOTHING; // default value
+    behaviour_state_B_ = BAYESACT_NOTHING; // default value
     current_epa_.resize(3);
   }
   
