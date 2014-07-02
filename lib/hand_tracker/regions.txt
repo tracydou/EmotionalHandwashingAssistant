@@ -1,7 +1,7 @@
 # Regions - in the Kitchen of CHIL lab: (x y z radius)
 AWAY 0 0 0 0
 SINK 0 0 0 0
-SOAP 425 265 136 30
+SOAP 425 265 124 30
 WATER 338 237 140 30
 L_TAP 348 300 125 28
 R_TAP 325 300 125 25
