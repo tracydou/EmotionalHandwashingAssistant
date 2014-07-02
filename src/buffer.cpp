@@ -77,9 +77,11 @@ namespace EHwA {
     if (hand_positions_.size() > NUM_POSITIONS_NEEDED) {
         hand_positions_.pop_back();
     }
-    double previous_epa = current_epa_;
-    double tmp_epa = EPACalculator::Calculate(hand_positions_);
-    current_epa_ = (ALPHA * previous_epa + tmp_epa) / (ALPHA + 1);
+    vector<double> previous_epa(current_epa_);
+    vector<double> tmp_epa = EPACalculator::Calculate(hand_positions_);
+    for (int i = 0; i < 3; ++i) {
+        current_epa_[i] = (ALPHA * previous_epa[i] + tmp_epa[i]) / (ALPHA + 1);
+    }
   }
                
   void Buffer::ChangeToState(int new_state, int new_behaviour) {
