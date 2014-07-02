@@ -43,7 +43,11 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     TrackerClient tracker_client(hand_tracker_addr);
     cout << "=============== Clients have been set up! =============" << endl << endl;
     // Define and initialize pipeline variables
-    Buffer buffer(300,1);
+    vector<double> default_epa(3);
+    default_epa[0] = 2.0; // initialize to the behaviour of an "elder"
+    default_epa[1] = 1.2;
+    default_epa[2] = -1.2;
+    Buffer buffer(300,1,default_epa);
     PromptSelecter prompt_selecter(output_mapping_filename, default_prompt_filename);
     PromptPlayer prompt_player;
     bool is_done = false;

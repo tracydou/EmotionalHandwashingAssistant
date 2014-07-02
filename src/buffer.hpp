@@ -37,7 +37,8 @@ namespace EHwA {
 
 class Buffer {
 public:
-  Buffer(double threshold_timeout, double threshold_timeup);
+  Buffer(double threshold_timeout, double threshold_timeup,
+          vector<double> default_epa);
   ~Buffer();
   
   int get_current_state();

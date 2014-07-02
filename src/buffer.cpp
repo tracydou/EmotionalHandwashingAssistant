@@ -13,14 +13,15 @@ namespace EHwA {
   const int Buffer::STATE_C = 2;
   const double Buffer::ALPHA = 1;
   
-  Buffer::Buffer(double threshold_timeout, double threshold_timeup) :
+  Buffer::Buffer(double threshold_timeout, double threshold_timeup,
+                   vector<double> default_epa) :
     threshold_timeout_(threshold_timeout), threshold_timeup_(threshold_timeup) {
     current_state_ = STATE_A;
     time_count_A_ = 0;
     time_count_B_ = 0;
     behaviour_state_A_ = BAYESACT_NOTHING; // default value
     behaviour_state_B_ = BAYESACT_NOTHING; // default value
-    current_epa_.resize(3);
+    current_epa_ = default_epa;
   }
   
   Buffer::~Buffer() {
