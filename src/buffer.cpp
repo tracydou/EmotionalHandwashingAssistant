@@ -11,6 +11,7 @@ namespace EHwA {
   const int Buffer::STATE_A = 0;
   const int Buffer::STATE_B = 1;
   const int Buffer::STATE_C = 2;
+  const double Buffer::ALPHA = 1;
   
   Buffer::Buffer(double threshold_timeout, double threshold_timeup) :
     threshold_timeout_(threshold_timeout), threshold_timeup_(threshold_timeup) {
@@ -71,12 +72,14 @@ namespace EHwA {
     // update current_epa_ 
     hand_positions_.push_front(
             pair<Position, Position> (left_hand_pos, right_hand_pos));
-    current_epa_ = EPACalculator::Calculate(hand_positions_);
     // NUM_POSITIONS_NEEDED, defined in defines.hpp, is the number of 
     // handpositions needed by epa-calc to compute epa values
     if (hand_positions_.size() > NUM_POSITIONS_NEEDED) {
         hand_positions_.pop_back();
     }
+    double previous_epa = current_epa_;
+    double tmp_epa = EPACalculator::Calculate(hand_positions_);
+    current_epa_ = (ALPHA * previous_epa + tmp_epa) / (ALPHA + 1);
   }
                
   void Buffer::ChangeToState(int new_state, int new_behaviour) {

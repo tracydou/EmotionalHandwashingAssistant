@@ -22,7 +22,7 @@ const int NO_PROMPT_PLEASE = 0; //used in PromptSelecter
 const int NOT_FOUND_PROPOSITION_PROMPT = -1; // used in PromptSelecter
 const double MAX_DIST = 3000000; // used in PromptSelecter
 
-const unsigned int NUM_POSITIONS_NEEDED = 10; // Maximum # of handpositions needed; used in EPACalc & main.cpp
+const unsigned int NUM_POSITIONS_NEEDED = 2; // Maximum # of handpositions needed; used in EPACalc & main.cpp
                                      // No minimum requirement
 
 /***************************************************************/

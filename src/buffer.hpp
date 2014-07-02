@@ -53,6 +53,7 @@ public:
   static const int STATE_B;
   static const int STATE_A;
   static const int STATE_C;
+  static const double ALPHA; // the weight of previous_epa v.s. the weight of current_epa
   
 private:
 
