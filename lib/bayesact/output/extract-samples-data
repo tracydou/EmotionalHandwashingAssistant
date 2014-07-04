@@ -1,0 +1,40 @@
+#!/bin/bash -f
+#this is for use with a set of samples logged
+#to get the input to this, run bayesact6.py and set learn_verbose=True and simul_verbose=True
+#and set the random seed to be something that gave a promising looking simulation
+#this will log all the samples. Then get that log file (really big) and put after grep '!unweighted set' below
+#then get the output of that and use in plotsample to get a set of images
+#finally make the movie with ffmpeg
+#if [ -e bayesact6out$1all.txt ]; then
+#    fname=bayesact6out$1all.txt
+#else
+#    fname=bayesact6out$1.txt
+#fi
+
+#set --after-context = 2*numberofsamples+1 here
+#./extract-samples-data  -lady-shoplifter-0.5-0.5 200 output/bayesactsim7/
+
+#number of steps per experiment
+numsteps=2
+
+numsamples=$2
+outdir=$3
+echo $numsamples
+samcon=$((2*numsamples+1))
+echo $samcon
+#grep '! unweighted set' bayesact6out17-reduxtrial9.stxt  --after-context=2001 | grep "f :" | sed 's/.* *\[//' | sed 's/ *\].*//' >& samples17trial9.txt
+#grep '! unweighted set' bayesact6out$1.txt  --after-context=$samcon | grep "f :" | sed 's/.* *\[//' | sed 's/ *\].*//' >& samples$1.txt
+grep '! unweighted set' $outdir/bactsim$1.txt  --after-context=$samcon | grep "f :" | sed 's/.* *\[//' | sed 's/ *\].*//' >& samples$1.txt
+
+echo "function bl=bestlabels()" >& bestlabels.m
+echo "bl=[" >> bestlabels.m
+#grep "top ten"  bayesact6outsamples-alpha1.0-prop0.1-winfe.txt  --after-context 1 | grep '\[' | sed 's/).*//' | sed 's/\[(//' | sed 's/,.*/;/' | sed 's/_/ /'>> bestlabelswinfe.m
+grep "top ten"  $outdir/bactsim$1.txt  --after-context 1 | grep '\[' | sed 's/).*//' | sed 's/\[(//' | sed 's/,.*/;/' | sed 's/_/ /'>> bestlabels.m
+echo "];" >> bestlabels.m
+
+###### !!!!! NEED TO SET NUMSAMPLES 
+./plotsamples.m samples$1.txt  $numsamples $numsteps 
+ffmpeg -f image2 -r 8 -i samplesexp%d.jpg -s 640x480 -vcodec mpeg4 $outdir/samples$1.avi
+
+rm -f samplesexp*.jpg
+

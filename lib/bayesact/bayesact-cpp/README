@@ -1,0 +1,215 @@
+=================
+Table of Contents
+=================
+
+Section 0: Introduction
+Section 1: File Descriptions
+Section 2: Compilation
+ - Section 2.1: Requirements
+ - Section 2.2: Testing
+ - Section 2.3: settingdefaults.h
+ - Section 2.4: Class Files
+Section 3: Python
+ - Section 3.1: Requirements
+ - Section 3.2: Compilation
+ - Section 3.3: Usage
+
+=======================
+Section 0: Introduction
+=======================
+This is the README for bayesact-cpp. This is meant to be built as a standalone
+alternative to bayesact, however see Section 3: Python for more information on
+linking the project with Python code.
+
+============================
+Section 1: File Descriptions
+============================
+
+agent.h:               The header for Agent class.
+agent.cpp:             The implementation of the Agent class.
+makefile:              The makefile. Warning not complete. See Section 2:
+                       Compilation.
+multivariatenormal.h:  Computational class used for multivariate normal
+                       computation. I recommend replacing it instead of
+                       adjusting it.
+performance-test.cpp:  A test designed to be profiled. Contains a main function.
+                       It's likely redundant with test.cpp
+py-wrapper.cpp:        This is focused on plugging the cpp version in with
+                       python. It contains a few class functions that are
+                       designed to be used with python and set the _PYTHON flag
+                       so that header classes impliment the correct python
+                       functions. See Section 3: Python for more information.
+settingdefaults.h:     Header containing settings constants. This file is
+                       generated from settings.csv by settingsGen. See
+                       Section 2.3: settingdefaults.h for more information.
+settings.h:            The header for the Settings class.
+settings.cpp:          The implementation of the Settings class.
+settingsGen:           The program to parse settings.csv into settingdefaults.h.
+                       See Section 2.3: settingdefaults.h for more details.
+settings-parser/:      Contains the source code for settingsGen.
+state.h:               The header for the State class.
+state.cpp:             The implimentation of the State class.
+taumappings.h:         The header for the TauMappings class
+taumappings.cpp:       The implimentation of the TauMappings class.
+test.cpp:              A main function designed for testing.
+                       It's likely redundant with performance-test.cpp
+transientdynamics.h:   The header for the TransientDynamics class.
+transientdynamics.cpp: The implimentation of the TransientDynamics class.
+transientvariable.h:   The header for the TransientVariable class.
+transientvariable.cpp: The implimentation of the TransientVariable class.
+values.h:              A header containing many constants for the bayesact
+                       program.
+xvar.h:                The header and implimentation of the XVar class. Note
+                       that this is mostly a placeholder and XVar is intended
+                       to subclassed where appropriate.
+*.dat:                 Data files duplicated from basic bayesact. Note that
+                       while these files are fine for testing they are likely
+                       not up to date. Note that I'm fairly certain
+                       tdynamics-male.dat is currently the only one actually
+                       being used by the program.
+
+======================
+Section 2: Compilation
+======================
+
+Currently compilation is somewhat messy. My goal was to eventually complete the
+Makefile so that there wasn't a huge mess, but unfortunately my time was needed
+elsewhere. So currently the Makefile only compiles 'settingdefaults.h', which is
+still useful in it's own right.
+
+-------------------------
+Section 2.1: Requirements
+-------------------------
+Currently bayesact-cpp mainly uses two libraries. Boost 1.55 and Eigen 3.2.0.
+
+Boost provides many miscallaeous features, but the key ones are multivariate
+normal computation as well as Python integration (see Section 3: Python for
+more information). Boost could be extracted with some effort without damaging
+the integrity of the program if a good alternative for Multivariate Normal
+computation could be found (and Python integration isn't important).
+
+Eigen is used for matrix computations. The project relies quite on Eigen. I
+recommend against looking to replace it. It is very useful for matrix
+computations and has very similar usage in many cases to Numpy arrays in python.
+
+Boost installation guide here: http://www.boost.org/doc/libs/1_55_0/doc/html/bbv2/installation.html
+
+Eigen installation guide here: http://eigen.tuxfamily.org/dox/GettingStarted.html
+
+A quick note to those that are unfamiliar with header file manipulation. 'gcc'
+allows you to link headers with the -I/usr/... flag. Alternatively you may add
+the folders to your PATH variable.
+
+--------------------
+Section 2.2: Testing
+--------------------
+Testing is fairly straightforward. Simply compile all of the relevant .h and
+.cpp files along with a test .cpp file containing a main function. See Section
+2.4: Class Files for all files used in 'agent.cpp'. Below are the list of files
+that contain a main function. Please update as more are created.
+
+test.cpp
+performance-test.cpp
+
+------------------------------
+Section 2.3: settingdefaults.h
+------------------------------
+Currently 'settingsdefaults.h' is autogenerated by settingsGen, which itself is
+compiled by the source code in settings-parser. The Makefile currently handles
+this and also provides examples of how to do so. Also note that this means that
+you can delete settingdefaults.h and remake to update changes from settings.csv.
+
+This method of producing 'settingdefaults.h' is admittedly not the best. At the
+time it seemed like a good idea, but in retrospect it's really not a great long
+time solution and not nearly as good a short term solution as simply manually
+adjusting the values in 'settingdefaults.h'. So in short, it may make sense to
+simply drop this process, but it does work as is currently. It's at your
+discretion.
+
+------------------------
+Section 2.4: Class Files
+------------------------
+Following is a list of files that agent.cpp uses. Headers are listed on the
+left and implimentations on the right
+
+agent.h				agent.cpp
+settings.h			settings.cpp
+state.h				state.cpp
+taumappings.h			taumappings.cpp
+transientdynamics.h		transientdynamics.cpp
+transientvariable.h		transientvariable.cpp
+multivariatenormal.h
+settingdefaults.h
+values.h
+xvar.h
+
+=================
+Section 3: Python
+=================
+
+This program can be compiled to plug in with python. Currently it has been set
+up to work with the agent class. 
+
+-------------------------
+Section 3.1: Requirements
+-------------------------
+
+To compile for Python, you need to have a version of Python (2.2 or newer)
+installed on your machine that includes the C headers. These should be included
+in most development versions of Python installs.
+
+Additionally you must have Boost's Python features installed. Be advised that
+most of the online documentation for Boost Python recommends using bjam (Boost's
+compiling scripting language). I managed to avoid using it, but be aware most
+documentation will assume you are using bjam.
+
+------------------------
+Section 3.2: Compilation
+------------------------
+
+Compilation for Python is a bit complicated. Here's how I managed to compile
+on my machine. Note that the cpp files used were all of those listed in Section
+2.4: Class Files with the addition of py-wrapper for the python functions.
+
+*** Compiling Individual Files ***
+g++ -I/usr/local/include -I/usr/include/python2.7 -fpic -c (FILENAME).cpp -o (FILENAME).o
+
+-I flag:    Include files for compilation. Might need to include Eigen as well
+            depending on your system is set up.
+-fpic flag: Required for use in compiling library
+-c flag:    Don't link - linking will be done in the next step
+-o flag:    Output name
+
+*** Compiling library ***
+g++ -shared -Wfatal-errors -Wl,-soname,"bayesactagent" -fpic *.o -lpython2.7 -L/usr/local/lib -lboost_python -o bayesactagent.so
+
+-shared flag:        Used to create a library. Basically used to tell the
+                     compiler not to look for a main function.
+-Wfatal-errors flag: Stop at the first error. Can make debuging a lot simpler.
+-Wl flag:            Passes -soname "bayesactagent" to the linker
+-fpic flag:          Required for use in compiling library
+-lpython2.7 flag:    This tells the linker to use the python libraries
+-lboost_python flag: This tells the linker to use the boost libraries
+-L/usr/... flag:     I believe this tells the linker to use your default
+                     includes.
+-o flag:             Output name
+
+*** IMPORTANT ***
+Quick point about the order of files to link. '*.o' is used above, but in
+reality I'm fairly certain it's important that py-wrapper.o goes before the
+others. The reason is because py-wrapper.o defines the _PYTHON flag so the
+compiler knows to read the headers with the python functions defined in
+py-wrapper.
+
+On the other hand it's possible that the linker will replace the new versions
+of the headers if it's read later. So if the linker is intelligent, this doesn't
+matter, because the _PYTHON flag only defines functions implimented in
+'py-wrapper.cpp'.
+
+------------------
+Section 3.3: Usage
+------------------
+
+Usage is fairly simple. In python import the library ("import bayesactagent"),
+then simply use functions exposed in py-wrapper. Specficially the agent
+initializer and propagateForward should be available.

@@ -191,7 +191,10 @@ class PlanNode(object):
     def print_aset(self,tab,fh=sys.stdout):
         index=0
         for a in self.actionSet:
-            fh.write(str(tab)+tab*" "+str(index)+": "+str(["%0.2f" % i for i in a[0]])+"..."+str(["%s" % i for i in a[1:]])+"\n")
+            #this version pretty-prints the floats but doesn't work in the case of stochastic actions
+            #fh.write(str(tab)+tab*" "+str(index)+": "+str(["%0.2f" % i for i in a[0]])+"..."+str(["%s" % i for i in a[1:]])+"\n")
+            fh.write(str(tab)+tab*" "+str(index)+": ")
+            print a
             index=index+1
 
     def print_oset(self,tab,fh=sys.stdout):

@@ -1,0 +1,620 @@
+true_client_id:  elder
+fixed_agent_act:  
+fixed_agent_default_act:  mind
+do_pomcp? : False
+pomcp obsres:   1.0
+pomcp actres:   1.0
+pomcp timeout:  10.0
+pomcp numcact:  5
+pomcp numdact:  8
+random seeed is :  64596495
+agent taking bayesact actions
+fixed policy is: 
+None
+---------- learning agent parameters: 
+alpha_value:  1.0
+beta_value_agent:  0.0001
+beta_value_client:  0.0001
+beta_value_client_init:  2.0
+beta_value_agent_init:  0.001
+beta_valueb_client:  1e+12
+beta_valueb_agent:  1e-12
+gamma_value:  0.5
+discount_factor:  0.9
+N:  1000
+client_gender:  male
+agent_gender:  male
+agent_rough:  0.1
+client_rough:  0.1
+use_pomcp?:  False
+alpha_value_pomcp:  0.1
+gamma_value_pomcp:  0.001
+num plansteps:  8
+observation functin:   [[ 0.99        0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857]
+ [ 0.00142857  0.99        0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857]
+ [ 0.00142857  0.00142857  0.99        0.00142857  0.00142857  0.00142857  0.00142857  0.00142857]
+ [ 0.00142857  0.00142857  0.00142857  0.99        0.00142857  0.00142857  0.00142857  0.00142857]
+ [ 0.00142857  0.00142857  0.00142857  0.00142857  0.99        0.00142857  0.00142857  0.00142857]
+ [ 0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.99        0.00142857  0.00142857]
+ [ 0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.99        0.00142857]
+ [ 0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.00142857  0.99      ]]
+ps dynamics:  {0: {0: ([1.0], [0]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [1, 0]), 3: ([1.0], [0]), 4: ([1.0], [0])}, 1: {0: ([1.0], [1]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [1, 0]), 3: ([1.0], [1]), 4: ([1.0], [1])}, 2: {0: ([1.0], [2]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [3, 2]), 3: ([1.0], [2]), 4: ([1.0], [0])}, 3: {0: ([1.0], [3]), 1: ([1.0], [3]), 2: ([0.6, 0.4], [3, 2]), 3: ([1.0], [4]), 4: ([1.0], [1])}, 4: {0: ([1.0], [4]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [6, 4]), 3: ([1.0], [4]), 4: ([1.0], [5])}, 5: {0: ([1.0], [5]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [7, 5]), 3: ([1.0], [4]), 4: ([1.0], [5])}, 6: {0: ([1.0], [6]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [6, 4]), 3: ([1.0], [6]), 4: ([1.0], [7])}, 7: {0: ([1.0], [7]), 1: ([1.0], [2]), 2: ([0.6, 0.4], [7, 5]), 3: ([1.0], [7]), 4: ([1.0], [7])}}
+learner init tau:  [[ 1.5   0.51  0.45  0.    0.    0.    0.48  2.16  0.94]]
+learner prop init:  [1.0]
+learner beta client init:  0.001
+learner beta agent init:  0.001
+---------- simulated agent parameters: 
+alpha_value:  1.0
+beta_value_agent:  0.001
+beta_value_client:  0.001
+beta_value_client_init:  0.0001
+beta_value_agent_init:  0.0001
+beta_valueb_client:  1e+12
+beta_valueb_agent:  1e-12
+gamma_value:  0.5
+discount_factor:  0.9
+N:  1000
+client_gender:  male
+agent_gender:  male
+agent_rough:  0.1
+client_rough:  0.1
+use_pomcp?:  False
+alpha_value_pomcp:  0.1
+gamma_value_pomcp:  0.001
+num plansteps:  8
+current (initial) awareness:  1
+ps dynamics:  {0: {0: ([1.0], [0]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [1, 0]), 3: ([1.0], [0]), 4: ([1.0], [0])}, 1: {0: ([1.0], [1]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [1, 0]), 3: ([1.0], [1]), 4: ([1.0], [1])}, 2: {0: ([1.0], [2]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [3, 2]), 3: ([1.0], [2]), 4: ([1.0], [0])}, 3: {0: ([1.0], [3]), 1: ([1.0], [3]), 2: ([0.6, 0.4], [3, 2]), 3: ([1.0], [4]), 4: ([1.0], [1])}, 4: {0: ([1.0], [4]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [6, 4]), 3: ([1.0], [4]), 4: ([1.0], [5])}, 5: {0: ([1.0], [5]), 1: ([1.0], [3]), 2: ([0.8, 0.2], [7, 5]), 3: ([1.0], [4]), 4: ([1.0], [5])}, 6: {0: ([1.0], [6]), 1: ([1.0], [2]), 2: ([0.8, 0.2], [6, 4]), 3: ([1.0], [6]), 4: ([1.0], [7])}, 7: {0: ([1.0], [7]), 1: ([1.0], [2]), 2: ([0.6, 0.4], [7, 5]), 3: ([1.0], [7]), 4: ([1.0], [7])}}
+learner (assistant) average sentiments (f) after initialisation: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.49997257  0.50996544  0.45001151 -0.04382457 -0.00225317 -0.02128275  0.47672427  2.1643487   0.96771688]
+weight : 1.0
+tau : [ 1.49997257  0.50996544  0.45001151 -0.04382457 -0.00225317 -0.02128275  0.47672427  2.1643487   0.96771688]
+x:  [ 1.     0.     0.688  0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+simulator (pwid) average sentiments (f) after initialisation: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.58999823  0.78999739 -0.87999499 -0.00356105  0.04480439  0.01427152  1.50000131  0.51000436  0.4500001 ]
+weight : 1.0
+tau : [ 1.58999823  0.78999739 -0.87999499 -0.00356105  0.04480439  0.01427152  1.50000131  0.51000436  0.4500001 ]
+x:  [ 0.   0.   0.7  0. ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##########  current turn:  client   ##########
+---------- iter  0 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 1 None 0 0
+client action/agent observ:  [1.611770054121032, 0.4518925188822054, -0.5965315439797276]
+client prop. action:  0
+client's proposition action :  0 
+
+agent advises the following action : [1.611770054121032, 0.4518925188822054, -0.5965315439797276] 
+  closest labels are:  ['nestle', 'study', 'confer with', 'inject with medicine', 'gaze at', 'apologize to', 'wash', 'answer', 'dress', 'pay for something']
+client does action:  [1.611770054121032, 0.4518925188822054, -0.5965315439797276] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  3.06313461739
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.51955551  0.50017139  0.45374672  1.44749362  0.65038683 -0.4910434   0.94919086  2.43454455  0.61986336]
+weight : 1.0
+tau : [ 1.08245614  0.13770408  0.36549614  0.99933072  0.84520615 -0.10406326  1.18598488  1.47282188  0.35994383]
+x:  [ 0.          0.00052713  0.00057201  0.00112231]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.59235643  0.78897993 -0.87953138  1.61177005  0.45189252 -0.59653154  1.49873363  0.50778266  0.45030843]
+weight : 1.0
+tau : [ 1.6518306   0.4419343  -0.64489534  1.22438927  0.44145137 -0.46050843  1.14905078  0.204179    0.36873281]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  bouncer
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  0
+pwid current planstep:  0
+pwid current lastPrompt:  0
+current deflection of averages:  1.76732483354
+current deflection of averages (client):  0.568814958758
+current deflection (agent's perspective):  3.20818977474
+current deflection (client's perspective):  0.589087200874
+##########  current turn:  agent   ##########
+---------- iter  1 --------------------------------------------------------------------------------
+[934, 56, 10, 0, 0, 0, 0, 0]
+average estimate of planstep:  0.0  most likely planstep:  0
+using heuristic policy .... awareness:  0.0005720102942  planstep:  0  action :  2
+agent action/client observ:  [2.2514742841730664, 0.08764746574041629, -0.06009033829929061]
+agent prop. action:  2
+suggested action for the agent is : [2.2514742841730664, 0.08764746574041629, -0.06009033829929061] 
+  closest label is:  confer_with
+agent's proposition action :  2 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.2514742841730664, 0.08764746574041629, -0.06009033829929061] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.5190604   0.4942893   0.45980045  2.25147428  0.08764747 -0.06009034  0.91015435  2.45529625  0.64544825]
+weight : 1.0
+tau : [ 1.59659238 -0.04369268  0.27725197  1.38888444  0.0057511   0.27348478  1.0432484   1.11020872  0.27372936]
+x:  [  1.00000000e+00   1.00000000e-03   1.00000000e-03   0.00000000e+00]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  8.90212732139
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57016308  0.79524669 -0.87046934  2.1280259   0.12864358 -0.02096875  1.50339651  0.50725711  0.45218464]
+weight : 1.0
+tau : [ 1.31994336  0.24410431 -0.33561485  1.50503864  0.08995986  0.29198954  1.78170404  0.04402784  0.30014587]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  bouncer
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  0
+pwid current planstep:  0
+pwid current lastPrompt:  2
+current deflection of averages:  3.15594981861
+current deflection of averages (client):  1.45514182904
+current deflection (agent's perspective):  5.62885512045
+current deflection (client's perspective):  1.76859534125
+##########  current turn:  client   ##########
+---------- iter  2 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 0 2 0 1.45514182904
+nn,defb:  0.941866788529 0.99
+moving on anyways at deflection  1.45514182904  because of random number  0.941866788529
+sampling from:  [0.8666666666666667, 0.13333333333333333]  behaviours:  [2, 1]
+behaviour:  1  new planstep:  2
+client action/agent observ:  [2.027096472229911, 1.2312895002423874, -0.9288228160234527]
+client prop. action:  1
+client's proposition action :  1 
+
+agent advises the following action : [2.027096472229911, 1.2312895002423874, -0.9288228160234527] 
+  closest labels are:  ['soothe', 'apologize to', 'pray with', 'put to bed', 'confer with', 'snuggle', 'comfort', 'confide in', 'massage', 'counsel']
+client does action:  [2.027096472229911, 1.2312895002423874, -0.9288228160234527] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  0.447851075725
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.53360241  0.5253538   0.49654791  1.83637834  1.51738721 -0.6577811   1.14505046  1.90134858  0.2826906 ]
+weight : 1.0
+tau : [ 1.26360322 -0.24053763  0.29332145  1.36810321  1.18745458 -0.23495003  1.56969345  0.95598723 -0.02661658]
+x:  [ 0.          1.98490986  0.99538724  1.00033712]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.56767722  0.79021914 -0.87398311  2.02709647  1.2312895  -0.92882282  1.50548922  0.50446527  0.45284291]
+weight : 1.0
+tau : [ 1.85353523  0.5083727  -0.41851379  1.58826968  0.88625888 -0.48219331  1.36721356 -0.12350151  0.30945648]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  2
+pwid current lastPrompt:  0
+current deflection of averages:  2.37741418334
+current deflection of averages (client):  1.31371962099
+current deflection (agent's perspective):  2.563717105
+current deflection (client's perspective):  1.49230199469
+##########  current turn:  agent   ##########
+---------- iter  3 --------------------------------------------------------------------------------
+[909, 61, 30, 0, 0, 0, 0, 0]
+average estimate of planstep:  2.0  most likely planstep:  0
+using heuristic policy .... awareness:  0.995387237181  planstep:  0  action :  0
+agent action/client observ:  [2.0498502295720358, 0.6300273455824513, 0.4794232581157173]
+agent prop. action:  0
+suggested action for the agent is : [2.0498502295720358, 0.6300273455824513, 0.4794232581157173] 
+  closest label is:  chat_with
+agent's proposition action :  0 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.0498502295720358, 0.6300273455824513, 0.4794232581157173] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.53284241  0.52154265  0.49819234  2.04985023  0.63002735  0.47942326  1.14700747  1.89087334  0.28114045]
+weight : 1.0
+tau : [ 1.64535524  0.02092716  0.39884575  1.34642306  0.37613513  0.61770909  1.25334036  0.55639077  0.04739197]
+x:  [ 1.     1.992  0.997  0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  12.1323677646
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57946833  0.8022152  -0.89128813  2.03800519  0.66818436  0.5764117   1.51133719  0.50910238  0.4413941 ]
+weight : 1.0
+tau : [ 1.4269549   0.20501749 -0.18533445  1.43853924  0.4470193   0.67038023  1.79762406  0.12471396  0.4243154 ]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  2
+pwid current lastPrompt:  0
+current deflection of averages:  2.69832753491
+current deflection of averages (client):  1.52538587282
+current deflection (agent's perspective):  2.8977936977
+current deflection (client's perspective):  1.87734129441
+##########  current turn:  client   ##########
+---------- iter  4 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 1 0 2 1.52538587282
+client action/agent observ:  [1.550219272628491, 1.0572124470561508, -0.82692180349585]
+client prop. action:  2
+client's proposition action :  2 
+
+agent advises the following action : [1.550219272628491, 1.0572124470561508, -0.82692180349585] 
+  closest labels are:  ['nestle', 'apologize to', 'put to bed', 'confer with', 'study', 'confide in', 'comfort', 'inject with medicine', 'contemplate', 'photograph']
+client does action:  [1.550219272628491, 1.0572124470561508, -0.82692180349585] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  1.88762967375
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.55409998  0.52053532  0.48630686  1.42650248  1.10966758 -0.88835932  1.10584901  1.95400869  0.2897864 ]
+weight : 1.0
+tau : [ 1.13485953 -0.26110149  0.35856674  1.07913075  0.8765246  -0.39533837  1.30958527  0.66471736 -0.10235832]
+x:  [ 0.          2.81788693  0.99388107  1.98776215]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57549577  0.80893107 -0.89832635  1.55021927  1.05721245 -0.8269218   1.50765396  0.5179421   0.44047815]
+weight : 1.0
+tau : [ 1.55763158  0.44837795 -0.24959145  1.23218971  0.79155097 -0.39107768  1.2869271  -0.15681922  0.3799878 ]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  3
+pwid current lastPrompt:  0
+current deflection of averages:  3.07868668577
+current deflection of averages (client):  1.42053584564
+current deflection (agent's perspective):  3.31031413995
+current deflection (client's perspective):  1.62313511731
+##########  current turn:  agent   ##########
+---------- iter  5 --------------------------------------------------------------------------------
+[7, 1, 928, 64, 0, 0, 0, 0]
+average estimate of planstep:  3.0  most likely planstep:  2
+using heuristic policy .... awareness:  0.993881072912  planstep:  2  action :  0
+agent action/client observ:  [2.3011514413680767, 0.5835866754629073, 0.6949054544327301]
+agent prop. action:  0
+suggested action for the agent is : [2.3011514413680767, 0.5835866754629073, 0.6949054544327301] 
+  closest label is:  chat_with
+agent's proposition action :  0 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.3011514413680767, 0.5835866754629073, 0.6949054544327301] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.55875285  0.51620193  0.48378162  2.30115144  0.58358668  0.69490545  1.10744176  1.95614202  0.29319372]
+weight : 1.0
+tau : [ 1.63924184 -0.03892862  0.47476365  1.4131373   0.28994412  0.78197573  1.11424464  0.4239907   0.00680046]
+x:  [ 1.     2.818  0.993  0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  9.46720786382
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57240141  0.80668261 -0.87260412  2.27860393  0.63367033  0.7839047   1.49494757  0.53541611  0.43493648]
+weight : 1.0
+tau : [ 1.27888001  0.24468021 -0.0750721   1.49374612  0.3654904   0.83941397  1.79630659  0.04886683  0.51574779]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  3
+pwid current lastPrompt:  0
+current deflection of averages:  3.62666107272
+current deflection of averages (client):  2.0631403097
+current deflection (agent's perspective):  3.77604188228
+current deflection (client's perspective):  2.45636044569
+##########  current turn:  client   ##########
+---------- iter  6 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 1 0 3 2.0631403097
+client action/agent observ:  [1.972768226892958, 1.3989827486399093, -1.2555716355057651]
+client prop. action:  0
+client's proposition action :  0 
+
+agent advises the following action : [1.972768226892958, 1.3989827486399093, -1.2555716355057651] 
+  closest labels are:  ['pray with', 'put to bed', 'snuggle', 'soothe', 'comfort', 'apologize to', 'massage', 'confer with', 'caress', 'confide in']
+client does action:  [1.972768226892958, 1.3989827486399093, -1.2555716355057651] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  4.33125024095
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.52793857  0.57065692  0.49542453  1.8762023   1.51389285 -1.1941666   1.11580106  1.97047814  0.28656276]
+weight : 1.0
+tau : [ 1.20685451 -0.23439462  0.42095458  1.42053582  1.10179415 -0.5789978   1.55566099  0.73247544 -0.25499581]
+x:  [  0.00000000e+00   2.87449909e+00   4.81923285e-04   1.40190336e-03]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57009608  0.80828431 -0.87083212  1.97276823  1.39898275 -1.25557164  1.49514939  0.54266006  0.43482746]
+weight : 1.0
+tau : [ 1.80793501  0.60122419 -0.33223987  1.57761921  1.00859374 -0.62412464  1.3633244  -0.13842354  0.45061309]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  0
+pwid current planstep:  3
+pwid current lastPrompt:  0
+current deflection of averages:  3.5320518206
+current deflection of averages (client):  1.57829637264
+current deflection (agent's perspective):  3.98598528584
+current deflection (client's perspective):  1.82454181178
+##########  current turn:  agent   ##########
+---------- iter  7 --------------------------------------------------------------------------------
+[0, 0, 162, 781, 57, 0, 0, 0]
+average estimate of planstep:  3.0  most likely planstep:  3
+using heuristic policy .... awareness:  0.00048192328473  planstep:  3  action :  3
+agent action/client observ:  [2.2271002482009643, 0.5890381689847111, 0.8894387302561936]
+agent prop. action:  3
+suggested action for the agent is : [2.2271002482009643, 0.5890381689847111, 0.8894387302561936] 
+  closest label is:  chat_with
+agent's proposition action :  3 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.2271002482009643, 0.5890381689847111, 0.8894387302561936] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.5291479   0.56666253  0.50171799  2.22710025  0.58903817  0.88943873  1.117868    1.97093315  0.2851717 ]
+weight : 1.0
+tau : [ 1.6897917  -0.00282928  0.57121359  1.41402709  0.32759862  0.92033537  1.25648678  0.44555599 -0.08559272]
+x:  [ 1.     2.894  0.     0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  9.00188691014
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.58456697  0.81601122 -0.83115     2.08959358  0.44511843  0.90973253  1.50044671  0.54617382  0.40308885]
+weight : 1.0
+tau : [ 1.42467523  0.32777586 -0.13446123  1.42840846  0.27680468  0.93012771  1.80965935  0.00249042  0.60254508]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  0
+pwid current planstep:  3
+pwid current lastPrompt:  3
+current deflection of averages:  3.56880707993
+current deflection of averages (client):  1.64621250929
+current deflection (agent's perspective):  3.85180705693
+current deflection (client's perspective):  2.13883741072
+##########  current turn:  client   ##########
+---------- iter  8 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 0 3 3 1.64621250929
+nn,defb:  0.499136717327 0.9
+moving on anyways at deflection  1.64621250929  because of random number  0.499136717327
+sampling from:  [1.0]  behaviours:  [3]
+behaviour:  3  new planstep:  4
+client action/agent observ:  [1.5896490225067326, 0.9785582370039322, -1.3181631796275557]
+client prop. action:  3
+client's proposition action :  3 
+
+agent advises the following action : [1.5896490225067326, 0.9785582370039322, -1.3181631796275557] 
+  closest labels are:  ['put to bed', 'pray with', 'nestle', 'study', 'apologize to', 'contemplate', 'comfort', 'confer with', 'snuggle', 'soothe']
+client does action:  [1.5896490225067326, 0.9785582370039322, -1.3181631796275557] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  0.839770651343
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57500673  0.54025399  0.48480386  1.52005885  1.4838489  -1.23060666  1.2189924   1.96133058  0.22058722]
+weight : 1.0
+tau : [ 1.23801983 -0.26052118  0.48086159  1.224741    1.11917549 -0.63698289  1.47746425  0.73456551 -0.30010907]
+x:  [ 0.          3.98974977  0.99092333  2.97268076]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.5824387   0.81375076 -0.83822466  1.58964902  0.97855824 -1.31816318  1.50609114  0.54771229  0.38883849]
+weight : 1.0
+tau : [ 1.65075809  0.47870354 -0.36338439  1.33024381  0.75306334 -0.6975421   1.31118582 -0.21070279  0.50422524]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  assistant
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  4
+pwid current lastPrompt:  0
+current deflection of averages:  3.17028992956
+current deflection of averages (client):  1.47220261481
+current deflection (agent's perspective):  3.40976937884
+current deflection (client's perspective):  1.78701163998
+##########  current turn:  agent   ##########
+---------- iter  9 --------------------------------------------------------------------------------
+[0, 0, 105, 767, 128, 0, 0, 0]
+average estimate of planstep:  4.0  most likely planstep:  3
+using heuristic policy .... awareness:  0.990923334392  planstep:  3  action :  0
+agent action/client observ:  [2.076163598172871, 0.5632449891464867, 0.2981544032225322]
+agent prop. action:  0
+suggested action for the agent is : [2.076163598172871, 0.5632449891464867, 0.2981544032225322] 
+  closest label is:  chat_with
+agent's proposition action :  0 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.076163598172871, 0.5632449891464867, 0.2981544032225322] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.57373342  0.53905216  0.47985387  2.0761636   0.56324499  0.2981544   1.22082449  1.96615016  0.22293689]
+weight : 1.0
+tau : [ 1.64632845 -0.01922449  0.46255437  1.36669336  0.31097744  0.55407932  1.18046813  0.40675119 -0.1296416 ]
+x:  [ 1.     3.99   0.991  0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  11.9258821376
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.58315971  0.81661506 -0.82711912  2.0076524   0.55399033  0.32323155  1.53160423  0.56866916  0.41030393]
+weight : 1.0
+tau : [ 1.28361895  0.19692699 -0.15406238  1.38513151  0.33591919  0.57240373  1.70392666  0.03427224  0.49564224]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  aide
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  4
+pwid current lastPrompt:  0
+current deflection of averages:  3.50739200432
+current deflection of averages (client):  1.7464751108
+current deflection (agent's perspective):  3.6648502417
+current deflection (client's perspective):  2.30940944873
+##########  current turn:  client   ##########
+---------- iter  10 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 1 0 4 1.7464751108
+client action/agent observ:  [1.8025431602825839, 0.9240326437505411, -0.9669561751600523]
+client prop. action:  4
+client's proposition action :  4 
+
+agent advises the following action : [1.8025431602825839, 0.9240326437505411, -0.9669561751600523] 
+  closest labels are:  ['put to bed', 'apologize to', 'confer with', 'soothe', 'nestle', 'study', 'pray with', 'confide in', 'comfort', 'inject with medicine']
+client does action:  [1.8025431602825839, 0.9240326437505411, -0.9669561751600523] 
+
+%%%%%%%%%%%%%%%%%%%%  total weight:  0.137810967852
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.54459673  0.50947059  0.59145298  1.18240276  0.89419548 -1.33689827  1.17335657  2.00824742  0.13992828]
+weight : 1.0
+tau : [ 1.08468581 -0.29749209  0.38835518  0.95294253  0.70159985 -0.7643685   1.18363841  0.44045533 -0.44851176]
+x:  [ 0.          4.97295877  0.96683165  3.85459272]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  1000.0
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.59211991  0.81407184 -0.83073414  1.80254316  0.92403264 -0.96695618  1.53124734  0.57054047  0.41810782]
+weight : 1.0
+tau : [ 1.68930611  0.37651834 -0.29124275  1.41532742  0.6739789  -0.46468271  1.30266566 -0.13835328  0.42680641]
+x:  [ 1.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  aide
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  5
+pwid current lastPrompt:  0
+current deflection of averages:  4.12583037036
+current deflection of averages (client):  1.51154628514
+current deflection (agent's perspective):  4.3543326835
+current deflection (client's perspective):  1.90466257018
+##########  current turn:  agent   ##########
+---------- iter  11 --------------------------------------------------------------------------------
+[0, 0, 0, 12, 929, 26, 33, 0]
+average estimate of planstep:  5.0  most likely planstep:  4
+using heuristic policy .... awareness:  0.966831645582  planstep:  4  action :  0
+agent action/client observ:  [2.254982323102546, 0.2790751265890159, 0.5246737915706184]
+agent prop. action:  0
+suggested action for the agent is : [2.254982323102546, 0.2790751265890159, 0.5246737915706184] 
+  closest label is:  chat_with
+agent's proposition action :  0 
+
+enter an action for the agent to take, or '0' for the Bayesact choice
+agent does action : [2.254982323102546, 0.2790751265890159, 0.5246737915706184] 
+
+client action/agent observ:  [0.0, 0.0, 0.0]
+client prop. action:  0
+%%%%%%%%%%%%%%%%%%%%  total weight:  990.0
+agent f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.54503248  0.50482262  0.59486156  2.25498232  0.27907513  0.52467379  1.17077116  2.00892963  0.13741635]
+weight : 1.0
+tau : [ 1.59425656 -0.19948702  0.44738789  1.38065033  0.05965535  0.68033531  1.0199613   0.27579147 -0.21921437]
+x:  [ 1.     4.973  0.968  0.   ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%%%%%%%%%%%%%%%%%%%%  total weight:  11.2760227831
+client f is: 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+f : [ 1.58521117  0.8106659  -0.78915333  2.14974068  0.23787116  0.45230092  1.54062785  0.54745791  0.36205568]
+weight : 1.0
+tau : [ 1.36035683  0.21194123 -0.09693064  1.49877125  0.11231044  0.64097071  1.84073322 -0.10079532  0.48030539]
+x:  [ 0.]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+agent thinks it is most likely a:  assistant
+agent thinks the client is most likely a:  adult
+client thinks it is most likely a:  elder
+client thinks the agent is most likely a:  aide
+client state is: 
+pwid current awareness:  1
+pwid current planstep:  5
+pwid current lastPrompt:  0
+current deflection of averages:  4.510752488
+current deflection of averages (client):  1.88760440261
+current deflection (agent's perspective):  4.64508178665
+current deflection (client's perspective):  2.41366326596
+##########  current turn:  client   ##########
+---------- iter  12 --------------------------------------------------------------------------------
+agent action/client observ:  [0.0, 0.0, 0.0]
+agent prop. action:  0
+getting propositonal action for pwid: 1 0 5 1.88760440261
+client action/agent observ:  [1.8928406251167735, 1.2203243684218557, -0.619880877972334]
+client prop. action:  2
+client's proposition action :  2 
+
+agent advises the following action : [1.8928406251167735, 1.2203243684218557, -0.619880877972334] 
+  closest labels are:  ['apologize to', 'soothe', 'confer with', 'confide in', 'compromise with', 'counsel', 'comfort', 'hold', 'sympathize with', 'remind']
+client does action:  [1.8928406251167735, 1.2203243684218557, -0.619880877972334] 
+
+all done
+current deflection of averages:  4.510752488
+current deflection of averages (client):  1.88760440261
+current deflection (agent's perspective):  4.64508178665
+current deflection (client's perspective):  2.41366326596
+final simul agent state: 
+pwid current awareness:  1
+pwid current planstep:  7
+pwid current lastPrompt:  0

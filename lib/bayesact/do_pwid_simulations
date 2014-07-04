@@ -1,0 +1,42 @@
+#!/bin/bash -f
+
+
+echo $#
+
+trueid=$1
+fname=pwid_sims.$trueid.txt
+fixedprompt=""
+fixeddefault=""
+
+if [ "$#" -gt 1 ]
+then
+  fixedprompt=$2
+  fname=pwid_sims.$trueid-$fixedprompt.txt
+fi
+
+if [ "$#" -gt 2 ]
+then
+  fixeddefault=$3
+  fname=pwid_sims.$trueid-$fixedprompt-$fixeddefault.txt
+fi
+
+echo $fname
+
+i="0"
+
+while [ $i -lt 10 ]
+do
+ python bayesactassistant.py $trueid $fixedprompt $fixeddefault >& shit
+ lastiter=$(tail -28 shit | egrep iter | egrep -o '[0-9]+')
+ 
+ lastps=$(tail -10 shit | egrep 'current planstep' | egrep -o '[0-9]+')
+
+ echo $lastiter $lastps >> $fname
+
+ i=$[$i+1]
+done
+
+
+#grep -o [0-9][0-9] $fname | awk '{sum+=$1; sumsq+=$1*$1} END {print sum/NR; print sqrt(sumsq/NR - (sum/NR)**2)}' 
+
+

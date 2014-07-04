@@ -4,7 +4,7 @@ import cPlot2D
 import cPlot3D
 
 
-class cPlotFrame2D(cPlot2D.cPlotFrame):
+class cPlotFrame(cPlot2D.cPlotFrame):
     def __init__(self, iParent, **kwargs):
         cPlot2D.cPlotFrame.__init__(self, iParent, **kwargs)
 
@@ -17,6 +17,8 @@ class cPlotPanel2D(cPlot2D.cPlotPanel):
     def __init__(self, iParent, iXAxisItem=eEPA.evaluation, iYAxisItem=eEPA.potency, iZAxisItem=eEPA.activity, **kwargs):
         cPlot2D.cPlotPanel.__init__(self, iParent, **kwargs)
 
+        self.m_Title = ""
+        
         self.m_XAxisItem = iXAxisItem
         self.m_YAxisItem = iYAxisItem
         self.m_ZAxisItem = iZAxisItem

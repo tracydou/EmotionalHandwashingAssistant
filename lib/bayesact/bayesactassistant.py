@@ -32,7 +32,7 @@ NP.set_printoptions(linewidth=10000)
 #1 : one of a selection of  num_confusers+1 randoms
 #2 : exactly - use this to mimic interact
 #3 : same as 0 but also agent does not know its own id
-agent_knowledge=0
+agent_knowledge=2
 
 client_knowledge=2
 
@@ -195,11 +195,14 @@ num_samples=2000
 roughening_noise=num_samples**(-1.0/3.0)
 
 
+#the observation noise
+#set to 0.05 or less to mimic interact
 #in our current assistant, the EPA measurements are null on the E dimension (we can't measure this yet)
 # and pretty bad on the other two, so we adjust here for that
-obs_noise=(100000,3.5,1.5)
+obs_noise=(100000,10,10)
 
 simul_obs_noise=0.5
+
 xobsnoise=0.1
 simul_xobsnoise=0.00001
 
@@ -221,6 +224,7 @@ learn_verbose=False
 #for repeatability
 rseed = NP.random.randint(0,382948932)
 #rseed=259721666
+rseed=3620463
 print "random seeed is : ",rseed
 NP.random.seed(rseed)
 
@@ -319,7 +323,9 @@ true_client_id=NP.asarray([true_client_id]).transpose()
 
 #get initial sets of parameters for agent
 #(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,client_mean_ids)
-(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,client_id,tcid)
+cid=[1.59,0.79,-0.88]
+cid=NP.asarray([cid]).transpose()
+(learn_tau_init,learn_prop_init,learn_beta_client_init,learn_beta_agent_init)=init_id(agent_knowledge,agent_id,cid,tcid)
 
 
 (simul_tau_init,simul_prop_init,simul_beta_client_init,simul_beta_agent_init)=init_id(client_knowledge,true_client_id,client_agent_id,agent_mean_ids)
@@ -497,9 +503,10 @@ while not done:
         simul_agent.set_behaviour(beh_obs)
     else:
         beh_obs=simul_paab
-  
+
     print "agent planstep distribution before update: "
     curr_planstep = learn_agent.get_most_likely_planstep()
+
 
     if learn_turn=="client" and learn_observ==[]:
         done = True
@@ -516,9 +523,11 @@ while not done:
 
         print "agent f is: "
         learn_avgs.print_val()
-
+        
         print "agent planstep distribution: "
         curr_planstep = learn_agent.get_most_likely_planstep()
+
+
 
         #learn_paab is passed into client as the x-observation
         simul_xobs=[State.turnnames.index(invert_turn(simul_turn)),learn_paab]

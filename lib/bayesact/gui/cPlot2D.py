@@ -1,9 +1,10 @@
-from cEnum import eAxes
+from cEnum import eAxes, eRect
 from cConstants import cPlotConstants, cPlot2DConstants
 import cPlot
 import wx
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+
 
 
 class cPlotFrame(cPlot.cPlotFrame):
@@ -29,6 +30,19 @@ class cPlotPanel(cPlot.cPlotPanel):
         self.m_Axes = self.m_Figure.add_axes(cPlot2DConstants.m_Rect)
         self.m_Axes.set_xlim(self.m_XAxisMin, self.m_XAxisMax)
         self.m_Axes.set_ylim(self.m_YAxisMin, self.m_YAxisMax)
+
+        '''
+        # Details of m_Rect, is described in cConstants.cPlot2DConstants
+        # This will be used for pretty panning, that is, panning the plot and making it look nice
+        # I will need to calculate the optimal stepping for the pixels
+        rect = cPlot2DConstants.m_Rect# [0.19, 0.13, 0.8, 0.79]
+        pixelLength_X_Axis = rect[eRect.fractionOfX] * self.GetSize()[0]
+        pixelLength_Y_Axis = rect[eRect.fractionOfY] * self.GetSize()[1]
+
+
+        self.m_OptimalXStep = 2.0 / pixelLength_X_Axis
+        self.m_OptimalYStep = 1.0 / pixelLength_Y_Axis
+        '''
 
         self.m_Canvas = FigureCanvas(self, -1, self.m_Figure)
 
@@ -77,35 +91,56 @@ class cPlotPanel(cPlot.cPlotPanel):
         self.m_YAxisLength = (self.m_YAxisMin - self.m_YAxisMax)
 
 
+    def onMousePress(self, iEvent):
+        if (iEvent.inaxes == self.m_Axes):
+            self.m_PreviousMouseX, self.m_PreviousMouseY = iEvent.xdata, iEvent.ydata
+            self.m_PreviousMouseXPixel, self.m_PreviousMouseYPixel = iEvent.x, iEvent.y
+
+
     # modified from mpl.toolkits.mplot3d.axes3d._on_move
     def onMouseMove(self, iEvent):
         if (not iEvent.button):
             return
 
         currentMouseX, currentMouseY = iEvent.xdata, iEvent.ydata
+        currentMouseXPixel, currentMouseYPixel = iEvent.x, iEvent.y
 
         # In case the mouse is out of bounds.
         if (currentMouseX == None):
             return
 
-        diffMouseX = (currentMouseX - self.m_PreviousMouseX) * cPlot2DConstants.m_MouseDragSensitivity
-        diffMouseY = (currentMouseY - self.m_PreviousMouseY) * cPlot2DConstants.m_MouseDragSensitivity
+        #diffMouseX = (currentMouseX - self.m_PreviousMouseX) * cPlot2DConstants.m_MouseDragSensitivity
+        #diffMouseY = (currentMouseY - self.m_PreviousMouseY) * cPlot2DConstants.m_MouseDragSensitivity
 
         # panning
         # 3 represents right click
         if (cPlotConstants.m_MousePanButton == iEvent.button):
             self.updateAxesData()
 
-            diffMouseX *= cPlot2DConstants.m_PanSensitivity
-            diffMouseY *= cPlot2DConstants.m_PanSensitivity
+            #diffMouseX *= cPlot2DConstants.m_PanSensitivity
+            #diffMouseY *= cPlot2DConstants.m_PanSensitivity
+
+            diffMouseX = currentMouseX - self.m_PreviousMouseX
+            diffMouseY = currentMouseY - self.m_PreviousMouseY
+
+            diffMouseXPixel = currentMouseXPixel - self.m_PreviousMouseXPixel
+            diffMouseYPixel = currentMouseYPixel - self.m_PreviousMouseYPixel
+
+            lengthX = abs(self.m_XAxisMax - self.m_XAxisMin)
+            lengthY = abs(self.m_YAxisMax - self.m_YAxisMin)
+
 
             if (False == self.m_LockAxes[eAxes.xAxis]):
-                self.shiftXAxis(diffMouseX)
+                if (1 <= abs(diffMouseXPixel)):
+                    shiftedX = diffMouseX * (1 / lengthX)
+                    self.shiftXAxis(-shiftedX)
 
             if (False == self.m_LockAxes[eAxes.yAxis]):
-                self.shiftYAxis(diffMouseY)
+                if (1 <= abs(diffMouseYPixel)):
+                    shiftedY = diffMouseY * (1 / lengthY)
+                    self.shiftYAxis(-shiftedY)
 
-            self.redrawPlot()
+            self.redrawAxes()
 
 
     def zoomAxes(self, iZoomAmount):

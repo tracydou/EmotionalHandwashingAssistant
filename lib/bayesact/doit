@@ -1,0 +1,7 @@
+#!/bin/bash -f
+
+
+./do_pwid_simulations patient 
+./do_pwid_simulations patient command mind
+./do_pwid_simulations patient curse curse
+

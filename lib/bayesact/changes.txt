@@ -1,0 +1,56 @@
+This file describes some changes that were made by Aaron Vaartjes during his 
+revamping of the code/writing of the C++ version.  They can be ignored by anyone
+looking at this code for the first time.  
+
+=====
+Usage
+=====
+
+-----------
+FVarSampler
+-----------
+
+** Old Usage **
+(tmpfv,wgt,tmpH,tmpC) = sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga, \
+                                   self.isigf_unconstrained_b, \
+                                   state.tau,state.f,state.get_turn(),[],[])
+tmpfv=tmpfv.transpose()
+
+** New Usage **
+fv = fVarSampler.sampleNewFVar()
+fv = fv.transpose()
+
+
+
+sampleNext:
+
+** Old Usage **
+newsample = self.sampleNext(fvars,tvars,sample,sample.get_turn(),aab,observ,paab)
+
+** New Usage **
+fVarSampler = FVarSampler(self.isiga, self.isigf, sample.tau, \
+                          sample.f, self, sample.get_turn(), \
+                          aab, observ)
+
+newsample = self.sampleNext(fVarSampler, fvars, tvars, sample, \
+                            aab, paab)
+
+** Notes **
+The main benefits of the next class is that the FVarSampler initialization
+contains expensive computations. This means that it can be used outside of some
+loops for a speedup.
+
+-----------
+TauMappings
+-----------
+
+** Old Usage **
+(tmpH,tmpC) = instHCfromTau(tvars,H,C,tau,turn)
+
+
+** New Usage **
+(self.h, self.c) = self.agentMappings.getHC(tau)
+
+This new version is both faster and slightly easier to understand.
+
+

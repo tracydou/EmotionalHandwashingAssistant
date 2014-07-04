@@ -205,6 +205,7 @@ class cBayesactSim(object):
             #on March 22nd at 11:52am
             #for repeatability
             rseed = NP.random.randint(0,382948932)
+            #rseed = 285907485
             #rseed=randseeds[trial]
             #rseed = 373044980  #lady and shoplifter
             #rseed = 156288614  #hero and insider
@@ -279,7 +280,7 @@ class cBayesactSim(object):
                     learn_agent.sendSamplesToPlotter(learn_agent.samples,self.plotter,eTurn.learner)
                     simul_agent.sendSamplesToPlotter(simul_agent.samples,self.plotter,eTurn.simulator)
                     self.plotter.plot()
-                    
+
                     if (None != self.threadEvent):
                         # For some reason, while a thread is waiting, the program will say it is leaking memory sometimes
                         self.waiting = True

@@ -24,6 +24,9 @@ class cPlotBayesactSim(object):
         self.m_LearnerTauSamples = []
         self.m_SimulatorTauSamples = []
 
+        self.m_LearnerPreviousAction = []
+        self.m_SimulatorPreviousAction = []
+        
         self.m_Sleep = False
 
         self.m_Parser = None
@@ -52,17 +55,17 @@ class cPlotBayesactSim(object):
         for plotPanel in self.m_PlotEPAPanels:
             #with plotPanel.m_Lock
             if (eEPA.fundamental == plotPanel.m_PlotType):
-                plotPanel.plotEPA(self.m_LearnerFundamentalSamples, self.m_SimulatorFundamentalSamples)
+                plotPanel.plotEPA(self.m_LearnerFundamentalSamples, self.m_SimulatorFundamentalSamples, self.m_LearnerPreviousAction, self.m_SimulatorPreviousAction)
             else:
-                plotPanel.plotEPA(self.m_LearnerTauSamples, self.m_SimulatorTauSamples)
+                plotPanel.plotEPA(self.m_LearnerTauSamples, self.m_SimulatorTauSamples, self.m_LearnerPreviousAction, self.m_SimulatorPreviousAction)
 
 
     # Resplots and assumes the samples were already truncated to the max plot samples from the above function
     def replotOnPanel(self, iPlotEPAPanel):
         if (eEPA.fundamental == iPlotEPAPanel.m_PlotType):
-            iPlotEPAPanel.plotEPA(self.m_LearnerFundamentalSamples, self.m_SimulatorFundamentalSamples)
+            iPlotEPAPanel.plotEPA(self.m_LearnerFundamentalSamples, self.m_SimulatorFundamentalSamples, self.m_LearnerPreviousAction, self.m_SimulatorPreviousAction)
         else:
-            iPlotEPAPanel.plotEPA(self.m_LearnerTauSamples, self.m_SimulatorTauSamples)
+            iPlotEPAPanel.plotEPA(self.m_LearnerTauSamples, self.m_SimulatorTauSamples, self.m_LearnerPreviousAction, self.m_SimulatorPreviousAction)
 
 
     def sleepProcess(self):

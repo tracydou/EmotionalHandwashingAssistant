@@ -1,0 +1,36 @@
+#!/bin/bash
+
+CURDIR=$PWD
+CONTROL="bayesact-control"	# CHANGE THIS 
+NEW="bayesact"			# CHANGE THIS
+SIMULATOR="bayesactsim.py"
+ARGS="-n 100 -t 2 -x 1 -s 12345678"
+EXT=".tmp"
+OUT="result-diff"
+
+cd $CONTROL
+
+python $SIMULATOR $ARGS > ../$CONTROL$EXT &
+
+cd $CURDIR
+cd $NEW
+
+python $SIMULATOR $ARGS > ../$NEW$EXT &
+
+cd $CURDIR
+
+wait
+
+
+diff $CONTROL$EXT $NEW$EXT > $OUT
+
+if [ -z `cat $OUT` ]
+then
+echo "OUTPUTS are identical"
+rm $OUT
+else
+echo "Differences found and written to $OUT"
+fi
+
+rm $CONTROL$EXT
+rm $NEW$EXT

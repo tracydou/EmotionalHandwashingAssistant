@@ -34,3 +34,6 @@ class eGenderKey:
 
 class eGui:
     simulator, interactive = range(2)
+
+class eRect:
+    fromLeft, fromBottom, fractionOfX, fractionOfY = range(4)

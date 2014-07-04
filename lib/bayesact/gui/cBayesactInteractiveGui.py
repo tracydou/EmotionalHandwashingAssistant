@@ -1,4 +1,5 @@
 import sys
+import threading
 sys.path.append("../")
 import wx
 from cBayesactSimGui import cBayesactSimGuiPanel
@@ -11,42 +12,58 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
 
         self.m_BayesactSimGuiPanel = iBayeactSimGuiPanel
 
+        self.m_ClientStaticText.Destroy()
+
         self.m_ClientAlphaStaticText.Destroy()
         self.m_ClientAlphaTextBox .Destroy()
         self.m_ClientAlphaSlider.Destroy()
+        self.m_ClientAlphaButton.Destroy()
 
         self.m_ClientBetaOfClientStaticText.Destroy()
+        self.m_ClientBetaOfClientSubscript_c_StaticText.Destroy()
         self.m_ClientBetaOfClientTextBox.Destroy()
         self.m_ClientBetaOfClientSlider.Destroy()
+        self.m_ClientBetaOfClientButton.Destroy()
 
         self.m_ClientBetaOfAgentStaticText.Destroy()
+        self.m_ClientBetaOfAgentSubscript_a_StaticText.Destroy()
         self.m_ClientBetaOfAgentTextBox.Destroy()
         self.m_ClientBetaOfAgentSlider.Destroy()
+        self.m_ClientBetaOfAgentButton.Destroy()
 
+        self.m_ClientGammaStaticText.Destroy()
+        self.m_ClientGammaTextBox.Destroy()
+        self.m_ClientGammaSlider.Destroy()
+        self.m_ClientGammaButton.Destroy()
+
+        self.m_AgentStaticText.Destroy()
 
         self.m_AgentAlphaStaticText.Destroy()
         self.m_AgentAlphaTextBox.Destroy()
         self.m_AgentAlphaSlider.Destroy()
+        self.m_AgentAlphaButton.Destroy()
 
         self.m_AgentBetaOfClientStaticText.Destroy()
+        self.m_AgentBetaOfClientSubscript_c_StaticText.Destroy()
         self.m_AgentBetaOfClientTextBox.Destroy()
         self.m_AgentBetaOfClientSlider.Destroy()
+        self.m_AgentBetaOfClientButton.Destroy()
 
         self.m_AgentBetaOfAgentStaticText.Destroy()
+        self.m_AgentBetaOfAgentSubscript_a_StaticText.Destroy()
         self.m_AgentBetaOfAgentTextBox.Destroy()
         self.m_AgentBetaOfAgentSlider.Destroy()
+        self.m_AgentBetaOfAgentButton.Destroy()
 
-        self.m_GammaValueStaticText.Destroy()
-        self.m_GammaValueTextBox.Destroy()
-        self.m_GammaValueSlider.Destroy()
-
+        self.m_AgentGammaStaticText.Destroy()
+        self.m_AgentGammaTextBox.Destroy()
+        self.m_AgentGammaSlider.Destroy()
+        self.m_AgentGammaButton.Destroy()
 
         self.m_EnvironmentNoiseStaticText.Destroy()
         self.m_EnvironmentNoiseTextBox.Destroy()
         self.m_EnvironmentNoiseSlider.Destroy()
 
-        self.m_UniformDrawsStaticText.Destroy()
-        self.m_UniformDrawsChoice.Destroy()
 
         self.m_NumberOfStepsStaticText.Destroy()
         self.m_NumberOfStepsTextBox.Destroy()
@@ -64,9 +81,6 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
         self.m_AgentBetaOfAgentTextBox.SetPosition((170, 88))
         self.m_AgentBetaOfAgentSlider.SetPosition((290, 88))
 
-        self.m_GammaValueStaticText.SetPosition((10, 120))
-        self.m_GammaValueTextBox.SetPosition((170, 118))
-        self.m_GammaValueSlider.SetPosition((290, 118))
         '''
 
         self.m_StepButton.SetLabel("Evaluate")
@@ -82,6 +96,9 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
         self.m_CurrentTurnStaticText = wx.StaticText(self, -1, "Current Turn", pos=(210, 230))
         self.m_CurrentTurnTextBox = wx.TextCtrl(self, -1, pos=(210, 260), size=(190, -1), style=wx.TE_READONLY)
 
+
+    def onDrawOutlines(self, iEvent=None):
+        pass
 
     def updateBayesactFromSettings(self):
         self.m_BayesactSimGuiPanel.updateBayesactFromSettings()
@@ -110,8 +127,6 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
     def onSetEnvironmentNoiseFlag(self, iEvent):
         pass
 
-    def onSetUniformDrawsFlag(self, iEvent):
-        pass
 
     def onSetNumStepsFlag(self, iEvent):
         pass
@@ -127,7 +142,7 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
 
     # Just simply continue the thread and set the client action
     def onStepBayesactSim(self, iEvent):
-        if (None != self.m_BayesactSimThread):
+        if (None != self.m_SimInteractiveTabs.m_BayesactSimThread):
             self.m_BayesactSim.evaluate_interaction = True
             self.m_BayesactSim.thread_event.set()
         else:
@@ -136,12 +151,3 @@ class cBayesactInteractiveGuiPanel(cBayesactSimGuiPanel):
 
     def onStartBayesactSim(self, iEvent):
         self.m_BayesactSimGuiPanel.onStartBayesactSim(None)
-
-        if ((None != self.m_BayesactSimGuiPanel) and (None == self.m_BayesactSimGuiPanel.m_BayesactSimThread)):
-            self.m_BayesactSimGuiPanel.m_BayesactSimThread = self.m_BayesactSimThread
-            self.m_BayesactSimGuiPanel.m_Plotter = self.m_Plotter
-            self.m_Plotter.addPanel(self.m_BayesactSimGuiPanel.m_PlotEPAPanel2D_A)
-            self.m_Plotter.addPanel(self.m_BayesactSimGuiPanel.m_PlotEPAPanel2D_B)
-
-
-

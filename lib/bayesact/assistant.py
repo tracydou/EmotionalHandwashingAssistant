@@ -11,7 +11,6 @@ Research sponsored by the Natural Sciences and Engineering Council of Canada (NS
 see README for details
 ----------------------------------------------------------------------------------------------"""
 
-from random import randint
 from bayesact import *
 import copy
 
@@ -31,6 +30,7 @@ class Assistant(Agent):
         self.nextPsDict = kwargs.get("nextpsd",{0:([1.0],[1]),1:([1.0],[1])})
         self.nextBehDict = kwargs.get("nextbd",{0:{0:([1.0],[0]),1:([1.0],[1])},1:{0:([1.0],[1]),1:([1.0],[1])}})
         self.num_plansteps=len(self.nextPsDict)
+        #self.num_behaviours=len(self.nextBehDict)
         self.num_behaviours=kwargs.get("numberbh",5)
 
         self.reconBehDict = {0:2,1:1,2:2,3:3,4:2,5:2,6:4,7:0}
@@ -40,7 +40,14 @@ class Assistant(Agent):
         #initial awarness distribution
         self.px = [0.3,0.7]
 
+        #self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
+        #turned these downwards after adding behaviours - seems deflections were not 
+        #as high, which may be just because of added uncertainty
         self.defb = [1.0,0.99,0.9,0.3,0.2,0.1,0.05,0.005,0.001,0.0001]
+
+        #self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
+        #self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
+        #downtuned versions
         self.defbnp = [0.8,0.6,0.3,0.2,0.1,0.05,0.005,0.002,0.001,0.0001]
 
 
@@ -49,16 +56,13 @@ class Assistant(Agent):
         #           NP.ones((self.num_plansteps,self.num_plansteps))*(self.obs_noise/(self.num_plansteps-1)))
         #self.of = (NP.diag(NP.ones(self.num_behaviours)*(1.0-self.obs_noise-(self.obs_noise/(self.num_behaviours-1)))) +
         #           NP.ones((self.num_behaviours,self.num_behaviours))*(self.obs_noise/(self.num_behaviours-1)))
-        #self.of = [ [ (1.0-self.obs_noise), self.obs_noise/4, self.obs_noise/4, self.obs_noise/4, self.obs_noise/4],
-        #            [ self.obs_noise/3,    (1.0-self.obs_noise),     0,         self.obs_noise/3, self.obs_noise/3],
-        #            [ self.obs_noise/2,             0,        (1.0-self.obs_noise), self.obs_noise/2,     0       ],
-        #            [ self.obs_noise,               0,               0,         (1.0-self.obs_noise),     0       ],
-        #            [ self.obs_noise,               0,               0,               0,      (1.0-self.obs_noise)]]
+        #print self.of
         self.of = [ [ (1.0-self.obs_noise), self.obs_noise/4, self.obs_noise/4, self.obs_noise/4, self.obs_noise/4],
                     [ self.obs_noise,    (1.0-self.obs_noise),     0,                0,                    0 ],
                     [ self.obs_noise,             0,        (1.0-self.obs_noise), 0,                    0       ],
                     [ self.obs_noise,             0,               0,         (1.0-self.obs_noise),     0       ],
                     [ self.obs_noise,             0,               0,               0,      (1.0-self.obs_noise)]]
+        print self.of
         
         self.x_avg=[0,0,0,0]
         
@@ -67,10 +71,12 @@ class Assistant(Agent):
         #propositional (discrete) actions are 0 (do nothing) and a=1...num_plansetps-1 (prompt for planstep a)
         self.numDiscActions=self.num_plansteps   #one action (number 0) is "do nothing" or "None"
 
+
     #overridden from Agent because the covariance here is 3D and non-spherical 
     def init_output_covariances(self):
- 
+
         #self.gamma_value2=self.gamma_value*self.gamma_value
+
         #precomputed stuff for computing normal pdfs for 3D vectors
         self.theivar=(0.5/float(self.gamma_value[0]*self.gamma_value[0]),
                  0.5/float(self.gamma_value[1]*self.gamma_value[1]),
@@ -78,6 +84,8 @@ class Assistant(Agent):
                  
         thedet=self.gamma_value[0]*self.gamma_value[1]*self.gamma_value[2]
         self.ldenom=math.log(math.pow((2*NP.pi),1.5)*thedet)
+
+
 
     def print_params(self):
         Agent.print_params(self)
@@ -106,21 +114,26 @@ class Assistant(Agent):
         return abs(curr_planstep-self.num_plansteps+1)<=0.1
 
 
-    def get_most_likely_planstep(self,if_print=True):
+    def get_most_likely_planstep(self):
         ps_belief=[0]*self.num_plansteps
-        for s in self.samples[1:]:
+        #ps_votes=[0]*self.num_plansteps
+        for s in self.samples:
+            #ps_votes[s.x[1]] += 1
             ps_belief[s.x[1]] += s.weight
-        most_likely_ps = NP.argmax(ps_belief)
-        if (if_print==True):
-            print "in get_most_likely_planstep(), planstep belief =", ps_belief
-            outfile = open("ps_belief.txt", "a")
-            outfile.write(str(most_likely_ps)) #most-likely-ps
-            outfile.write(" ")
-            outfile.write(str(ps_belief)[1:-1]) #ps_beliefs
-            outfile.write("\n")
-            outfile.close()
-        return most_likely_ps
+            
+        #print ps_votes
+        print ps_belief
+        return NP.argmax(ps_belief)
 
+
+    def get_expected_planstep(self):
+        exp_ps=0
+        tot_weight=0
+        for s in self.samples:
+            exp_ps += s.x[1]*s.weight
+            tot_weight += s.weight
+        return exp_ps/tot_weight
+        
 
 
     #called from get_next_action (bayesact.py)
@@ -131,6 +144,9 @@ class Assistant(Agent):
             (aab,paab)=self.get_default_predicted_action(state)
         else:
             (aab,paab)=self.get_null_action()
+            #in any case, get the propositional action (always happens)
+            #doesn't happen anymore - 
+            #paab = self.get_prop_action(state)
             
         return (aab,paab)
 
@@ -155,8 +171,10 @@ class Assistant(Agent):
             propositional_action=0
             curr_avg_planstep = round(self.x_avg[1])
             curr_planstep = self.get_most_likely_planstep()
-            self.x_avg[1] = curr_planstep
             print "average estimate of planstep: ",curr_avg_planstep," most likely planstep: ",curr_planstep
+            expected_planstep = self.get_expected_planstep()
+            print "expected planstep: ",expected_planstep
+
             if awareness < 0.4:
                 propositional_action=self.getRecommendedNextBehaviour(curr_planstep)  #used to add 1 here, but that was wrong
             print "using heuristic policy .... awareness: ",awareness," planstep: ",curr_planstep," action : ",propositional_action
@@ -187,8 +205,9 @@ class Assistant(Agent):
         new_awareness=awareness
         new_planstep=planstep
 
-        new_behaviour = 0
-#        new_behaviour = randint(0,4)  #initialize behaviour randomly
+        #new_behaviour = 0  #could be randomized
+        new_behaviour = NP.random.randint(0,self.num_behaviours)  #randomized version
+
 
         if state.get_turn()=="agent":
             #agent turn - save action - why?
@@ -260,6 +279,7 @@ class Assistant(Agent):
     def evalSampleXvar(self,sample,xobs):
         #print sample.x[0],sample.x[1],xobs,self.of[sample.x[1]][xobs[1]]
         if sample.x[0]==xobs[0]:
+            #print sample.x[3],xobs[1]
             return self.of[sample.x[3]][xobs[1]]
         else:
             return 0.0
@@ -268,12 +288,15 @@ class Assistant(Agent):
     def sampleXObservation(self,sample):
         return [sample.x[0],list(NP.random.multinomial(1,self.of[sample.x[1]])).index(1)]
 
+
     #this version allows for different variances in each dimension
     def normpdf(self,x, mean, ivar, ldenom):
-         num=0.0
-         for (xv,iv) in zip(x,ivar):
-             num = num-iv*( float(xv) - float(mean) )**2            
-         return num-ldenom
+        num=0.0
+        for (xv,iv) in zip(x,ivar):
+            num = num-iv*( float(xv) - float(mean) )**2
+            
+        return num-ldenom
+
 
     def reward(self,sample,action=None):
         xreward=0.0
@@ -328,3 +351,4 @@ class Assistant(Agent):
             return math.sqrt(raw_dist(obs1[0],obs2[0]))
         else:
             return -2
+

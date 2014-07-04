@@ -41,8 +41,15 @@ class cPlotPanel(wx.Panel):
         # Locks up axis when panning
         self.m_LockAxes = [False, False, False]
 
+        self.m_InAxes = False
+
+        # These represent data co-ordinate, that is the point on the graph
         self.m_PreviousMouseX = 0
         self.m_PreviousMouseY = 0
+
+        # These represent mouse co-ordinate
+        self.m_PreviousMouseXPixel = 0
+        self.m_PreviousMouseYPixel = 0
 
         self.m_XAxisMin = cPlotConstants.m_DefaultXAxisMin
         self.m_XAxisMax = cPlotConstants.m_DefaultXAxisMax
@@ -54,6 +61,9 @@ class cPlotPanel(wx.Panel):
         self.m_XAxisLength = self.m_XAxisMax - self.m_XAxisMin
         self.m_YAxisLength = self.m_YAxisMax - self.m_YAxisMin
         self.m_ZAxisLength = self.m_ZAxisMax - self.m_ZAxisMin
+
+        self.m_ClickX = 0
+        self.m_ClickY = 0
 
         self.m_Figure = None
         self.m_Axes = None
@@ -67,6 +77,8 @@ class cPlotPanel(wx.Panel):
         self.m_Background = None
         self.m_Patches = None
 
+        self.m_Title = ""
+
         self.SetBackgroundColour(cPlotConstants.m_BackgroundColour)
 
         # For resizing window
@@ -74,7 +86,6 @@ class cPlotPanel(wx.Panel):
         self.m_n = 0
 
     def plotScatter(self, iXData, iYData, iAutoScaling=False, iRedraw=False, iUpdate=True, **kwargs):
-        print 1
         pass
 
 
@@ -94,6 +105,7 @@ class cPlotPanel(wx.Panel):
     def onMousePress(self, iEvent):
         if (iEvent.inaxes == self.m_Axes):
             self.m_PreviousMouseX, self.m_PreviousMouseY = iEvent.xdata, iEvent.ydata
+            self.m_PreviousMouseXPixel, self.m_PreviousMouseYPixel = iEvent.x, iEvent.y
 
 
     def onMouseRelease(self, iEvent):
@@ -179,29 +191,9 @@ class cPlotPanel(wx.Panel):
         self.m_Axes.add_patch(iPatch)
         #self.m_Axes.draw_artist(iPatch)
 
-    # This thing doesn't seem to work right now
-    def redrawPlot(self):
-        print self.m_n
-        self.m_n += 1
-        with self.m_Lock:
-            self.m_Axes.draw_artist(self.m_Axes.patch)
-            #self.m_Axes.draw_artist(iPlot)
-            self.m_Canvas.Update()
-            #self.m_Canvas.Show()
-            #self.m_Canvas.draw()
-            self.m_Canvas.flush_events()
-
-
     def redrawAxes(self):
-        # This thing will draw really really slowly if you are parsing and plotting at the same time
-        # Parsing as in parsing it from a pipe
         with self.m_Lock:
-            #self.m_Canvas.restore_region(self.m_Background)
-            #self.m_Axes.draw_artist(self.m_Axes.patch)
-            #self.m_Canvas.blit()
             self.m_Canvas.draw()
-        #self.m_Background = [self.m_Canvas.copy_from_bbox(self.m_Axes.bbox)]
-        #print self.m_Background
 
 
     # Remember to call redrawAxes

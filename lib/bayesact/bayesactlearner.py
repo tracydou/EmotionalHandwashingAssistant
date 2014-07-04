@@ -29,7 +29,7 @@ NP.set_printoptions(linewidth=10000)
 #1 : one of a selection of  num_confusers+1 randoms
 #2 : exactly - use this to mimic interact
 #3 : same as 0 but also agent does not know its own id
-agent_knowledge=0
+agent_knowledge=2
 
 # agent gender
 agent_gender="male"
@@ -255,8 +255,13 @@ class LearningAgent(Agent):
     def drawFbSample(self,fvars):
         newsample=drawSamples(self.samples,1)
         state = newsample[0]
-        (tmpfv,wgt,tmpH,tmpC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf_unconstrained_b,state.tau,state.f,state.get_turn(),[],[])
-        fb = getbvars(fvars,tmpfv)
+        #(tmpfv,wgt,tmpH,tmpC)=sampleFvar(fvars,tvars,self.iH,self.iC,self.isiga,self.isigf_unconstrained_b,state.tau,state.f,state.get_turn(),[],[])
+        fVarSampler = FVarSampler(self.isiga, self.isigf, state.tau, state.f, \
+                                  self, state.get_turn(), [], [])
+        fv = fVarSampler.sampleNewFVar()
+        fv = fv.transpose()
+
+        fb = getbvars(fvars,fv)
         return fb
 
 

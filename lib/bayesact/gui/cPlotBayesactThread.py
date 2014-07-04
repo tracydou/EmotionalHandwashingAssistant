@@ -19,6 +19,9 @@ class cPlotBayesactThread(object):
         self.m_LearnerTauSamples = []
         self.m_SimulatorTauSamples = []
 
+        self.m_LearnerPreviousAction = []
+        self.m_SimulatorPreviousAction = []
+
 
     # Used when you want to just blatantly start a window and plot stuff on it, will probably be deprecated later
     def initFrame(self):
@@ -37,7 +40,10 @@ class cPlotBayesactThread(object):
 
 
     def addPanel(self, iPlotPanel):
-        self.m_PlotBayesactSim.m_PlotEPAPanels.append(iPlotPanel)
+        if (None == self.m_PlotBayesactSim):
+            self.initPlotBayesactSim(iPlotPanel)
+        else:
+            self.m_PlotBayesactSim.m_PlotEPAPanels.append(iPlotPanel)
 
 
     def setThread(self, iThread):
@@ -63,11 +69,14 @@ class cPlotBayesactThread(object):
     def plot(self):
         self.m_PlotBayesactSim.setFundamentals(self.m_LearnerFundamentalSamples, self.m_SimulatorFundamentalSamples)
         self.m_PlotBayesactSim.setTau(self.m_LearnerTauSamples, self.m_SimulatorTauSamples)
+        self.m_PlotBayesactSim.m_LearnerPreviousAction = self.m_LearnerPreviousAction
+        self.m_PlotBayesactSim.m_SimulatorPreviousAction = self.m_SimulatorPreviousAction
         self.m_PlotBayesactSim.plotBayesactSim()
 
 
     def replotOnPanel(self, iPlotEPAPanel):
-        self.m_PlotBayesactSim.replotOnPanel(iPlotEPAPanel)
+        if (0 < len(self.m_LearnerFundamentalSamples)):
+            self.m_PlotBayesactSim.replotOnPanel(iPlotEPAPanel)
 
 
     def clearPlots(self):

@@ -35,17 +35,24 @@ class PwD(Agent):
 
 
         #initial awarness distribution
-        self.px = [0.9,0.1]
+        self.px = [0.3,0.7]
         
         #dynamics of behaviours as a function of integer deflections from 0-9
         #defb[d] gives the probability that a person will move to the next planstep 
         #if they are aware, they were given a prompt and the deflection has value d
-        self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
+        #self.defb = [1.0,0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005]
+
+        #turned these downwards after adding behaviours - seems deflections were not 
+        #as high, which may be just because of added uncertainty
+        self.defb = [1.0,0.99,0.9,0.3,0.2,0.1,0.05,0.005,0.001,0.0001]
+
         #these are the numbers for a person losing awareness spontaneously, without a prompt
         #defbnp[d] gives the probability that a person will move to the next planstep
         #if they are aware and the deflection has value d
         #self.defbnp = [0.99,0.95,0.7,0.5,0.3,0.2,0.1,0.05,0.005,0.001]
-        self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
+        #self.defbnp = [0.8,0.6,0.5,0.3,0.2,0.1,0.05,0.005,0.002,0.001]
+        #downtuned versions
+        self.defbnp = [0.8,0.6,0.3,0.2,0.1,0.05,0.005,0.002,0.001,0.0001]
 
         self.currPlanStep=0
         self.currBehaviour=0
@@ -232,3 +239,4 @@ class PwD(Agent):
         if self.currPlanStep==self.num_plansteps-1:
             xreward=1.0
         return xreward
+

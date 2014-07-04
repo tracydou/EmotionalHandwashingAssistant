@@ -1,30 +1,3 @@
-Places changed by Luyuan Lin:
-
-* Wrote bayesactlib.py basing on bayesactassistant.py
-  - packed funcs in the latter into class BayesactAssistant defined in the former
-  - set use_pomcp to FALSE
-  - the most essential changes are:
-    (in member func calculate()) patient actions are passed in as arguments and prompts
-    the assistant should perform are returned
-* Added member func "convert_prompt_number()", which converts learn_paab
-  to prompt-number value that is consistant with ../../data/OutputMappingResult.csv
-  and thus can be recoganized correctly by PromptSelecter
-  - this func depends on the hard-coded values of reconPsDict in bayesact.py
-  - this func should be consistant with values of "prompt_number" in
-    ../../data/OutputMappingResult.csv
-    
-* If you want to try out the most recent implementation of bayesact engine, then you should
-  1) copy & update the following files from https://github.com/jessehoey/bayesact:
-     - bayesact.py
-     - assistant.py
-     - pwid.py (optional; recommend to change)
-     - bayesactassistant.py (optional; recommend to change)
-  2) update bayesactlib.py if needed. For example, if signature of member funcs in class Assistant
-     changed, then you might need to update bayesactlib.py as well. A good way to decide if
-     bayesactlib.py needs change or not is to compare the latest bayesactassistant.py with current one. 
-
-
------------------------------ Original README Followed --------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 Bayesian Affect Control Theory
 Author: Jesse Hoey  jhoey@cs.uwaterloo.ca   http://www.cs.uwaterloo.ca/~jhoey
@@ -136,13 +109,15 @@ PLOTTING GUI:
 - Call bayesactgui.py to use
 - Requires wxPython3.0, matplotlib, and wxmpl2.0 installed
 - run bayesactsim or bayesactinteractive with -o option to display a 3D plot
-- use ctrl+q or ctrl+w to adjust x-axis
-- use ctrl+a or ctrl+s to adjust y-axis
-- use ctrl+z or ctrl+x to adjust z-axis
-- use ctrl+d to reset axes
-- use ctrl+= or ctrl+- to zoom in or out
-- use left click to pan
+- use alt+q or alt+w to adjust x-axis
+- use alt+a or alt+s to adjust y-axis
+- use alt+d to reset axes
+- use alt+= or alt+- to zoom in or out
+- use right click to pan
+- left click on a point to see what the closest point is, it will give the e, p, and a values while looking for the nearest identity, it will not estimate an action
+- to see what an action is, check the console or look at bayesact interactive, it will show you what the next action will be
 - modify m_MaxPlotSamples in cConstants.py to adjust number of samples for each agent to plot respectively
+- you may also adjust controls in cConstants.py
 
 --------------------------
 

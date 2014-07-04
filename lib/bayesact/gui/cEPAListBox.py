@@ -4,14 +4,16 @@ from cEnum import eIdentityParse, eInstitutions, eAgentListBoxParam
 import unicodedata
 
 
-class cIdentitiesListBox(wx.ListBox):
-    def __init__(self, parent, **kwargs):
+class cEPAListBox(wx.ListBox):
+    def __init__(self, parent, iDataFile, **kwargs):
         self.m_IdentitiesData = []
 
         self.m_SelectedIdentity = ""
         self.m_SelectedMaleSentiment = None
         self.m_SelectedFemaleSentiment = None
         self.m_SelectedInstitutions = None
+
+        self.m_fsentiments = iDataFile
 
         # To fill up the self.m_IdentitiesData with fidentities data
         self.initIdentitiesData()
@@ -37,7 +39,8 @@ class cIdentitiesListBox(wx.ListBox):
 
     # Reads and parses fbahaviours and puts it into m_IdentitiesData
     def initIdentitiesData(self):
-        stream = open(cDataFilesConstants.m_fidentities, "rU")
+        self.m_IdentitiesData = []
+        stream = open(self.m_fsentiments, "rU")
         for line in stream:
             line = line.rstrip().split(",")
             identity = line[eIdentityParse.identity]
@@ -59,6 +62,8 @@ class cIdentitiesListBox(wx.ListBox):
 
 
     # Returns a filtered list from the original data set using a gender key and institution key
+    # I do an AND opteration with the key, then check if it is greater than 0, which indicates there is a set bit in the result
+    # The keys are the bunch of 1s and 0s in the cConstants.py file
     def getFilteredInstitution(self, iGenderKey, iInstitutionKey):
         return filter(lambda x :
                       ((x[eAgentListBoxParam.institution][eInstitutions.gender] & iGenderKey) > 0) and
@@ -77,3 +82,8 @@ class cIdentitiesListBox(wx.ListBox):
     def getIdentities(self):
         return map(lambda x : x[eAgentListBoxParam.identity], self.m_IdentitiesData)
 
+    def refreshIdentities(self, iDataFile):
+        self.m_fsentiments = iDataFile
+        self.initIdentitiesData()
+        self.SetItems(self.getIdentities())
+        self.Layout()

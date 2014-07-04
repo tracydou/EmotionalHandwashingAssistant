@@ -2,23 +2,27 @@ import sys
 import threading
 sys.path.append("../")
 from bayesact import *
-import getopt
 import cProfile
 from cEnum import eTurn, eGui
 from cBayesactSimGui import cBayesactSimGuiPanel
 
-'''
+
 #simple threading class so we can do two things at once
-class myThread (threading.Thread):
-    def __init__(self, agent, *args, **kwargs):
+class propagateForwardThread (threading.Thread):
+    def __init__(self, tAgent, aab,observ,xobserv=[],paab=None,verb=False,plotter=None,agent=eTurn.learner):
         threading.Thread.__init__(self)
         self.tAgent = tAgent
         self.result = None
-        self.args = *args
-        self.kwargs = **kwargs
+        self.aab = aab
+        self.observ = observ
+        self.xobserv = xobserv
+        self.paab = paab
+        self.verb = verb
+        self.plotter = plotter
+        self.agent = agent
     def run(self):
-        self.result = self.agent.propagate_forward(*args, **kwargs)
-'''
+        self.result = self.tAgent.propagate_forward(self.aab, self.observ, self.xobserv, self.paab, self.verb, self.plotter, self.agent)
+
 
 class cBayesactSim(object):
     def __init__(self):
@@ -82,12 +86,6 @@ class cBayesactSim(object):
 
         self.behaviours_filename="fbehaviours.dat"
 
-        #uniform draws - if true will draw client IDs uniformly over -4.3,4.3.
-        #If false, drawn from Normal distribution of the client ids in the database
-        self.uniform_draws=False
-
-        self.gamma_value=1.0
-
         #if>0, add a small amount of roughening noise to the client identities
         self.roughening_noise=-1.0
 
@@ -148,8 +146,8 @@ class cBayesactSim(object):
 
         #the mean and covariance of IDs for male agents as taken from the databases
         #should do this automatically in python based on actual genders of client/agent....
-        #self.mean_ids=NP.array([0.40760,0.40548,0.45564])
-        #self.cov_ids=NP.array([[2.10735,1.01121, 0.48442],[1.01121,1.22836,0.55593],[0.48442,0.55593,0.77040]])
+        self.mean_ids=NP.array([0.40760,0.40548,0.45564])
+        self.cov_ids=NP.array([[2.10735,1.01121, 0.48442],[1.01121,1.22836,0.55593],[0.48442,0.55593,0.77040]])
 
 
         #------------------------------------------------------------------------------
@@ -175,24 +173,27 @@ class cBayesactSim(object):
         #NP.random.seed(1)
 
         # alpha beta and gamma values
-        self.client_alpha_value = 1.0
+        self.client_alpha_value = 0.1
         self.client_beta_value_of_client = 0.005
         self.client_beta_value_of_agent = 0.005
+        self.client_gamma_value = 1.0
 
-        self.agent_alpha_value = 1.0
+        self.agent_alpha_value = 0.1
         self.agent_beta_value_of_client = 0.005
         self.agent_beta_value_of_agent = 0.005
+        self.agent_gamma_value = 1.0
 
 
         # for interacting
         self.fbehaviours_agent = None
         self.fbehaviours_client = None
 
+        '''
         self.agent_mean_ids = None
         self.agent_cov_ids = None
         self.client_mean_ids = None
         self.client_cov_ids = None
-
+        '''
 
         # from trials block
         self.client_id = None
@@ -246,54 +247,64 @@ class cBayesactSim(object):
         self.terminate_flag = False
 
         # for running instructions
-        self.update_uniform_draws               = False
         self.update_environment_noise           = False
-        self.update_gamma_value                 = False
-        self.update_client_alpha                = False
 
+        self.update_client_alpha                = False
         self.update_client_beta_of_client       = False
         self.update_client_beta_of_agent        = False
+        self.update_client_gamma                = False
 
         self.update_agent_alpha                 = False
-
         self.update_agent_beta_value_of_client  = False
         self.update_agent_beta_value_of_agent   = False
+        self.update_agent_gamma                 = False
 
-        self.acquire_stepping_lock              = False
 
         # This is for the simulator to specify how many times to step
         self.update_num_steps                   = False
         self.step_bayesact_sim                  = False
 
-        self.num_steps                          = 1
+        # Special case where user wants to press the step command first instead of the start command
+        self.initial_step_bayesact_sim          = False
 
-        self.start_sim_lock                     = threading.Lock()
-        self.stepping_lock                      = threading.Lock()
+        self.num_steps                          = 1
 
         self.evaluate_interaction               = False
         self.user_input_action                  = ""
 
+
+        self.next_learn_aab                     = []
+        self.next_learn_paab                    = []
+
+        self.next_simul_aab                     = []
+        self.next_simul_paab                    = []
+
+        self.last_action_agent                  = ""
+        self.last_action_client                 = ""
 
 
     def startThread(self):
         self.waiting = False
 
         print "random seed is : ", self.rseed
-        NP.random.seed(self.rseed)
-
         print "num samples: ",self.num_samples
         print "client knowledge: ",self.client_knowledge
         print "agent knowledge: ",self.agent_knowledge
-        print "uniform draws: ",self.uniform_draws
         print "roughening noise: ",self.roughening_noise
         print "environment noise: ",self.env_noise
-        print "gamma value: ",self.gamma_value
+        print "client gamma value: ",self.client_gamma_value
+        print "agent gamma value: ",self.agent_gamma_value
         print "client id label: ",self.client_id_label
         print "agent id label: ",self.agent_id_label
         print "agent gender: ",self.agent_gender
         print "client gender: ",self.client_gender
 
         self.initBayesactSim()
+
+        if (self.initial_step_bayesact_sim):
+            self.stepBayesactSim(self.num_steps)
+            self.initial_step_bayesact_sim = False
+
         self.mainLoop()
 
 
@@ -303,22 +314,17 @@ class cBayesactSim(object):
             self.waiting = True
             # Pause and await instruction
             self.thread_event.clear()
-
-            # For starting bayesactsim for the first time
-            # Used by cBayesactSimGui
-            if (True == self.start_sim_lock.locked()):
-                self.start_sim_lock.release()
-
             self.thread_event.wait()
-
             self.runInstructions()
             self.waiting = False
             #self.plotter.plot()
 
         self.plotter.clearPlots()
         self.sim_gui.m_PreviousIterationsTextBox.SetValue(str(self.total_iterations))
+        self.interactive_gui.m_PreviousIterationsTextBox.SetValue(str(self.total_iterations))
         self.total_iterations = 0
         self.sim_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
+        self.interactive_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
 
 
     def runInstructions(self):
@@ -329,6 +335,7 @@ class cBayesactSim(object):
 
             self.stepBayesactSim(self.num_steps)
             self.step_bayesact_sim = False
+            return
 
         if (self.evaluate_interaction):
             self.user_input_action = self.interactive_gui.m_ActionTextBox.GetValue()
@@ -337,16 +344,9 @@ class cBayesactSim(object):
 
 
     def stepBayesactSim(self, iNumSteps):
-        # this locking is used if you want to step more than one time when stepping for the first time
-        # Used by cBayesactSimGui
-        if (True == self.acquire_stepping_lock):
-            self.stepping_lock.release()
-            self.acquire_stepping_lock = False
-
         for i in range(iNumSteps):
             self.checkParams()
             self.evaluateStep()
-            self.plotter.plot()
 
             if (self.terminate_flag):
                 return
@@ -356,22 +356,9 @@ class cBayesactSim(object):
         recompute_client = False
         recompute_agent = False
 
-        # I don't think uniform_draws currently does anything, probably will need to
-        if (self.update_uniform_draws):
-            self.uniform_draws = bool(self.sim_gui.m_UniformDrawsChoice.GetStringSelection())
-            self.update_uniform_draws = False
-
         if (self.update_environment_noise):
             self.env_noise = float(self.sim_gui.m_EnvironmentNoiseTextBox.GetValue())
             self.update_environment_noise = False
-
-        if (self.update_gamma_value):
-            self.gamma_value = float(self.sim_gui.m_GammaValueTextBox.GetValue())
-            self.learn_agent.gamma_value = self.gamma_value
-            self.simul_agent.gamma_value = self.gamma_value
-            recompute_client = True
-            recompute_agent = True
-            self.update_gamma_value = False
 
         if (self.update_client_alpha):
             self.client_alpha_value = float(self.sim_gui.m_ClientAlphaTextBox.GetValue())
@@ -391,6 +378,12 @@ class cBayesactSim(object):
             recompute_client = True
             self.update_client_beta_of_agent = False
 
+        if (self.update_client_gamma):
+            self.client_gamma_value = float(self.sim_gui.m_AgentGammaTextBox.GetValue())
+            self.simul_agent.gamma_value = self.client_gamma_value
+            recompute_client = True
+            self.update_client_gamma = False
+
         if (self.update_agent_alpha):
             self.agent_alpha_value = float(self.sim_gui.m_AgentAlphaTextBox.GetValue())
             self.learn_agent.alpha_value = self.agent_alpha_value
@@ -408,6 +401,12 @@ class cBayesactSim(object):
             self.simul_agent.beta_value_agent = self.agent_beta_value_of_agent
             recompute_agent = True
             self.update_agent_beta_value_of_agent = False
+
+        if (self.update_agent_gamma):
+            self.agent_gamma_value = float(self.sim_gui.m_AgentGammaTextBox.GetValue())
+            self.learn_agent.gamma_value = self.agent_gamma_value
+            recompute_agent = True
+            self.update_agent_gamma = False
 
 
         # To be used after updating alpha, beta, and gamma values
@@ -481,12 +480,16 @@ class cBayesactSim(object):
 
 
     def initBayesactSim(self):
+
         self.fbehaviours_agent=readSentiments(self.behaviours_filename,self.agent_gender)
         self.fbehaviours_client=readSentiments(self.behaviours_filename,self.client_gender)
 
+        NP.random.seed(self.rseed)
+
+        # In order to copy bayesactsim, this method of drawing the distribution over ids is not used
+        '''
         (self.agent_mean_ids,self.agent_cov_ids)=getIdentityStats(self.identities_filename,self.agent_gender)
         (self.client_mean_ids,self.client_cov_ids)=getIdentityStats(self.identities_filename,self.client_gender)
-
 
         #the actual (true) ids drawn from the distribution over ids
         if self.client_id_label=="":
@@ -498,14 +501,28 @@ class cBayesactSim(object):
         else:
             self.agent_id = NP.asarray([getIdentity(self.identities_filename,self.agent_id_label,self.agent_gender)]).transpose()
 
-        print "agent id: ",self.agent_id
-        print "client id: ",self.client_id
-
         # The agent
         (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge, self.agent_id, self.client_id, self.client_mean_ids, self.num_agent_confusers)
         # The client
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.client_knowledge, self.client_id, self.agent_id, self.agent_mean_ids, self.num_client_confusers)
+        '''
 
+        #the actual (true) ids drawn from the distribution over ids
+        if self.client_id_label=="":
+            self.client_id = NP.asarray([NP.random.multivariate_normal(self.mean_ids,self.cov_ids)]).transpose()
+        else:
+            self.client_id = NP.asarray([getIdentity(self.identities_filename,self.client_id_label,self.client_gender)]).transpose()
+        if self.agent_id_label=="":
+            self.agent_id =  NP.asarray([NP.random.multivariate_normal(self.mean_ids,self.cov_ids)]).transpose()
+        else:
+            self.agent_id = NP.asarray([getIdentity(self.identities_filename,self.agent_id_label,self.agent_gender)]).transpose()
+
+
+        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge, self.agent_id, self.client_id, self.mean_ids, self.num_agent_confusers)
+        (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.client_knowledge, self.client_id, self.agent_id, self.mean_ids, self.num_client_confusers)
+
+        print "agent id: ",self.agent_id
+        print "client id: ",self.client_id
 
         self.learn_initx=self.learn_init_turn
         self.simul_initx=self.simul_init_turn
@@ -516,18 +533,18 @@ class cBayesactSim(object):
 
         # The agent
         self.learn_agent=Agent(N=self.num_samples, alpha_value=self.agent_alpha_value,
-                               gamma_value=self.gamma_value ,beta_value_agent=self.agent_beta_value_of_agent ,beta_value_client=self.agent_beta_value_of_client,
-                               beta_value_client_init=self.simul_beta_client_init, beta_value_agent_init=self.simul_beta_agent_init,
+                               gamma_value=self.agent_gamma_value ,beta_value_agent=self.agent_beta_value_of_agent ,beta_value_client=self.agent_beta_value_of_client,
+                               beta_value_client_init=self.learn_beta_client_init, beta_value_agent_init=self.learn_beta_agent_init,
                                client_gender=self.client_gender, agent_gender=self.agent_gender,
-                               agent_rough=self.simul_agent_rough,client_rough=self.simul_client_rough,identities_file=self.identities_filename, use_pomcp=self.use_pomcp,
+                               agent_rough=self.learn_agent_rough,client_rough=self.learn_client_rough,identities_file=self.identities_filename, use_pomcp=self.use_pomcp,
                                init_turn=self.learn_init_turn, numcact=self.numcact, numdact=self.numdact, obsres=self.obsres, actres=self.actres, pomcp_timeout=self.timeout)
 
         # The client
         self.simul_agent=Agent(N=self.num_samples, alpha_value=self.client_alpha_value,
-                               gamma_value=self.gamma_value, beta_value_agent=self.client_beta_value_of_agent, beta_value_client=self.client_beta_value_of_client,
-                               beta_value_client_init=self.learn_beta_client_init, beta_value_agent_init=self.learn_beta_agent_init,
+                               gamma_value=self.client_gamma_value, beta_value_agent=self.client_beta_value_of_agent, beta_value_client=self.client_beta_value_of_client,
+                               beta_value_client_init=self.simul_beta_client_init, beta_value_agent_init=self.simul_beta_agent_init,
                                client_gender=self.client_gender, agent_gender=self.agent_gender,
-                               agent_rough=self.learn_agent_rough, client_rough=self.learn_client_rough, identities_file=self.identities_filename, use_pomcp=self.use_pomcp,
+                               agent_rough=self.simul_agent_rough, client_rough=self.simul_client_rough, identities_file=self.identities_filename, use_pomcp=self.use_pomcp,
                                init_turn=self.simul_init_turn, numcact=self.numcact, numdact=self.numdact, obsres=self.obsres, actres=self.actres, pomcp_timeout=self.timeout)
 
 
@@ -568,10 +585,11 @@ class cBayesactSim(object):
         self.simul_agent.sendSamplesToPlotter(self.simul_agent.samples,self.plotter,eTurn.simulator)
         self.plotter.plot()
 
-        (learn_aab,learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
+        (self.next_learn_aab,self.next_learn_paab)=self.learn_agent.get_next_action(self.learn_avgs,exploreTree=True)
+        (self.next_simul_aab,self.next_simul_paab)=self.simul_agent.get_next_action(self.simul_avgs,exploreTree=True)
 
         self.interactive_gui.m_CurrentTurnTextBox.SetValue(self.learn_turn)
-        self.populateSuggestedActions(findNearestBehaviours(learn_aab,self.fbehaviours_agent,10))
+        self.populateSuggestedActions(findNearestBehaviours(self.next_learn_aab, self.fbehaviours_agent, 10))
 
         self.terminate_flag = False
         self.total_iterations=0
@@ -583,26 +601,16 @@ class cBayesactSim(object):
 
         observ=[]
 
-        print 10*"-d","total iterations ",self.total_iterations,80*"-"
+        print 10*"-d","iteration number ",self.total_iterations,80*"-"
 
         # To get the next action and propagate_forward on it
         # ####################################################################
 
-        #In fact, both agents should update on every turn now, so
-        #we should be able to always call get_next_action for both agents here?
+        print "agent action/client observ: ",self.next_learn_aab
+        simul_observ=self.next_learn_aab
 
-        #like this:
-        (learn_aab,learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
-
-        print "agent action/client observ: ",learn_aab
-
-        simul_observ=learn_aab
-
-        (simul_aab,simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
-
-        print "client action/agent observ: ",simul_aab
-
-        learn_observ=simul_aab
+        print "client action/agent observ: ",self.next_simul_aab
+        learn_observ=self.next_simul_aab
 
         #add environmental noise here if it is being used
         if self.env_noise>0.0:
@@ -620,19 +628,21 @@ class cBayesactSim(object):
 
         #learn_avgs=cProfile.run('learn_agent.propagate_forward(learn_turn,learn_aab,learn_observ,verb=learn_verbose)')
         # propagate_forward sends the unweigted data set to the plotter, hence the reason why there isn't a function there isn't an explicit sendSamplesToPlotter function here
-        self.learn_avgs=self.learn_agent.propagate_forward(learn_aab,learn_observ,learn_xobserv,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
-        self.simul_avgs=self.simul_agent.propagate_forward(simul_aab,simul_observ,simul_xobserv,verb=self.simul_verbose,plotter=self.plotter,agent=eTurn.simulator)
+        self.learn_avgs=self.learn_agent.propagate_forward(self.next_learn_aab,learn_observ,learn_xobserv,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+        self.simul_avgs=self.simul_agent.propagate_forward(self.next_simul_aab,simul_observ,simul_xobserv,verb=self.simul_verbose,plotter=self.plotter,agent=eTurn.simulator)
 
+        # The multithreaded code here is horrendously slow, I will leave it here for future reference
         '''
-        learnThread = myThread(self.learn_agent
-        simulThread = myThread(self.simul_agent
-        self.simulThread.start()
-        self.clientThread.start()
-        agentThread.start()
-        clientThread.start()
+        learnThread = propagateForwardThread(self.learn_agent,self.next_learn_aab,learn_observ,learn_xobserv,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+        simulThread = propagateForwardThread(self.simul_agent,self.next_simul_aab,simul_observ,simul_xobserv,verb=self.simul_verbose,plotter=self.plotter,agent=eTurn.simulator)
+        learnThread.start()
+        simulThread.start()
 
-        while agentThread.isAlive() or clientThread.isAlive():
+        while learnThread.isAlive() or simulThread.isAlive():
             pass
+
+        self.learn_avgs = learnThread.result
+        self.simul_avgs = simulThread.result
         '''
 
         # ####################################################################
@@ -686,17 +696,24 @@ class cBayesactSim(object):
         #To plot data
         self.plotter.plot()
 
-        # If we make learn_aab and sim etc. a member variable, we can save a calculation
+
+        #In fact, both agents should update on every turn now, so
+        #we should be able to always call get_next_action for both agents here?
+
+        #like this:
+        (self.next_learn_aab,self.next_learn_paab)=self.learn_agent.get_next_action(self.learn_avgs,exploreTree=True)
+        (self.next_simul_aab,self.next_simul_paab)=self.simul_agent.get_next_action(self.simul_avgs,exploreTree=True)
+
+        # We know who goes next, so populate the suggested actions
         self.interactive_gui.m_CurrentTurnTextBox.SetValue(self.learn_turn)
         if (self.learn_turn == "agent"):
-            (learn_aab,learn_paab)=self.learn_agent.get_next_action(self.learn_avgs)
-            self.populateSuggestedActions(findNearestBehaviours(learn_aab,self.fbehaviours_agent,10))
+            self.populateSuggestedActions(findNearestBehaviours(self.next_learn_aab, self.fbehaviours_agent, 10))
         else:
-            (simul_aab,simul_paab)=self.simul_agent.get_next_action(self.simul_avgs)
-            self.populateSuggestedActions(findNearestBehaviours(simul_aab,self.fbehaviours_client,10))
+            self.populateSuggestedActions(findNearestBehaviours(self.next_simul_aab, self.fbehaviours_client, 10))
 
         self.total_iterations += 1
         self.sim_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
+        self.interactive_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
 
 
     def is_array_of_floats(self,possarray):
@@ -775,35 +792,16 @@ class cBayesactSim(object):
 
         #this always works here, but is only needed to avoid asking the user too many questions
         #to figure out the observation
-        self.learn_turn = self.learn_avgs.get_turn()
-        self.simul_turn = self.simul_avgs.get_turn()
+        #self.learn_turn = self.learn_avgs.get_turn()
+        #self.simul_turn = self.simul_avgs.get_turn()
+        # Note: I have assumed that the agents will take turns, so we do not have to constantly get turns
 
-        observ=[]
 
         # To get the next action and propagate_forward on it
         # ####################################################################
-
-        #if use_pomcp or learn_turn=="agent":
-        #get the next action for the agent - may be a null action if it is the client turn
-        (learn_aab,learn_paab)=self.learn_agent.get_next_action(self.learn_avgs,exploreTree=True)
-        (simul_aab,simul_paab)=self.simul_agent.get_next_action(self.simul_avgs,exploreTree=True)
-
-
-        self.interactive_gui.m_CurrentTurnTextBox.SetValue(self.learn_turn)
+        aact = self.interactive_gui.m_SuggestedActionsListBox.GetItems()
         if self.learn_turn=="agent":
-            #aact=findNearestBehaviour(learn_aab,self.fbehaviours_agent)
-            aact=findNearestBehaviours(learn_aab,self.fbehaviours_client,10)
-            print "suggested action for the client is :",learn_aab,"\n  closest label is: ",aact
-
-            #we only want to ask the user for an action if it is his turn,
-            #although this could be relaxed to allow the agent to barge in
-            #this will be relevant if the turn is non-deterministic, in which case there
-            #may be some samples for each turn value, and we may want an action to take??
-
-            # Populate the suggested actions into the BayesactInteractiveGui
-            self.populateSuggestedActions(aact)
-
-            learn_aab = self.ask_client(self.fbehaviours_client,aact,learn_aab,self.learn_turn)
+            learn_aab = self.ask_client(self.fbehaviours_client,aact,self.next_learn_aab,self.learn_turn)
             if (False == learn_aab):
                 return
 
@@ -812,28 +810,12 @@ class cBayesactSim(object):
             learn_observ=[]
 
         else:
-            #first, see what the agent would predict and suggest this to the client
-            #this can be removed in a true interactive setting, so this is only here so we can see what is going on
-            #(client_aab,client_paab)=self.learn_agent.get_default_predicted_action(self.learn_avgs)
-            #aact=findNearestBehaviours(client_aab,self.fbehaviours_agent,10)
-            #print "agent advises the following action :",client_aab,"\n  closest labels are: ", [re.sub(r"_"," ",i.strip()) for i in aact]
-
-            aact=findNearestBehaviours(simul_aab,self.fbehaviours_agent,10)
-            print "suggested action for the agent is :",simul_aab,"\n  closest label is: ",aact
-
-            #now, this is where the client actually decides what to do, possibly looking at the suggested labels from the agent
-            #we use fbehaviours_agent here (for agent gender) as it is the agent who is perceiving this
-
-            # Populate the suggested actions into the BayesactInteractiveGui
-            self.populateSuggestedActions(aact)
-
-            simul_aab = self.ask_client(self.fbehaviours_agent,aact,simul_aab,self.learn_turn)
+            simul_aab = self.ask_client(self.fbehaviours_agent,aact,self.next_simul_aab,self.learn_turn)
             if (False == simul_aab):
                 return
 
             learn_observ = simul_aab
             #should be to get a default (null)  action from the agent
-            #learn_aab=[0.0,0.0,0.0]
             print "agent action: ", simul_aab, "\n"
             simul_observ = []
 
@@ -855,9 +837,39 @@ class cBayesactSim(object):
 
 
             #the main SMC update step
-            self.learn_avgs=self.learn_agent.propagate_forward(learn_aab,learn_observ,learn_xobserv,learn_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
-            self.simul_avgs=self.simul_agent.propagate_forward(simul_aab,simul_observ,simul_xobserv,simul_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+            if (self.learn_turn == "agent"):
+                self.learn_avgs=self.learn_agent.propagate_forward(learn_aab,learn_observ,learn_xobserv,self.next_learn_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+                self.simul_avgs=self.simul_agent.propagate_forward(self.next_simul_aab,simul_observ,simul_xobserv,self.next_simul_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.simulator)
 
+                '''
+                learnThread = propagateForwardThread(self.learn_agent,learn_aab,learn_observ,learn_xobserv,self.next_learn_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+                simulThread = propagateForwardThread(self.simul_agent,simul_observ,simul_xobserv,self.next_simul_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.simulator)
+                learnThread.start()
+                simulThread.start()
+
+                while learnThread.isAlive() or simulThread.isAlive():
+                    pass
+
+                self.learn_avgs = learnThread.result
+                self.simul_avgs = simulThread.result
+                '''
+
+            else:
+                self.learn_avgs=self.learn_agent.propagate_forward(self.next_learn_aab,learn_observ,learn_xobserv,self.next_learn_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+                self.simul_avgs=self.simul_agent.propagate_forward(simul_aab,simul_observ,simul_xobserv,self.next_simul_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.simulator)
+
+                '''
+                learnThread = propagateForwardThread(self.learn_agent,self.next_learn_aab,learn_observ,learn_xobserv,self.next_learn_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.learner)
+                simulThread = propagateForwardThread(self.simul_agent,simul_aab,simul_observ,simul_xobserv,self.next_simul_paab,verb=self.learn_verbose,plotter=self.plotter,agent=eTurn.simulator)
+                learnThread.start()
+                simulThread.start()
+
+                while learnThread.isAlive() or simulThread.isAlive():
+                    pass
+
+                self.learn_avgs = learnThread.result
+                self.simul_avgs = simulThread.result
+                '''
 
             #To plot data
             if (None != self.plotter):
@@ -888,6 +900,7 @@ class cBayesactSim(object):
 
             self.total_iterations += 1
             self.sim_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
+            self.interactive_gui.m_CurrentIterationsTextBox.SetValue(str(self.total_iterations))
 
         print "current deflection of averages: ",self.learn_agent.deflection_avg
 
@@ -895,3 +908,33 @@ class cBayesactSim(object):
         print "current deflection (agent's perspective): ",self.learn_d
         self.simul_d=self.simul_agent.compute_deflection()
         print "current deflection (simulator perspective): ",self.simul_d
+
+
+        # Instead of getting the turn, we will assume this is a purely interactive simulation and they will take turns
+        if self.learn_turn=="client":
+            self.learn_turn="agent"
+            self.simul_turn="client"
+        else:
+            self.learn_turn="client"
+            self.simul_turn="agent"
+
+        #if use_pomcp or learn_turn=="agent":
+        #get the next action for the agent - may be a null action if it is the client turn
+        (self.next_learn_aab,self.next_learn_paab)=self.learn_agent.get_next_action(self.learn_avgs,exploreTree=True)
+        (self.next_simul_aab,self.next_simul_paab)=self.simul_agent.get_next_action(self.simul_avgs,exploreTree=True)
+
+        self.learn_turn = self.learn_avgs.get_turn()
+        self.interactive_gui.m_CurrentTurnTextBox.SetValue(self.learn_turn)
+        if self.learn_turn=="agent":
+            #aact=findNearestBehaviour(learn_aab,self.fbehaviours_agent)
+            aact=findNearestBehaviours(self.next_learn_aab,self.fbehaviours_agent,10)
+            print "suggested action for the agent is :",self.next_learn_aab,"\n  closest label is: ",aact
+
+            # Populate the suggested actions into the BayesactInteractiveGui
+            self.populateSuggestedActions(aact)
+        else:
+            aact=findNearestBehaviours(self.next_simul_aab,self.fbehaviours_client,10)
+            print "suggested action for the client is :",self.next_simul_aab,"\n  closest label is: ",aact
+
+            # Populate the suggested actions into the BayesactInteractiveGui
+            self.populateSuggestedActions(aact)

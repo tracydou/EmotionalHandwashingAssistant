@@ -119,11 +119,11 @@ fb.close()
 #statically defined functions of general usage
 #---------------------------------------------------------------------------------------------------------------------------
 #initialises ids
-#0: knows own id, not client id
+#0: knows own id, not client id   (so input argument client_id is ignored)
 #1: knows own id, knows client id is one of num_confusers possibilities
 #2: knows own id, knows client id
 #3: doesn't know own id, doesn't know client id
-def init_id(knowledge,agent_id,client_id=[],mean_id=[],num_confusers=0):
+def init_id(knowledge,agent_id,client_id=[],mean_id=[],num_confusers=0,aidprop=[]):
     if knowledge==2 and not client_id == []:
         tau_init=NP.concatenate((agent_id,NP.zeros((3,1)),client_id)).transpose()
         prop_init=[1.0]
@@ -146,6 +146,26 @@ def init_id(knowledge,agent_id,client_id=[],mean_id=[],num_confusers=0):
         prop_init=[1.0]
         beta_client_init=2.0
         beta_agent_init=2.0
+    elif knowledge==4:
+        if client_id==[]:
+            #agent does not know client id, but has multiple self ids
+            for aid in agent_id:
+                if mean_id==[]:
+                    tau_init.append(NP.concatenate((aid,NP.zeros((3,1)),NP.zeros((3,1)))).transpose())
+                else:
+                    tau_init.append(NP.concatenate((aid,NP.zeros((3,1)),NP.asarray([mean_id]).transpose())).transpose())
+            prop_init=aidprop
+            beta_client_init=2.0
+            beta_agent_init=0.01
+        else:
+            #agent does not know client id, but has multiple self ids
+            tau_init=[]
+            for aid in agent_id:
+                tau_init.append(NP.concatenate((aid,NP.zeros((3,1)),client_id)).transpose()[0])
+        prop_init=aidprop
+        beta_client_init=2.0
+        beta_agent_init=0.01
+            
     else:   #knowldge is 0
         if mean_id==[]:
             tau_init=NP.concatenate((agent_id,NP.zeros((3,1)),NP.zeros((3,1)))).transpose()
@@ -155,6 +175,73 @@ def init_id(knowledge,agent_id,client_id=[],mean_id=[],num_confusers=0):
         beta_client_init=2.0
         beta_agent_init=0.01
     return (tau_init,prop_init,beta_client_init,beta_agent_init)
+
+
+#initialise a set of samples \fsb (9D with fub_a,fub_b,fub_c 3D vectors)
+#agent_ids and client_ids are arrays of 4-tuples, where the first element gives
+#the proportion of that id, and the second element gives the id as a label or 3D vector
+#and the third element gives the variance for that id, and the fourth, if present gives the gender (otherwise assumed to be male)
+#the samples in fsb are drawn agent_ids and client_ids
+#if agent_ids or client_ids is [] then the mean_id and cov_id are used for a single Gaussian
+#initx is the distribution of the initial turn [agent,client] - e.g. [1,0] means its definitely agent's turn
+#while [0.5,0.5] means the turn is unknown
+def initialise_samples(n,fifname,agent_gender,agent_ids=[],client_ids=[],initx=[0.5,0.5],mean_id=[],cov_id=[]):
+
+    if agent_ids==[] or client_ids==[]: 
+        if mean_id==[] or cov_id==[]:
+            (mean_id,cov_id)=getIdentityStats(fifname,agent_gender)
+        if agent_ids==[]:
+            agent_ids=[[1.0,mean_id,cov_id,agent_gender]]
+        if client_ids==[]:
+            client_ids=[[1.0,mean_id,cov_id,agent_gender]]
+
+
+    agent_ids=make_ids_covs(fifname,agent_ids,agent_gender)
+    client_ids=make_ids_covs(fifname,client_ids,agent_gender)
+    return initialise_samples_help(n,agent_ids,client_ids,initx)
+
+def make_ids_covs(fifname,ids,agender):
+    for theid in ids:
+        if type(theid[1])==type("dummy"):   # its a label so we need to look it up
+            if len(theid)<4:
+                gender=agender
+            else:
+                gender=theid[3]
+            theid[1]=getIdentity(fifname,theid[1],gender)
+        theid[2] = NP.eye(3)*(theid[2]**2)
+    return ids
+
+#initialises a set of n samples from agent_ids and client_ids, where 
+#agent_ids and client_ids are arrays of 3-tuples, where the first element gives
+#the proportion of that id, and the second element gives the id as a 3D vector
+#and the third element gives the covariance for that id
+#agent_ids and client_ids must each have at least one element
+#initx is the initial turn ("agent" or "client")
+def initialise_samples_help(n,agent_ids,client_ids,initx):
+    samples=[]
+    
+    assert len(agent_ids)>0
+    assert len(client_ids)>0
+
+    agent_propor=map(lambda x: x[0],agent_ids)
+    client_propor=map(lambda x: x[0],client_ids)
+    
+
+    #draw the samples
+    for i in range(n):
+        #choose identities for each
+        ai=list(NP.random.multinomial(1, agent_propor)).index(1)
+        ci=list(NP.random.multinomial(1, client_propor)).index(1)
+        #draw the sample
+        fuba=NP.random.multivariate_normal(agent_ids[ai][1],agent_ids[ai][2])
+        fubc=NP.random.multivariate_normal(client_ids[ci][1],client_ids[ci][2])
+        fubb=[0,0,0]  #is never used so is not important
+        tmpfv = NP.hstack([fuba,fubb,fubc])
+        tmpix = [list(NP.random.multinomial(1,initx)).index(1)]
+        samples.append(State(tmpfv,tmpfv,tmpix,1.0))
+    return samples
+
+
 
 #reads in sentiments for gender from fbfname and returns a dictionary
 def readSentiments(fbfname,gender):
@@ -480,6 +567,10 @@ def getDefaultMeanF(fvars,tvars,H,C,tau,f,turn="agent",aab=[],observ=[]):
 
 
 
+
+
+
+
 #multi-variate normalpdf function (unused)
 def mvar_normpdf(x, mean, cov):
     size=len(x)
@@ -719,18 +810,6 @@ class TauMappings:
 
             return (self.H, self.C)
         
-#---------------------------------------------------------------------------------------------------------------------------
-#class to describe the state - including fundamental and transient sentiments and x
-#this will be used for sampling, so includes a weight
-#note that the "State" will change in subclasses of "Agent", but this is defined on-the-fly by simply
-#initialising the "x" component to a certain size array.  However, the "x" component must always contain
-#the "turn" as the first element.
-#---------------------------------------------------------------------------------------------------------------------------
-
-
-class State(object):
-
-    turnnames=["agent","client"]
 
 #---------------------------------------------------------------------------------------------------------------------------
 #class to describe the state - including fundamental and transient sentiments and x
@@ -1003,6 +1082,7 @@ class Agent(object):
 
     #needs to be a separate function, because we may want to override this in applications/subclasses
     def init_output_covariances(self):
+
         self.gamma_value2=self.gamma_value*self.gamma_value
 
         #precomputed stuff for computing normal pdfs for 3D vectors
@@ -1010,6 +1090,7 @@ class Agent(object):
         thedet=math.pow(float(self.gamma_value),3)
         self.ldenom=math.log(math.pow((2*NP.pi),1.5)*thedet)
         self.theivar = theivar*0.5
+
 
 
     def init_sentiment_dictionaries(self,fifname):
@@ -1080,7 +1161,16 @@ class Agent(object):
         self.x_avg=avgs.x
         return avgs
 
+    def set_samples(self,samples):
+        self.samples=[]
+        for s in samples:
+            self.samples.append(s.get_copy())
+        avgs=sampleMean(self.samples)
+        return avgs
+
     def initialise_array(self,f,prop,initx):
+
+
         #draw a set of samples from an array of initial distributions with weights given by prop
         #the set is drawn according to prop so f can be of any size greater than prop
         self.samples=[]
@@ -1174,15 +1264,18 @@ class Agent(object):
         map(lambda x: x.roughen(noiseVector),samples)
 
     #compute the log-PDF of a normal with mean mean and
-     #constant multiplicative factor in the exponent ivar,
-     #and log-denominator ldenom
-     #mean is a scalar value (usually zero)
+    #constant multiplicative factor in the exponent ivar,
+    #and log-denominator ldenom
+    #mean is a scalar value (usually zero)
     def normpdf(self,x, mean, ivar, ldenom):
         num=0.0
         for xv in x:
             num = num-ivar*( float(xv) - float(mean) )**2
+            
         return num-ldenom
- 
+
+
+
     #evaluates a sample of Fvar'=state.f
     def evalSampleFvar(self,fvars,tdyn,state,ivar,ldenom,turn,observ):
         weight=0.0

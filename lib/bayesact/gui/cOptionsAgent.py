@@ -1,12 +1,10 @@
 import wx
-import wx.lib.agw.balloontip as cBT
-from cIdentitiesListBox import cIdentitiesListBox
+from cEPAListBox import cEPAListBox
 #from cEnum importeIdentityParse
-from cConstants import cInstitutionsConstants, cOptionsAgentConstants
+from cConstants import cInstitutionsConstants, cOptionsAgentConstants, cDataFilesConstants, cSystemConstants
 
 
 # This is the panel where you define the interactants
-# From what I have read, I believe the client is the learner while the agent is the simulator
 # From what I have read, I believe the agent is the learner while the client is the simulator
 # They also seem to take turns being simulator and learner which makes the simulation confusing
 class cOptionsAgentPanel(wx.Panel):
@@ -18,109 +16,103 @@ class cOptionsAgentPanel(wx.Panel):
 
 
         self.m_IdenditiesText = wx.StaticText(self, -1, "Identities", pos=(10, 10))
-        self.m_IdentityListBox = cIdentitiesListBox(self, pos=(10, 40), size=(190, 468))
+        self.m_IdentitiesListBox = cEPAListBox(self, iDataFile=cDataFilesConstants.m_fidentities, pos=(10, 40), size=(190, 468))
+
+        self.m_SettingsText = wx.StaticText(self, -1, "Settings", pos=(220, 10))
+        self.m_SettingsListBox = cEPAListBox(self, iDataFile=cDataFilesConstants.m_fsettings, pos=(220, 40), size=(190, 468))
+
+        self.m_ModifiersText = wx.StaticText(self, -1, "Modifiers", pos=(430, 10))
+        self.m_ModifiersListBox = cEPAListBox(self, iDataFile=cDataFilesConstants.m_fmodifiers, pos=(430, 40), size=(190, 468))
 
 
-        self.m_GenderText = wx.StaticText(self, -1, "Gender", pos=(210, 35))
-        self.m_GenderChoice = wx.ComboBox(self, -1, pos=(210, 65), size=self.m_ComboBoxSize,
+        self.m_GenderText = wx.StaticText(self, -1, "Gender", pos=(650, 35))
+        self.m_GenderChoice = wx.ComboBox(self, -1, pos=(650, 65), size=self.m_ComboBoxSize,
                                           choices=cInstitutionsConstants.m_Gender,
                                           style=wx.CHOICEDLG_STYLE, value=cInstitutionsConstants.m_Gender[0])
         self.m_GenderChoice.Bind(wx.EVT_COMBOBOX, self.onSelectInstitution)
 
 
-        self.m_InstitutionText = wx.StaticText(self, -1, "Institution", pos=(210, 135))
-        self.m_InstitutionChoice = wx.ComboBox(self, -1, pos=(210, 165), size=self.m_ComboBoxSize,
+        self.m_InstitutionText = wx.StaticText(self, -1, "Institution", pos=(650, 135))
+        self.m_InstitutionChoice = wx.ComboBox(self, -1, pos=(650, 165), size=self.m_ComboBoxSize,
                                                choices=cInstitutionsConstants.m_Institution,
                                                style=wx.CHOICEDLG_STYLE, value=cInstitutionsConstants.m_Institution[0])
         self.m_InstitutionChoice.Bind(wx.EVT_COMBOBOX, self.onSelectInstitution)
 
+        textBoxXDiscrepancy = 0
+        macButtonYDiscrepancy = 0
+        if (cSystemConstants.m_MacOS == cSystemConstants.m_OS):
+            textBoxXDiscrepancy = 3
+            macButtonYDiscrepancy = -5
 
 
-        # Client Identity and gender
-        # To have a choice between being a confuser or not
-        if (True == cOptionsAgentConstants.m_ClientMultipleIdentity):
-            self.m_ClientIdentitiesText = wx.StaticText(self, -1, "Client Identites", pos=(420, 10))
-            self.m_ClientIdentityListBox = wx.ListBox(self, -1, pos=(420, 40), size=(190, 250),
-                                                      choices=[],
-                                                      style=wx.LB_SINGLE)
-            self.m_AddClientIdentityButton = wx.Button(self, label="Add Identity", pos=(412, 290), size=(190, 28))
-            self.m_DeleteClientIdentityButton = wx.Button(self, label="Delete Identity", pos=(412, 320), size=(190, 28))
+        self.m_ClientIdentityText = wx.StaticText(self, -1, "Client Identity", pos=(20, 510))
+        self.m_ClientIdentityTextBox = wx.TextCtrl(self, pos=(17+textBoxXDiscrepancy, 533), size=(190, 26),
+                                                  style=wx.TE_READONLY)
 
-            self.m_AddClientIdentityButton.Bind(wx.EVT_BUTTON, self.onAddClientIdentity)
-            self.m_DeleteClientIdentityButton.Bind(wx.EVT_BUTTON, self.onDeleteClientIdentity)
+        self.m_ClientSettingText = wx.StaticText(self, -1, "Client Setting", pos=(230, 510))
+        self.m_ClientSettingTextBox = wx.TextCtrl(self, pos=(227+textBoxXDiscrepancy, 533), size=(190, 26),
+                                                  style=wx.TE_READONLY)
 
-        else:
-            self.m_ClientIdentityText = wx.StaticText(self, -1, "Client Identity", pos=(420, 10))
-            self.m_ClientIdentityTextBox = wx.TextCtrl(self, pos=(420, 40), size=(190, 26),
-                                                      style=wx.TE_READONLY)
-            self.m_SetIdentityText = self.m_SetClientIdentityButton = wx.Button(self, label="Set Identity", pos=(414, 70), size=(190, 28))
+        self.m_ClientModifierText = wx.StaticText(self, -1, "Client Modifier", pos=(440, 510))
+        self.m_ClientModifierTextBox = wx.TextCtrl(self, pos=(437+textBoxXDiscrepancy, 533), size=(190, 26),
+                                                  style=wx.TE_READONLY)
 
-            self.m_SetClientIdentityButton.Bind(wx.EVT_BUTTON, self.onSetClient)
-
-        self.m_ClientGenderText = wx.StaticText(self, -1, "Client Gender", pos=(630, 10))
-        self.m_ClientGenderChoice = wx.ComboBox(self, -1, pos=(630, 40), size=self.m_ComboBoxSize,
+        self.m_ClientGenderText = wx.StaticText(self, -1, "Client Gender", pos=(650, 505))
+        self.m_ClientGenderChoice = wx.ComboBox(self, -1, pos=(650, 528), size=self.m_ComboBoxSize,
                                                 choices=cOptionsAgentConstants.m_GenderChoices,
                                                 style=wx.CHOICEDLG_STYLE)
         self.m_ClientGenderChoice.SetStringSelection(cOptionsAgentConstants.m_ClientGenderDefault)
 
+        self.m_SetIdentityText = self.m_SetClientIdentityButton = wx.Button(self, label="Set Client", pos=(770, 530+macButtonYDiscrepancy), size=(100, 28))
+        self.m_SetClientIdentityButton.Bind(wx.EVT_BUTTON, self.onSetClient)
+
+
+
 
         # Agent Identity and gender
-        self.m_AgentIdentityText = wx.StaticText(self, -1, "Agent Identity", pos=(420, 420))
-        self.m_AgentIdentityTextBox = wx.TextCtrl(self, pos=(420,443), size=(190, 26),
+        self.m_AgentIdentityText = wx.StaticText(self, -1, "Agent Identity", pos=(20, 570))
+        self.m_AgentIdentityTextBox = wx.TextCtrl(self, pos=(17+textBoxXDiscrepancy,593), size=(190, 26),
                                                   style=wx.TE_READONLY)
-        self.m_SetAgentIdentityButton = wx.Button(self, label="Set Identity", pos=(414, 480), size=(190, 28))
-        self.m_SetAgentIdentityButton.Bind(wx.EVT_BUTTON, self.onSetAgent)
 
+        self.m_AgentSettingText = wx.StaticText(self, -1, "Agent Setting", pos=(230, 570))
+        self.m_AgentSettingTextBox = wx.TextCtrl(self, pos=(227+textBoxXDiscrepancy,593), size=(190, 26),
+                                                  style=wx.TE_READONLY)
 
+        self.m_AgentModifierText = wx.StaticText(self, -1, "Agent Modifier", pos=(440, 570))
+        self.m_AgentModifierTextBox = wx.TextCtrl(self, pos=(437+textBoxXDiscrepancy,593), size=(190, 26),
+                                                  style=wx.TE_READONLY)
 
-        self.m_AgentGenderText = wx.StaticText(self, -1, "Agent Gender", pos=(630, 420))
-        self.m_AgentGenderChoice = wx.ComboBox(self, -1, pos=(630, 443), size=self.m_ComboBoxSize,
+        self.m_AgentGenderText = wx.StaticText(self, -1, "Agent Gender", pos=(650, 570))
+        self.m_AgentGenderChoice = wx.ComboBox(self, -1, pos=(650, 593), size=self.m_ComboBoxSize,
                                                choices=cOptionsAgentConstants.m_GenderChoices,
                                                style=wx.CHOICEDLG_STYLE)
         self.m_AgentGenderChoice.SetStringSelection(cOptionsAgentConstants.m_AgentGenderDefault)
 
+        self.m_SetAgentIdentityButton = wx.Button(self, label="Set Agent", pos=(770, 590+macButtonYDiscrepancy), size=(100, 28))
+        self.m_SetAgentIdentityButton.Bind(wx.EVT_BUTTON, self.onSetAgent)
 
-
-    # Adds to client identity, you only use this when the client can have more than one identity, for now we'll only allow one
-    def onAddClientIdentity(self, iEvent):
-        index = self.m_ClientIdentityListBox.GetSelection()
-        identity = self.m_IdentityListBox.m_SelectedIdentity
-
-        if ("" == identity):
-            return
-
-        # Check for duplicates
-        if (identity in self.m_ClientIdentityListBox.GetItems()):
-            return
-
-        # If nothing is selected on the client identity list box, insert to end, else insert after whatever is selected
-        if (-1 == index):
-            self.m_ClientIdentityListBox.InsertItems(items=[identity], pos=self.m_ClientIdentityListBox.GetCount())
-        else:
-            self.m_ClientIdentityListBox.InsertItems(items=[identity], pos=index+1)
-
-
-    def onDeleteClientIdentity(self, iEvent):
-        index = self.m_ClientIdentityListBox.GetSelection()
-        currentItems = self.m_ClientIdentityListBox.GetItems()
-
-        if (0 == len(currentItems)):
-            return
-
-        currentItems.pop(index)
-        self.m_ClientIdentityListBox.SetItems(currentItems)
 
 
     def onSetClient(self, iEvent):
-        self.m_ClientIdentityTextBox.SetValue(self.m_IdentityListBox.m_SelectedIdentity)
+        self.m_ClientIdentityTextBox.SetValue(self.m_IdentitiesListBox.m_SelectedIdentity)
+        self.m_ClientSettingTextBox.SetValue(self.m_SettingsListBox.m_SelectedIdentity)
+        self.m_ClientModifierTextBox.SetValue(self.m_ModifiersListBox.m_SelectedIdentity)
 
 
     def onSetAgent(self, iEvent):
-        self.m_AgentIdentityTextBox.SetValue(self.m_IdentityListBox.m_SelectedIdentity)
+        self.m_AgentIdentityTextBox.SetValue(self.m_IdentitiesListBox.m_SelectedIdentity)
+        self.m_AgentSettingTextBox.SetValue(self.m_SettingsListBox.m_SelectedIdentity)
+        self.m_AgentModifierTextBox.SetValue(self.m_ModifiersListBox.m_SelectedIdentity)
 
 
     def onSelectInstitution(self, iEvent):
-        self.m_IdentityListBox.filterInstitution(self.m_GenderChoice.GetSelection(),
+        self.m_IdentitiesListBox.filterInstitution(self.m_GenderChoice.GetSelection(),
+                                                 self.m_InstitutionChoice.GetSelection())
+
+        self.m_SettingsListBox.filterInstitution(self.m_GenderChoice.GetSelection(),
+                                                 self.m_InstitutionChoice.GetSelection())
+
+        self.m_ModifiersListBox.filterInstitution(self.m_GenderChoice.GetSelection(),
                                                  self.m_InstitutionChoice.GetSelection())
 
 

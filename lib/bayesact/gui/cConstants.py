@@ -7,22 +7,31 @@ class cWindowsOSConstants:
 class cSystemConstants:
     m_OS = 0
 
-    m_LinuxOS = 0b0001
-    m_MacOS = 0b0010
-    m_WindowsOS = 0b0100
+    m_LinuxOS = 1
+    m_MacOS = 2
+    m_WindowsOS = 3
 
     if "linux" == _platform or "linux2" == _platform:
-        m_OS |= 0b0001
+        m_OS = m_LinuxOS
     elif "darwin" == _platform:
-        m_OS |= 0b0010
+        m_OS = m_MacOS
     elif "win32" == _platform:
-        m_OS |= 0b0100
+        m_OS = m_WindowsOS
 
 
 class cColourConstants:
     m_Colours = ["blue", "green", "red", "pink", "cyan", "magenta",
                  "yellow", "goldenrod", "black", "white"]
 
+    '''
+    m_AgentThinksOfSelf =
+    m_AgentThinksOfOther
+    m_ClientThinksOfSelf
+    m_ClientThinksOfOther
+
+    m_AgentAction
+    m_ClientAction
+    '''
 
 class cEPAConstants:
     # Try not to change the ordering of this, as cEnum.eEPA depends on this
@@ -34,21 +43,26 @@ class cEPAConstants:
 
     m_NumAttributes = 9
 
+    m_PlotDetails = ["What the client thinks of themselves",
+                     "What the client thinks of the agent",
+                     "What the agent thinks of themselves",
+                     "What the agent thinks of the client"]
+
 
 class cPlotConstants:
     # Adjust how many samples of each agent to plot
     m_MaxPlotSamples = 100
 
-    m_ZoomKey = "ctrl+="
-    m_UnZoomKey = "ctrl+-"
-    m_ResetAxesKey = "ctrl+d"
+    m_ZoomKey = "alt+="
+    m_UnZoomKey = "alt+-"
+    m_ResetAxesKey = "alt+d"
 
-    m_IncreaseXAxisKey = "ctrl+w"
-    m_DecreaseXAxisKey = "ctrl+q"
-    m_IncreaseYAxisKey = "ctrl+a"
-    m_DecreaseYAxisKey = "ctrl+s"
-    m_IncreaseZAxisKey = "ctrl+x"
-    m_DecreaseZAxisKey = "ctrl+z"
+    m_IncreaseXAxisKey = "alt+w"
+    m_DecreaseXAxisKey = "alt+q"
+    m_IncreaseYAxisKey = "alt+a"
+    m_DecreaseYAxisKey = "alt+s"
+    m_IncreaseZAxisKey = "alt+x"
+    m_DecreaseZAxisKey = "alt+z"
 
     # 3 represents right click
     m_MousePanButton = 3
@@ -78,9 +92,9 @@ class cPlot2DConstants:
     m_FigRatioY = 0.012
 
     # Used for adjusting the position and size of the graph is on the panel
-    # Left, Bottom, Width, Height, all of which are fractions of figure width and height or the panel in the range [0,1]
+    # Left, Bottom, Width, Height, all of which are fractions of figure width(x) and height(y) of the panel in the range [0,1]
     # These values were largely chosen for keeping the x and y axis labels visible
-    m_Rect = [0.19, 0.15, 0.8, 0.8]
+    m_Rect = [0.19, 0.13, 0.8, 0.79]
 
 
 class cPlot3DConstants:
@@ -108,6 +122,10 @@ class cParseConstants:
 
 class cDataFilesConstants:
     m_fidentities = "fidentities.dat"
+    m_fbehaviours = "fbehaviours.dat"
+    m_fsettings = "fsettings.dat"
+    m_fmodifiers = "fmodifiers.dat"
+
 
 
 # Please keep the elements in the arrays in the same order as their name and key counterparts
@@ -158,7 +176,7 @@ class cInstitutionsConstants:
 
 class cOptionsAgentConstants:
     m_ClientMultipleIdentity = False
-    m_GenderChoices = ["Male", "Female"]
+    m_GenderChoices = ["male", "female"]
 
     m_AgentGenderDefault = m_GenderChoices[eGender.male]
     m_ClientGenderDefault = m_GenderChoices[eGender.male]
@@ -166,6 +184,14 @@ class cOptionsAgentConstants:
 
 
 class cOptionSimConstants:
+    m_AlphaSymbol = u"\u03b1"
+    m_BetaSymbol = u"\u03b2"
+    m_GammaSymbol = u"\u03b3"
+
+    m_Subscript_c = "c"
+    m_Subscript_a = "a"
+
+
     #0: knows own id, not client id
     #1: knows own id, knows client id is one of num_confusers possibilities
     #2: knows own id, knows client id
@@ -186,19 +212,22 @@ class cOptionSimConstants:
     m_UniformDraws                        = "Uniform Draws"
     m_RougheningNoise                     = "Roughening Noise"
     m_EnvironmentNoise                    = "Environment Noise"
-    m_GammaValue                          = "Gamma Value"
     m_AgentGender                         = "Agent Gender"
     m_ClientGender                        = "Client Gender"
 
-    m_ClientAlpha                         = "Client Alpha"
+    m_ClientText                          = "Client"
+    m_ClientAlpha                         = m_AlphaSymbol
 
-    m_ClientBetaOfClient                  = "Client Beta of Client"
-    m_ClientBetaOfAgent                   = "Client Beta of Agent"
+    m_ClientBetaOfClient                  = m_BetaSymbol
+    m_ClientBetaOfAgent                   = m_BetaSymbol
+    m_ClientGamma                         = m_GammaSymbol
 
-    m_AgentAlpha                          = "Agent Alpha"
+    m_AgentText                           = "Agent"
+    m_AgentAlpha                          = m_AlphaSymbol
 
-    m_AgentBetaOfClient                   = "Agent Beta of Client"
-    m_AgentBetaOfAgent                    = "Agent Beta of Agent"
+    m_AgentBetaOfClient                   = m_BetaSymbol
+    m_AgentBetaOfAgent                    = m_BetaSymbol
+    m_AgentGamma                          = m_GammaSymbol
 
     m_NumSteps                            = "Number of Steps"
 
@@ -227,12 +256,12 @@ class cOptionSimConstants:
     m_EnvironmentNoiseDefault             = 0.0
     m_GammaValueDefault                   = 1.0
 
-    m_ClientAlphaDefault                  = 1.0
+    m_ClientAlphaDefault                  = 0.1
 
     m_ClientBetaOfClientDefault           = 0.005
     m_ClientBetaOfAgentDefault            = 0.005
 
-    m_AgentAlphaDefault                   = 1.0
+    m_AgentAlphaDefault                   = 0.1
 
     m_AgentBetaOfClientDefault            = 0.005
     m_AgentBetaOfAgentDefault             = 0.005
@@ -262,3 +291,12 @@ class cSliderConstants:
     # Logarithmic, since I don't know how to use decimal points in sliders,
     # I will just set the max value to be n times larger than usual, then divide it
     m_Precision = 1000.0
+
+class cBoundaries:
+    # To get make the file menu large enough for windows and linux
+    if (cSystemConstants.m_MacOS == cSystemConstants.m_OS):
+        m_GlobalWindowHeight = 710
+    else:
+        m_GlobalWindowHeight = 750
+
+    m_GlobalWindowWidth = 1100

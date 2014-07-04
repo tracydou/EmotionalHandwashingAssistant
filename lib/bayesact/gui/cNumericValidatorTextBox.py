@@ -11,6 +11,7 @@ class cNumericValidatorTextBox(wx.PyValidator):
 
         self.Bind(wx.EVT_CHAR, self.onChar)
 
+    # This is a necessary function for wx.PyValidator's pure virtual function
     def Clone(self):
         return cNumericValidatorTextBox(iDecimals=self.m_AllowDecimals, iNegative=self.m_AllowNegatives)
 

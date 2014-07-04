@@ -1,0 +1,14 @@
+Variable,Default Value
+Affect Control Principle Strength,1
+Agent Identity Inertia,0.01
+Client Identity Inertia,0.01
+Agent Initial Identity Certainty,0.01
+Client Initial Identity Certainty,0.01
+Environment Noise,1
+Discount Factor,0.9
+Number of Samples,300
+Beta Value B Client,INFINITY
+Beta Value B Client Init,1.0
+Beta Value B Agent,DBL_MIN
+Agent Rough,0.0
+Client Rough,0.0

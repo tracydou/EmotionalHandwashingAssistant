@@ -2,7 +2,6 @@ import sys
 sys.path.append("./gui/")
 import cGuiTabs
 
-
 def main(argv):
     cGuiTabs.main(argv)
 

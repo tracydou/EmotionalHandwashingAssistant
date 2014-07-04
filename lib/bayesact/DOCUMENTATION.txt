@@ -1,0 +1,125 @@
+If you have any questions about the source code, you may contact me by asking Jesse for my email
+or
+My name is Howard Zeng, any student from Waterloo should know how to get my contact information from just a name.
+
+Of course you can simply just read and follow the code, but if you're are in a rush, I will cover the important details of the code here.
+It is sorted by how you would see the gui
+
+Bayesact
+    You can run this program using python bayesactgui.py
+    Requires wxPython3.0, matplotlib, and wxmpl2.0 installed
+
+    Use the file menu to adjust the sentiment files, using an incompatible file will likely prevent further simulations until you choose a correct file
+    
+    Throughout the source code, there are "discrepancy" variables, those are for positioning the widgets over different machine platforms
+    Of course, they aren't needed, it just makes things look nice for those who may feel uneasy when seeing an text box or widget
+    
+    The position of the widgets may sometimes depend on or be relative to other widgets, you are free to change it to a constant to shorten the text if you want
+    
+
+    Define Interactants
+        Define interactants is instantiated in ./gui/cGuiTabs.py in the class cGuiTabs
+        The source code for this panel is located in the file ./gui/cOptionsAgent.py
+
+        You define interactants here, choose an identity and set the client at the bottom of the screen by clicking "Set Agent" or "Set Client"
+        You may also set the client gender with the drop down menu
+        You can filter the gender and setting institutions on the side
+        
+        The settings and modifiers currently have not been implemented
+        
+
+        cOptionsAgent.py
+            Uses cEPAListBox, which are those giant list boxes with the multitude of identities and sentiments
+            
+            Everything else are just widgets
+            
+
+            cEPAListBox.py
+                This essentially takes in a fsentiment file in its constructor, then parses it and displays it on the list box
+                The parsed list is a master data set that is used for filtering. The variable is self.m_fsentiments
+                
+                I could've made a data structure here for the master data set but it's used only once.
+                Sorry if it confuses you, the data structure looks like this:
+                [identity, [male_e, male_p, male_a], [female_e, femle_p, female_a], [gender, institution, whatisthis]]
+                I honestly don't know what that last three zeroes are (whatisthis), maybe David Heise would know.
+                
+                refreshIdentities() which allows you to switch between different data files, it replaces the master data set with the new parsed data file
+                    **NOTE: There are 3 instances of this in cOptionsAgent.py, if you want to get rid of any of these instances, you will also need to modify the cGuiTabs.py
+                            This is because that is where I implemented a drop down file menu for you to switch data sets
+                
+                You can call filterInstitution which takes in a keys two filter the lists, and replaces the current sentiments with the filtered one
+                The keys are simply just some 1s and 0s found in the cConstants.py, further documentation is in the code
+                
+
+
+    Bayesact Simulator Settings
+        This source code for this panel is located in the file ./gui/cOptionsBayesactSim.py
+        
+        You may change initial simulation settings here, they will be greyed out during a simulation, please stop the simulation before modifying these
+        If you wish to "ungrey" out these while having a use for these, you will need to add these variables to the cBayesactSim.py's threading code, that will be discussed further down.
+        
+        There are hint buttons here! You can modify what they say by just rewriting those strings.
+        The implementation is pretty easy, if you want to make a hint button just follow the code, it's literally 4 lines (you know lambda functions right?)
+
+        It takes in a cBayesactSim instance so that it can modify some variables in the initial start up of the simulation
+
+
+    Bayesact Simulator
+        The source code for this panel is located in the file ./gui/cSimInteractiveTabs.py
+        
+        This panel has two parts, the left half and the right half.
+        The right have have two plots, the fundamentals, and the taus
+        
+        The source code for the plots are located in the ./gui/cPlotEPA2D.py
+        
+        cPlotEPA2D.py
+            There is a list called twin plots, which copy what you did in one plot onto any of the plots in the list.
+            In plot EPA, it will simply just plot the data given into the plotting function in cPlot2D.py, the implementation is in that file, and there is also inline documentation
+            Note that there is a threading lock in the draw redraw function for the entire plot, this is to prevent bad things from happening.
+            Imagine two threads drawing on one plot at once while the other isn't done drawing...yeah. But honestly, without having a lock still "seems" to have no problems. But I'd rather not take chances.
+            
+            getSampleEPA is just code to try and calculate the closest point, if you find a better, more clean way to do it, you can rewrite it
+            
+            Note that I can plot on two axes at a time, so there is some samples data that is stored, so I use that that data find the closest points of course.
+            
+        
+        The left half of the panel have two other tabs.
+        One tab is for the simulation, and the other is for the interaction.
+        The source code for each of them are located in ./gui/cBayesactSimGui.py and ./gui/cBayesactInteractiveGui.py respectively
+        
+        Both of them are synchronized, so you can pause a simulation, and then input your own interaction.
+            **NOTE: You do not have to input the suggested actions, you can input your own, in the agent action text box,
+                    you can put your own comma separated list of E,P,A values or type in an action that is supported by the loaded behaviours files
+                    
+        You can modify the buttons here! You can modify the message in the strings to modify what they say.
+        
+        The positions for the widgets are relative, if the code looks like a lot of text, feel free to replace it with a constant.
+        
+        Also here is where I start threading the cBayesactSim. Beacause of the way wx.App works on mac, wx.App must be the main program, or else it will crash.
+        
+******************
+******************
+******************
+******************
+How to add something to cBayesactSim.py
+    Of course, you can just simply copy what I do, but I guess I should tell you how I do handle the threading.
+    I have an update variable, which updates in between steps, which is either evaluateStep or evaluateInteraction
+    
+    Here is where is pauses:
+    self.thread_event.clear()
+    self.thread_event.wait()
+    
+    In order the wait() is where it waits of course, in order to unpause it, you must call a function called thread_event.set()
+    
+    This done in the gui, you can easily ctrl+f and find it.
+    
+    After continuing, it checks for updates, and then it determines whether to evaluate the simulation or an interaction
+    
+    When it is checking for variables to update, they use a flag, so if you want to implement something, you will need to set a flag.
+    It's pretty simple, if you really don't understand how I did it, you could try to contact me.
+    
+    
+
+Please try to at least try to read and follow the code before asking questions on a specific part of the program.
+Feel free to use ctrl+f on Notepad++ and use the find in files function to look for something.
+If you're using a mac, you can always use the grep function to search in all the files in the directory to look for something.
