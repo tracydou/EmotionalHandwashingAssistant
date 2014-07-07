@@ -11,7 +11,7 @@ namespace EHwA {
   const int Buffer::STATE_A = 0;
   const int Buffer::STATE_B = 1;
   const int Buffer::STATE_C = 2;
-  const double Buffer::ALPHA = 1;
+  const double Buffer::ALPHA = 0;
   
   Buffer::Buffer(double threshold_timeout, double threshold_timeup,
                    vector<double> default_epa) :
@@ -22,6 +22,7 @@ namespace EHwA {
     behaviour_state_A_ = BAYESACT_NOTHING; // default value
     behaviour_state_B_ = BAYESACT_NOTHING; // default value
     current_epa_ = default_epa;
+    time0_ = true;
   }
   
   Buffer::~Buffer() {
@@ -80,8 +81,12 @@ namespace EHwA {
     }
     vector<double> previous_epa(current_epa_);
     vector<double> tmp_epa = EPACalculator::Calculate(hand_positions_);
-    for (int i = 0; i < 3; ++i) {
-        current_epa_[i] = (ALPHA * previous_epa[i] + tmp_epa[i]) / (ALPHA + 1);
+    if (time0_ == true) {
+        current_epa_ = tmp_epa;
+    } else {
+        for (int i = 0; i < 3; ++i) {
+            current_epa_[i] = (ALPHA * previous_epa[i] + tmp_epa[i]) / (ALPHA + 1);
+        }
     }
   }
                
