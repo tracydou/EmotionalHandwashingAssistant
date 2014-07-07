@@ -27,7 +27,7 @@ class BayesactAssistant:
         #1 : one of a selection of  num_confusers+1 randoms
         #2 : exactly
         #3 : same as 0 but also agent does not know its own id
-        self.agent_knowledge=0
+        self.agent_knowledge=2
 
         # agent gender
         self.agent_gender="male"
@@ -169,7 +169,7 @@ class BayesactAssistant:
 
         #get some key parameters from the command line
         #set much larger to mimic interact (>5000)
-        self.num_samples=1000
+        self.num_samples=2000
 
 
         # use 0.0 for mimic interact simulations
@@ -179,7 +179,7 @@ class BayesactAssistant:
 
         #the observation noise
         #set to 0.05 or less to mimic interact
-        self.obs_noise=(100000,3.5,1.5)
+        self.obs_noise=(100000,1,0.5)
         self.simul_obs_noise=0.5
         self.xobsnoise=0.01
         self.simul_xobsnoise=0.00001
@@ -240,13 +240,15 @@ class BayesactAssistant:
 
 
         self.true_client_id=getIdentity(self.fifname,self.true_client_id,self.client_gender)
-        self.tcid=self.true_client_id
         if self.true_client_id==[]:
             self.true_client_id =  NP.random.multivariate_normal(self.client_mean_ids,self.client_cov_ids)
         self.true_client_id=NP.asarray([self.true_client_id]).transpose()
 
         #get initial sets of parameters for agent
-        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.client_id,self.tcid)
+        self.tcid=[1.59,0.79,-0.88]
+        self.cid=[1.59,0.79,-0.88]# "elder": [1.59,0.79,-0.88]; "lonesome elder": [-0.66,-0.43,-1.8]
+        self.cid=NP.asarray([self.cid]).transpose() 
+        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.cid,self.tcid)
 
 
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.agent_knowledge,self.true_client_id,self.client_agent_id,self.agent_mean_ids)
@@ -322,6 +324,12 @@ class BayesactAssistant:
         self.done = False
         self.iter=0
         self.ps_obs=0
+        
+        
+        outfile = open("f_c_init.txt", "a")
+        outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
+        outfile.write("\n")
+        outfile.close()
         
         self.print_parameters_after_initialization()
         print "==================== END of INITIALIZATION ================"
@@ -458,6 +466,8 @@ class BayesactAssistant:
                 outfile.write(str(action)) #prop of action
                 outfile.write(" ")
                 outfile.write(str(epa)[1:-1]) #epa of action
+                outfile.write(" ")
+                outfile.write(str(self.learn_avgs.f[-3:])[1:-1]) #fc
                 outfile.write("\n")
                 outfile.close()
 
