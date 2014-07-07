@@ -5234,7 +5234,6 @@ void write_to_file() {
     time (&rawtime);
     timeinfo = localtime (&rawtime);
     
-    // outfile declared in .hpp file
     ofstream outfile;
     outfile.open("threshold.txt", ios::out|ios::app);
     //outfile << "localtime: " << asctime(timeinfo) << ",\t";
