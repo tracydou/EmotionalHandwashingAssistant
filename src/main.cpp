@@ -47,8 +47,8 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
                  string output_mapping_filename,string prompt_foldername, 
                  string default_prompt_filename) {
                      
-    //ofstream outfile;
-    //outfile.open("runspeed.txt", ios::out|ios::app);
+    ofstream outfile;
+    outfile.open("runspeed.txt", ios::out|ios::app);
   
     // Start BayesActClient & TrackerClient clients
     BayesactClient bayesact_client(bayesact_addr);
@@ -66,8 +66,8 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
     cout << "=============== Initialization ready ! =============" << endl << endl;
     while (not is_done) {
     
-        //struct timespec start, middle, end;
-        //clock_gettime(CLOCK_MONOTONIC, &start);	/* mark start time */
+        struct timespec start, middle1, middle2, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);	/* mark start time */
           
         cout << endl << "=============== Start of a new iteration: =============" << endl;
 	    //------------- Get hand-pos info from HandTracker -------
@@ -79,13 +79,16 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
         }
       
     
-        //clock_gettime(CLOCK_MONOTONIC, &middle);/* mark middle time */
+        clock_gettime(CLOCK_MONOTONIC, &middle1);/* mark middle time */
 
         //---------------- Updater buffer state -------------------------
         buffer.Update(current_action, left_hand_pos, right_hand_pos);
         if(buffer.get_current_state() != Buffer::STATE_C) {
           continue;
         }
+        
+        clock_gettime(CLOCK_MONOTONIC, &middle2);/* mark middle time */
+        
         //-------- Send currentEPA & handAction to server -------
         current_action = buffer.get_current_user_behaviour();
         bayesact_client.Send(buffer.get_current_epa(), current_action);
@@ -105,15 +108,15 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
         //----------- Play prompt with PromptPlayer (a plug-in)
         //prompt_player.Play(prompt_filename);
 
-        //clock_gettime(CLOCK_MONOTONIC, &end);/* mark end time */
-        //uint64_t diff1, diff2, diff3;
-        //uint64_t BILLION = 1000000000;
-        //diff1 = BILLION * (middle.tv_sec - start.tv_sec) + middle.tv_nsec - start.tv_nsec;
-        //diff2 = BILLION * (end.tv_sec - middle.tv_sec) + end.tv_nsec - middle.tv_nsec;
-        //diff3 = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        //outfile << "elapsed time = nanoseconds. diff1 = "<<diff1<<", diff2 = "<<diff2<<", diff3 = "<<diff3<<endl;
+        clock_gettime(CLOCK_MONOTONIC, &end);/* mark end time */
+        uint64_t diff1, diff2, diff3;
+        uint64_t BILLION = 1000000000;
+        diff1 = BILLION * (middle1.tv_sec - start.tv_sec) + middle1.tv_nsec - start.tv_nsec;
+        diff2 = BILLION * (middle2.tv_sec - middle1.tv_sec) + middle2.tv_nsec - middle1.tv_nsec;
+        diff3 = BILLION * (end.tv_sec - middle2.tv_sec) + end.tv_nsec - middle2.tv_nsec;
+        outfile << "elapsed time = nanoseconds. diff1 = "<<diff1<<", diff2 = "<<diff2<<", diff3 = "<<diff3<<endl;
         }
-    //outfile.close();
+    outfile.close();
 }
 	
 int main() {
@@ -128,7 +131,7 @@ int main() {
   string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "default_prompt.mp4";
   string default_vid_path = "/home/l39lin/TracyThesis/EmotionalHandwashingAssistant" \
-                        "/lib/hand_tracker/videos/fast1.oni";
+                        "/lib/hand_tracker/videos/slow1.oni";
                         
   StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr,default_vid_path);
