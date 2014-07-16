@@ -138,7 +138,7 @@ int main() {
   string prompt_foldername = "../data/video_prompts/";
   string default_prompt_filename = "default_prompt.mp4";
   string default_vid_path = "/home/l39lin/TracyThesis/EmotionalHandwashingAssistant" \
-                        "/lib/hand_tracker/videos/slow1.oni";
+                        "/lib/hand_tracker/videos/slow2.oni";
                         
   StartBayesactServer(bayesactServerAddr);
   StartHandtrackerServer(trackerServerAddr,default_vid_path);
