@@ -11,6 +11,10 @@ PromptPlayer::~PromptPlayer() {
   libvlc_release(inst_);
 }
 
+bool PromptPlayer::TryLock(){
+  return mtx_playing_.try_lock();
+}
+
 void PromptPlayer::Play(string media_filename) {
   // Set up media & media-player
   libvlc_media_t *m = libvlc_media_new_path (inst_, media_filename.c_str());
@@ -23,6 +27,7 @@ void PromptPlayer::Play(string media_filename) {
   // Release media & media-player  
   libvlc_media_release (m);
   libvlc_media_player_release (mp);
+  mtx_playing_.unlock();
 }
  
 // This is a non working code that show how to hooks into a window,

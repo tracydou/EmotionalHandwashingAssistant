@@ -9,6 +9,7 @@
 #include <string>
 #include <utility>
 #include <list>
+#include <thread> // multi-threading for prompt-player
 
 #include "bayesact_client.hpp"
 #include "buffer.hpp"
@@ -16,6 +17,7 @@
 #include "prompt_player.hpp"
 #include "prompt_selecter.hpp"
 #include "tracker_client.hpp"
+
 // to get current time
 #include <time.h>
 
@@ -29,6 +31,8 @@ using std::cout;
 using std::endl;
 using std::list;
 using std::string;
+
+using std::thread; // multi-threading for prompt-player
 
 using namespace EHwA;
 
@@ -99,15 +103,17 @@ void StartClient(string bayesact_addr, string hand_tracker_addr,
         vector<double> response_epa = bayesact_client.get_response_epa();
         int response_prompt = bayesact_client.get_response_prompt();
         is_done = bayesact_client.is_done();
-        //----------- Select proper prompt ---------------------
+        //----------- Select proper prompt & Play prompt with PromptPlayer (a plug-in) ---------------------
         string prompt_filename = prompt_foldername + prompt_selecter.Select(response_epa, response_prompt);
         if (prompt_filename == "") {
           cout << "No Prompt is needed at this time;" << endl;
         } else {		  
           cout << "Proper prompt_filename is " << prompt_filename << endl;
+          if (prompt_player.TryLock()) {
+			thread thread_play_video(&PromptPlayer::Play, &prompt_player, prompt_filename);
+			thread_play_video.detach();
+		  }
         }
-        //----------- Play prompt with PromptPlayer (a plug-in)
-        //prompt_player.Play(prompt_filename);
 
         //clock_gettime(CLOCK_MONOTONIC, &end);/* mark end time */
         //uint64_t diff1, diff2, diff3;
