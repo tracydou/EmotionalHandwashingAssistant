@@ -1,5 +1,6 @@
 # Source configuration
-SOURCE VID
+SOURCE KIN
+#SOURCE VID
 DISK_PATH /home/basement/Documents/COACH_HomeLab_trials/holdback_images/H1_13-10-22_trial-004(Steve)
 
 # Spearmint configuration
