@@ -248,7 +248,7 @@ class BayesactAssistant:
         self.tcid=[1.59,0.79,-0.88]
         self.cid=[1.59,0.79,-0.88]# "elder": [1.59,0.79,-0.88]; "lonesome elder": [-0.66,-0.43,-1.8]
         self.cid=NP.asarray([self.cid]).transpose()
-        self.aid=[1.5, 0.51, 0.45]#"assistant": [1.5, 0.51, 0.45]; "athelete": [1.57, 1.66, 2.04]
+        self.aid=[-0.89,0.52,0.53]#"assistant": [1.5, 0.51, 0.45]; "athelete": [1.57, 1.66, 2.04] # "bossy assistant":-0.89,0.52,0.53
         self.aid=NP.asarray([self.aid]).transpose()
         #(self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.cid,self.tcid)
         (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.aid,self.cid,self.tcid)
