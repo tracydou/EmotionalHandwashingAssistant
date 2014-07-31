@@ -247,9 +247,11 @@ class BayesactAssistant:
         #get initial sets of parameters for agent
         self.tcid=[1.59,0.79,-0.88]
         self.cid=[1.59,0.79,-0.88]# "elder": [1.59,0.79,-0.88]; "lonesome elder": [-0.66,-0.43,-1.8]
-        self.cid=NP.asarray([self.cid]).transpose() 
-        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.cid,self.tcid)
-
+        self.cid=NP.asarray([self.cid]).transpose()
+        self.aid=[1.5, 0.51, 0.45]#"assistant": [1.5, 0.51, 0.45]; "athelete": [1.57, 1.66, 2.04]
+        self.aid=NP.asarray([self.aid]).transpose()
+        #(self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.agent_id,self.cid,self.tcid)
+        (self.learn_tau_init,self.learn_prop_init,self.learn_beta_client_init,self.learn_beta_agent_init)=init_id(self.agent_knowledge,self.aid,self.cid,self.tcid)
 
         (self.simul_tau_init,self.simul_prop_init,self.simul_beta_client_init,self.simul_beta_agent_init)=init_id(self.agent_knowledge,self.true_client_id,self.client_agent_id,self.agent_mean_ids)
 
